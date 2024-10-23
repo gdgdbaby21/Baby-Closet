@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baby Closet</title>
+
 </head>
 <body>
     <h1>サインアップ</h1>
-   <a href="{% url 'login' %}">アプリへ</a>
+    <form method="post">
+        {% csrf_token %}
+        <div>名前<input type="text" name="username" value="{{ form.name.value|default:''}}"></div>
+        <div>メールアドレス<input type="email" name="email" value="{{ form.name.value|default:''}}"></div>
+        <div>パスワード<input type="password" name="password1" value="{{ form.name.value|default:''}}"></div>
+        <div>確認用パスワード<input type="password" name="password2" value="{{ form.name.value|default:''}}"></div> 
+        <button type="submit">signup</button> 
+    </form>
+    {{ form.errors }}
+   <a href="{% url 'login' %}">Loginへ戻る</a>
 </body>
 </html>
