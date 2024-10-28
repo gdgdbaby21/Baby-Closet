@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Closet</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center; /* テキストを中央揃え */
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        div {
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: gray;
+        }
+
+        input[type="email"], input[type="password"] {
+            padding: 8px;
+            border: 2px solid #c0c0c0; 
+            border-radius: 5px; 
+            background-color: #f9f9f9; 
+            width: 100%; 
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4cafa0;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #bf00e6; /* ホバー時の色を濃い青に変更 */
+        }
+
+        a {
+            color: #4cafa0;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Baby Closet</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>メールアドレス<input type="email" name="email" value="{{ form.name.value|default:''}}"></div>
+        <div>パスワード<input type="password" name="password1" value="{{ form.name.value|default:''}}"></div>
+        <div>パスワード再入力<input type="password" name="password2" value="{{ form.name.value|default:''}}"></div> 
+        <button type="submit">新規登録</button> 
+    </form>
+    {{ form.errors }}
+   <a href="{% url 'login' %}">Loginへ戻る</a>
+</body>
+</html>
