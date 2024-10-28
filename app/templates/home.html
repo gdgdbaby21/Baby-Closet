@@ -9,3 +9,27 @@
    <a href="{% url 'login' %}">アプリへ</a>
 </body>
 </html>
+
+
+
+<!-- myapp/templates/myapp/home.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ホーム</title>
+</head>
+<body>
+    <h1>ホーム画面</h1>
+    <nav>
+        <ul>
+            <li><a href="{% url 'home' %}">ホーム</a></li>
+            <li><a href="{% url 'profile' %}">プロフィール</a></li>
+            <li><a href="{% url 'wishlist' %}">欲しいものリスト</a></li>
+            <li><a href="{% url 'clothes' %}">服管理</a></li>
+            <li><a href="{% url 'logout' %}">ログアウト</a></li>
+        </ul>
+    </nav>
+    <p>ここにホーム画面のコンテンツが入ります。</p>
+</body>
+</html>
