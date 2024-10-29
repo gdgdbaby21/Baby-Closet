@@ -44,7 +44,20 @@ class LoginView(View):
     
        
 class HomeView(LoginRequiredMixin, View):
-    login_url = "login"
     def get(self, request):
         return render(request, "home.html")
+
     
+class ProfileView(View):
+    def get(self, request):
+        return render(request, "profile.html")
+
+    
+class WishlistView(View):
+    def get(self, request):
+        return render(request, "wishlist.html")
+
+
+class ClothesView(View):
+    def get(self, request):
+        return render(request, "clothes.html")
