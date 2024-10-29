@@ -61,3 +61,8 @@ class WishlistView(View):
 class ClothesView(View):
     def get(self, request):
         return render(request, "clothes.html")
+    
+
+class LogoutView(View):
+    def get(self, request):
+        return render(request, "login.html")
