@@ -24,3 +24,18 @@ REQUIRED_FIELDS = ["email"]
 
 class Meta:
     db_table = "users"
+    
+#Postモデルとハッシュタグモデルの作成
+class Hashtag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return f"#{self.name}"
+
+class Post(models.Model):
+    content = models.TextField()
+    hashtags = models.ManyToManyField(Hashtag, blank=True, related_name='posts')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.content
