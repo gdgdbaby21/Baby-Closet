@@ -3,6 +3,10 @@ from django.views import View
 from app.forms import SignupForm, LoginForm
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
+#プロフィール編集画面用
+from django.contrib.auth.decorators import login_required
+from .models import UserProfile
+from .forms import UserProfileForm
 
 
 
@@ -66,3 +70,41 @@ class ClothesView(View):
 class LogoutView(View):
     def get(self, request):
         return render(request, "login.html")
+    
+    
+class Edit_profileView(LoginRequiredMixin, View):
+    def get(self, request):
+        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+        form = UserProfileForm(instance=user_profile)
+        return render(request, "edit_profile.html", {"from": form})
+    
+    
+    def post(self, request):
+        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect("profile")  # プロフィール表示ページにリダイレクト
+        return render(request, "edit_profile.html", {"form": form})
+    
+    
+    
+@login_required
+def edit_profile(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  #プロフィール表示ページにリダイレクト
+    else:
+        form = UserProfileForm(instance=user_profile)
+
+    return render(request, 'edit_profile.html', {'form': form})
+
+
+@login_required
+def profile(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    return render(request, 'profile.html', {'profile': user_profile})

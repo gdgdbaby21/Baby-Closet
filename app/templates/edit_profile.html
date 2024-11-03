@@ -1,0 +1,12 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>プロフィール編集</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">決定</button>
+</form>
+<a href="{% url 'profile' %}">キャンセル</a>
+{% endblock %}

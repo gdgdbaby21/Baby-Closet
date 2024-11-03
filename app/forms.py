@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from app.models import User
 from django.contrib.auth import authenticate
+#プロフィール編集用フォーム作成
+from .models import UserProfile
 
 
 class SignupForm(UserCreationForm):
@@ -30,3 +32,10 @@ class LoginForm(forms.Form):
         if self.user is None:
             raise forms.ValidationError("認証に失敗しました")
         return self.cleaned_data
+    
+    
+#プロフィール編集用フォーム作成
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['avatar', 'account_name', 'gender', 'birth_date', 'bio']

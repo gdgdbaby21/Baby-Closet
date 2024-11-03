@@ -25,17 +25,16 @@ REQUIRED_FIELDS = ["email"]
 class Meta:
     db_table = "users"
     
-#Postモデルとハッシュタグモデルの作成
-class Hashtag(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
+    
+#プロフィール情報の管理するモデルの作成
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    account_name = models.CharField(max_length=50)
+    gender = models.CharField(max_length=10, choices=[('male', 'Male'), ('female', 'Female')])
+    birth_date = models.DateField(null=True, blank=True)
+    bio = models.TextField(max_length=500, blank=True)
+    
+    
     def __str__(self):
-        return f"#{self.name}"
-
-class Post(models.Model):
-    content = models.TextField()
-    hashtags = models.ManyToManyField(Hashtag, blank=True, related_name='posts')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.content
+        return self.user.username
