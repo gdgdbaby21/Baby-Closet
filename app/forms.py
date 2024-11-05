@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate
 from .models import UserProfile
 
 
+
 class SignupForm(UserCreationForm):
     class Meta:
         model = User
@@ -38,4 +39,4 @@ class LoginForm(forms.Form):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['avatar', 'account_name', 'gender', 'birth_date', 'bio']
+        fields = ['画像', 'アカウント名', '性別', '生年月日', '自己紹介']

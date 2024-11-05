@@ -81,7 +81,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = "app.User"
+AUTH_USER_MODEL = "app.CustomUser"
 AUTHENTICATION_BACKENDS = [
     "app.backends.UserAuthBackend"
 ]

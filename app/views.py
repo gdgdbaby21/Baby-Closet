@@ -74,13 +74,13 @@ class LogoutView(View):
     
 class Edit_profileView(LoginRequiredMixin, View):
     def get(self, request):
-        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+        user_profile, created = UserProfile.objects.get_or_create(ユーザー=request.user)
         form = UserProfileForm(instance=user_profile)
         return render(request, "edit_profile.html", {"from": form})
     
     
     def post(self, request):
-        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+        user_profile, created = UserProfile.objects.get_or_create(ユーザー=request.user)
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
         if form.is_valid():
             form.save()
@@ -91,7 +91,7 @@ class Edit_profileView(LoginRequiredMixin, View):
     
 @login_required
 def edit_profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    user_profile, created = UserProfile.objects.get_or_create(ユーザー=request.user)
     
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
@@ -106,5 +106,6 @@ def edit_profile(request):
 
 @login_required
 def profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    user_profile, created = UserProfile.objects.get_or_create(ユーザー=request.user)
     return render(request, 'profile.html', {'profile': user_profile})
+

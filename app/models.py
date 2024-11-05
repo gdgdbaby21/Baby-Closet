@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)
+
 
 
 class User(AbstractUser):
@@ -28,12 +31,12 @@ class Meta:
     
 #プロフィール情報の管理するモデルの作成
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
-    account_name = models.CharField(max_length=50)
-    gender = models.CharField(max_length=10, choices=[('male', 'Male'), ('female', 'Female')])
-    birth_date = models.DateField(null=True, blank=True)
-    bio = models.TextField(max_length=500, blank=True)
+    ユーザー = models.OneToOneField(User, on_delete=models.CASCADE)
+    画像 = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    アカウント名 = models.CharField(max_length=50)
+    性別 = models.CharField(max_length=10, choices=[('male', '男性'), ('female', '女性')])
+    生年月日 = models.DateField(null=True, blank=True)
+    自己紹介 = models.TextField(max_length=500, blank=True)
     
     
     def __str__(self):
