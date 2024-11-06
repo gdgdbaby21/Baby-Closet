@@ -33,3 +33,4 @@ urlpatterns = [
     path('edit-profile/', Edit_profileView.as_view(), name='edit_profile'),
 
 ]
+
