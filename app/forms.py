@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from app.models import User
 from django.contrib.auth import authenticate
-#プロフィール編集用フォーム作成
 from .models import UserProfile
 
 
@@ -40,3 +39,4 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['画像', 'アカウント名', '性別', '生年月日', '自己紹介']
+        

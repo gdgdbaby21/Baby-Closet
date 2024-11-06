@@ -30,7 +30,7 @@ urlpatterns = [
     path('wishlist/', WishlistView.as_view(), name="wishlist"),
     path('clothes/', ClothesView.as_view(), name="clothes"),
     path('logout/', auth_views.LogoutView.as_view(), name="logout"),
-    path('edit-profile/', Edit_profileView.as_view(), name='edit_profile'),
-
+    path('edit-profile/', Edit_profileView.as_view(), name='edit_profile'),  
+    
 ]
 

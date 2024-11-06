@@ -5,9 +5,8 @@ from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 #プロフィール編集画面用
 from django.contrib.auth.decorators import login_required
-from .models import UserProfile
+from .models import UserProfile, WishlistItem
 from .forms import UserProfileForm
-
 
 
 
@@ -59,7 +58,8 @@ class ProfileView(View):
     
 class WishlistView(View):
     def get(self, request):
-        return render(request, "wishlist.html")
+        items = WishlistItem.objects.all()
+        return render(request, "wishlist.html", {"items": items})
 
 
 class ClothesView(View):
