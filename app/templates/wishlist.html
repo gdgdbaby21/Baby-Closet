@@ -1,23 +1,52 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>欲しいものリスト</title>
+    <style>
+        .wishlist-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .wishlist-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            width: 150px;
+            text-align: center;
+        }
+        .wishlist-item img {
+            max-width: 100%;
+            height: auto;
+        }
+        .add-button {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ddd;
+            text-decoration: none;
+            color: black;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>欲しいものリスト</h1>
-    <a href="{% url 'home' %}">ホームに戻る</a>
-    <ul>
+    <div class="wishlist-container">
         {% for item in items %}
-            <li>
-                <strong>ブランド:</strong> {{ item.brand }} <br>
-                <strong>値段:</strong> {{ item.price }}円 <br>
-                <strong>URL:</strong> <a href="{{ item.product_url }}" target="_blank">商品リンク</a> <br>
-                <strong>メモ:</strong> {{ item.memo }}
-            </li>
-        {% empty %}
-            <p>欲しいものリストにアイテムがありません。</p>
+        <div class="wishlist-item">
+            {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.brand }}">
+            {% else %}
+                <div>Image</div>
+            {% endif %}
+            <p>¥{{ item.price }}</p>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+    <a href="{% url 'add_to_wishlist' %}" class="add-button">+</a>
 </body>
 </html>

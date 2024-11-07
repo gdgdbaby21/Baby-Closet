@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from app.models import User
 from django.contrib.auth import authenticate
-from .models import UserProfile
+from .models import UserProfile, WishlistItem
 
 
 
@@ -40,3 +40,11 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = ['画像', 'アカウント名', '性別', '生年月日', '自己紹介']
         
+        
+#欲しいものリスト登録用フォーム
+class WishlistItemForm(forms.ModelForm):
+    class Meta:
+        model = WishlistItem
+        fields = ['image', 'price', 'brand', 'product_url', 'note']
+        
+

@@ -3,10 +3,9 @@ from django.views import View
 from app.forms import SignupForm, LoginForm
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
-#プロフィール編集画面用
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile, WishlistItem
-from .forms import UserProfileForm
+from .forms import UserProfileForm, WishlistItemForm
 
 
 
@@ -109,3 +108,20 @@ def profile(request):
     user_profile, created = UserProfile.objects.get_or_create(ユーザー=request.user)
     return render(request, 'profile.html', {'profile': user_profile})
 
+
+def wishlist_view(request):
+    items = WishlistItem.objects.all()  # 全てのWishlistItemを取得
+    return render(request, 'wishlist.html', {'items': items})
+
+
+class AddToWishlistView(View):
+    def get(self, request):
+        form = WishlistItemForm()
+        return render(request, 'add_to_wishlist.html', {'form': form})
+
+    def post(self, request):
+        form = WishlistItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("wishlist")
+        return render(request, 'add_to_wishlist.html', {'form': form})
