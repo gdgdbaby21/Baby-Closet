@@ -14,11 +14,34 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# from django.contrib import admin
+# from django.urls import path
+# from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, Edit_profileView
+# from django.contrib.auth import views as auth_views
+# from . import views
+
+
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('', PortfolioView.as_view(), name="portfolio"), 
+#     path('signup/', SignupView.as_view(), name="signup"),
+#     path('login/', LoginView.as_view(), name="login"),
+#     path('home/', HomeView.as_view(), name="home"),
+#     path('profile/', ProfileView.as_view(), name="profile"),
+#     path('wishlist/', WishlistView.as_view(), name="wishlist"),
+#     path('clothes/', ClothesView.as_view(), name="clothes"),
+#     path('logout/', auth_views.LogoutView.as_view(), name="logout"),
+#     path('edit-profile/', Edit_profileView.as_view(), name='edit_profile'),
+#     path('', views.wishlist_list, name='wishlist_list'),
+#     path('item/<int:item_id>/', views.wishlist_detail, name='wishlist_detail'),
+#     path('create/', views.wishlist_create, name='wishlist_create'),
+# ]
+
+
 from django.contrib import admin
 from django.urls import path
-from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, Edit_profileView, AddToWishlistView
+from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, wishlist_list, wishlist_detail, wishlist_create
 from django.contrib.auth import views as auth_views
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,7 +53,7 @@ urlpatterns = [
     path('wishlist/', WishlistView.as_view(), name="wishlist"),
     path('clothes/', ClothesView.as_view(), name="clothes"),
     path('logout/', auth_views.LogoutView.as_view(), name="logout"),
-    path('edit-profile/', Edit_profileView.as_view(), name='edit_profile'),
-    path('wishlist/add/', AddToWishlistView.as_view(), name='add_to_wishlist'),
+    path('edit-profile/', EditProfileView.as_view(), name='edit_profile'),
+    path('wishlist/item/<int:item_id>/', wishlist_detail, name='wishlist_detail'),
+    path('wishlist/create/', wishlist_create, name='wishlist_create'),
 ]
-

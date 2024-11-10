@@ -1,52 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
+    <meta charset="UTF-8">
     <title>欲しいものリスト</title>
-    <style>
-        .wishlist-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .wishlist-item {
-            border: 1px solid #ddd;
-            padding: 10px;
-            width: 150px;
-            text-align: center;
-        }
-        .wishlist-item img {
-            max-width: 100%;
-            height: auto;
-        }
-        .add-button {
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #ddd;
-            text-decoration: none;
-            color: black;
-            margin-top: 20px;
-        }
-    </style>
 </head>
 <body>
     <h1>欲しいものリスト</h1>
-    <div class="wishlist-container">
+    <div>
         {% for item in items %}
-        <div class="wishlist-item">
-            {% if item.image %}
-                <img src="{{ item.image.url }}" alt="{{ item.brand }}">
-            {% else %}
-                <div>Image</div>
-            {% endif %}
-            <p>¥{{ item.price }}</p>
-        </div>
+            <div>
+                <a href="{% url 'wishlist_detail' item.id %}">
+                    <img src="{{ item.image.url }}" alt="Wishlist Item Image" style="width:100px;">
+                </a>
+                <p>¥{{ item.price }}</p>
+            </div>
         {% endfor %}
     </div>
-    <a href="{% url 'add_to_wishlist' %}" class="add-button">+</a>
+    <a href="{% url 'wishlist_create' %}">投稿</a>
 </body>
 </html>

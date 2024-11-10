@@ -5,7 +5,6 @@ from django.contrib.auth import authenticate
 from .models import UserProfile, WishlistItem
 
 
-
 class SignupForm(UserCreationForm):
     class Meta:
         model = User
@@ -38,13 +37,11 @@ class LoginForm(forms.Form):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['画像', 'アカウント名', '性別', '生年月日', '自己紹介']
-        
-        
-#欲しいものリスト登録用フォーム
+        fields = ['image', 'account', 'gender', 'birth_of_date', 'bio']
+
+
+#欲しいものリスト投稿のフォーム        
 class WishlistItemForm(forms.ModelForm):
     class Meta:
         model = WishlistItem
-        fields = ['image', 'price', 'brand', 'product_url', 'note']
-        
-
+        fields = ['image', 'price']

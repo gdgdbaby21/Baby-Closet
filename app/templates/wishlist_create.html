@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>投稿ページ</title>
+</head>
+<body>
+    <h1>欲しいものリストに追加</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">投稿</button>
+    </form>
+    <a href="{% url 'wishlist_list' %}">戻る</a>
+</body>
+</html>
