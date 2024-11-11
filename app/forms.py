@@ -44,4 +44,4 @@ class UserProfileForm(forms.ModelForm):
 class WishlistItemForm(forms.ModelForm):
     class Meta:
         model = WishlistItem
-        fields = ['image', 'price']
+        fields = ['image', 'price','brand', 'product_url', 'notes']

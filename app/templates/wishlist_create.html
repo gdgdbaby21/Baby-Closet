@@ -5,12 +5,59 @@
     <title>投稿ページ</title>
 </head>
 <body>
+    <style>
+        /* フォーム全体のスタイル */
+        form {
+            width: 300px; /* 任意の幅 */
+            margin: 0 auto; /* 中央に配置 */
+        }
+
+        /* フィールドごとの間隔を調整 */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        /* ラベルのスタイル */
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* テキストフィールドとボタンのスタイル調整 */
+        input[type="text"], input[type="number"], textarea, input[type="url"], input[type="file"], button {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    </style>
     <h1>欲しいものリストに追加</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        
+        <!-- 画像 -->
+        <label for="id_image">画像:</label>
+        {{ form.image }}
+        
+        <!-- 価格 -->
+        <label for="id_price">価格:</label>
+        {{ form.price }}
+
+        <!-- ブランド -->
+        <label for="id_brand">ブランド:</label>
+        {{ form.brand }}
+        
+        <!-- 商品URL -->
+        <label for="id_product_url">商品URL:</label>
+        {{ form.product_url }}
+        
+        <!-- メモ -->
+        <label for="id_notes">メモ:</label>
+        {{ form.notes }}
+        
         <button type="submit">投稿</button>
     </form>
-    <a href="{% url 'wishlist_list' %}">戻る</a>
+    <a href="{% url 'wish_list' %}">戻る</a>
 </body>
 </html>
+

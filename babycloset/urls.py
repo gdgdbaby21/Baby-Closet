@@ -40,7 +40,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, wishlist_list, wishlist_detail, wishlist_create
+from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, wishlist_detail, wishlist_create
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -50,7 +50,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name="login"),
     path('home/', HomeView.as_view(), name="home"),
     path('profile/', ProfileView.as_view(), name="profile"),
-    path('wishlist/', WishlistView.as_view(), name="wishlist"),
+    path('wishlist/', WishlistView.as_view(), name="wish_list"),
     path('clothes/', ClothesView.as_view(), name="clothes"),
     path('logout/', auth_views.LogoutView.as_view(), name="logout"),
     path('edit-profile/', EditProfileView.as_view(), name='edit_profile'),
