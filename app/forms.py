@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from app.models import User
 from django.contrib.auth import authenticate
 from .models import UserProfile, WishlistItem
+import datetime
 
 
 class SignupForm(UserCreationForm):
@@ -34,10 +35,31 @@ class LoginForm(forms.Form):
     
     
 #プロフィール編集用フォーム作成
+# class UserProfileForm(forms.ModelForm):
+#     class Meta:
+#         model = UserProfile
+#         fields = ['image', 'account', 'gender', 'birth_of_date', 'bio']
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['image', 'account', 'gender', 'birth_of_date', 'bio']
+        fields = ['profile_image','name','account', 'gender', 'birth_of_date', 'bio']
+        labels = {
+            'profile_image': 'プロフィール画像',
+            'name': '名前',
+            'account': 'アカウント名',
+            'gender': '性別',
+            'birth_of_date': '生年月日',
+            'bio': '自己紹介',
+        }
+        widgets = {
+            'profile_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '名前を入力'}),
+            'account': forms.TextInput(attrs={'placeholder': 'フリー入力'}),
+            'gender': forms.Select(choices=[('M', '男性'), ('F', '女性'), ('O', 'その他')]),
+            'birth_of_date': forms.SelectDateWidget(years=range(1900, 2024)),
+            'bio': forms.Textarea(attrs={'placeholder': 'フリー入力'}),
+        }
+
 
 
 #欲しいものリスト投稿のフォーム        
