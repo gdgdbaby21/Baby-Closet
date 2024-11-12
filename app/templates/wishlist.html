@@ -7,6 +7,13 @@
 <body>
     <h1>欲しいものリスト</h1>
     <div>
+        {% for item in wishlist_items %}
+    <div>
+        <img src="{{ item.image_url }}" alt="item image">
+        <p>{{ item.price }}</p>
+    </div>
+{% endfor %}
+
     </div>
     <a href="{% url 'wishlist_create' %}">投稿</a>
 </body>

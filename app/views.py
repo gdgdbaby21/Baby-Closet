@@ -56,7 +56,7 @@ class ProfileView(View):
 class WishlistView(View):
     def get(self, request):
         items = WishlistItem.objects.all()
-        return render(request, "wishlist.html", {"items": items})
+        return render(request, "wishlist.html", {"wishlist_items": items})
 
 class ClothesView(View):
     def get(self, request):
@@ -111,7 +111,7 @@ def wishlist_create(request):
         form = WishlistItemForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('wishlist_list')
+            return redirect('wishlist')
     else:
         form = WishlistItemForm()
     return render(request, 'wishlist_create.html', {'form': form})
