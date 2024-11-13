@@ -74,15 +74,36 @@ h1 {
     <!-- プロフィール編集フォーム -->
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
+      
 
-         <!-- プロフィール画像 -->
-        <div class="profile-image">
+        {% comment %} <div class="profile-image">
             <label for="profile_image">
-                <img src="{{ user.profile_image.url }}" alt="プロフィール画像" class="profile-thumbnail">
+                {% if user.profile_image %}
+                    <img src="{{ user.profile_image.url }}" alt="プロフィール画像" class="profile-thumbnail">
+                {% else %}
+                    <img src="{% static 'default-profile.png' %}" alt="デフォルト画像" class="profile-thumbnail">
+                {% endif %}
                 <input type="file" id="profile_image" name="profile_image" style="display: none;">
             </label>
             <p>画像をクリックするとファイル選択が可能です</p>
-        </div> {% endcomment %} {% endcomment %} %}  {% endcomment %}
+        </div>
+         {% endcomment %}
+
+
+         <div class="profile-image">
+            <label for="profile_image">
+                {% if user.userprofile and user.userprofile.profile_image %}
+                    <img src="{{ user.userprofile.profile_image.url }}" alt="プロフィール画像" class="profile-thumbnail">
+                {% else %}
+                    <img src="{% static 'default-profile.png' %}" alt="デフォルト画像" class="profile-thumbnail">
+                {% endif %}
+                <input type="file" id="profile_image" name="profile_image" style="display: none;">
+            </label>
+            <p>画像をクリックするとファイル選択が可能です</p>
+        </div>
+        
+
+        
 
         <!-- フォームフィールド -->
         <div class="form-group">

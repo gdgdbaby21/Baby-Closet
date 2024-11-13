@@ -33,12 +33,8 @@ class LoginForm(forms.Form):
             raise forms.ValidationError("認証に失敗しました")
         return self.cleaned_data
     
-    
-#プロフィール編集用フォーム作成
-# class UserProfileForm(forms.ModelForm):
-#     class Meta:
-#         model = UserProfile
-#         fields = ['image', 'account', 'gender', 'birth_of_date', 'bio']
+
+
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
