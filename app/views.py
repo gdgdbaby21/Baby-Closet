@@ -81,8 +81,9 @@ class EditProfileView(LoginRequiredMixin, View):
         return render(request, "edit_profile.html", {"form": form})
 
 @login_required
-def wishlist_list(request):
+def wishlist_view(request):
     items = WishlistItem.objects.all()
+    print("Items in wishlist:", items)
     return render(request, "wishlist.html", {"items": items})
 
 @login_required
@@ -102,11 +103,13 @@ def profile(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     return render(request, 'profile.html', {'profile': user_profile})
 
-def wishlist_detail(request, item_id):
-    item = get_object_or_404(WishlistItem, id=item_id)
-    return render(request, 'wishlist_detail.html', {'item': item})
+class Wishlist_detailView(View):
+    def get(self, request, item_id):
+     item = get_object_or_404(WishlistItem, id=item_id)
+     return render(request, 'wishlist_detail.html', {'item': item})
 
-def wishlist_create(request):
+class Wishlist_createView(View):
+ def wishlist_create(request):
     if request.method == 'POST':
         form = WishlistItemForm(request.POST, request.FILES)
         if form.is_valid():
@@ -115,3 +118,6 @@ def wishlist_create(request):
     else:
         form = WishlistItemForm()
     return render(request, 'wishlist_create.html', {'form': form})
+
+
+
