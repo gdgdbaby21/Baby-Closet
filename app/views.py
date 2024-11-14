@@ -5,6 +5,7 @@ from app.forms import SignupForm, LoginForm
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages 
 from .models import UserProfile, WishlistItem
 from .forms import UserProfileForm, WishlistItemForm
 
@@ -86,17 +87,47 @@ def wishlist_view(request):
     print("Items in wishlist:", items)
     return render(request, "wishlist.html", {"items": items})
 
+# @login_required
+# def edit_profile(request):
+#     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+#     if request.method == 'POST':
+#         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'プロフィールが更新されました！')
+#             return redirect('profile')
+#     else:
+#         form = UserProfileForm(instance=user_profile)
+#         messages.error(request, 'プロフィールの更新に失敗しました。入力内容を確認してください。')
+#         else:
+#         # GETリクエストの場合、空のフォームを生成
+#         form = ProfileForm(instance=user_profile)
+
+        
+        
+#     return render(request, 'edit_profile.html', {'form': form})
+
 @login_required
 def edit_profile(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        
         if form.is_valid():
             form.save()
+            messages.success(request, 'プロフィールが更新されました！')
             return redirect('profile')
+        else:
+            
+            messages.error(request, 'プロフィールの更新に失敗しました。入力内容を確認してください。')
     else:
+        
         form = UserProfileForm(instance=user_profile)
+
     return render(request, 'edit_profile.html', {'form': form})
+        
+
 
 @login_required
 def profile(request):

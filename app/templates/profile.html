@@ -1,14 +1,34 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <title>プロフィール</title>
 </head>
 <body>
     <h1>プロフィールページ</h1>
-    <p><a href="{% url 'edit_profile' %}">プロフィール編集</a>
-    </p>
-    <a href="{% url 'home' %}">ホームに戻る</a>
+
+    <!-- プロフィール画像の表示 -->
+    <div class="profile-image">
+        {% if user_profile.profile_image %}
+            <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像" style="width: 150px; height: 150px; border-radius: 50%;">
+        {% else %}
+            <!-- デフォルト画像を表示 -->
+            <img src="{% static 'default-profile.png' %}" alt="デフォルト画像" style="width: 150px; height: 150px; border-radius: 50%;">
+        {% endif %}
+    </div>
+
+    <!-- プロフィール情報の表示 -->
+    <p>名前: {{ user_profile.name }}</p>
+    <p>アカウント: {{ user_profile.account }}</p>
+    <p>性別: {{ user_profile.gender }}</p>
+    <p>生年月日: {{ user_profile.birth_of_date }}</p>
+    <p>自己紹介: {{ user_profile.bio }}</p>
+
+    <!-- プロフィール編集リンク -->
+    <p><a href="{% url 'edit_profile' %}">プロフィール編集</a></p>
+    
+    <!-- ホームに戻るリンク -->
+    <p><a href="{% url 'home' %}">ホームに戻る</a></p>
 </body>
 </html>

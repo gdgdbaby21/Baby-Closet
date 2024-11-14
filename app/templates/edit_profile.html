@@ -3,94 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>プロフィール編集画面</title>
-    <link rel="stylesheet" href="{% static 'body {
-    font-family: Arial, sans-serif;
-}
-
-nav {
-    margin-bottom: 20px;
-}
-
-nav a {
-    margin-right: 10px;
-    text-decoration: none;
-    color: #333;
-}
-
-h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-.profile-image {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.profile-thumbnail {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.form-group input, .form-group select, .form-group textarea {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-.btn-submit {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 15px;
-    border: none;
-    cursor: pointer;
-}
-' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-    <!-- ナビゲーションバー -->
+    {% comment %} <!-- ナビゲーションバー -->
     <nav>
         <a href="{% url 'home' %}">ホーム</a> |
         <a href="{% url 'profile' %}">プロフィール</a> |
         <a href="{% url 'wishlist' %}">欲しいものリスト</a> |
         <a href="{% url 'settings' %}">設定</a> |
         <a href="{% url 'logout' %}">ログアウト</a>
-    </nav>
+    </nav> {% endcomment %}
 
     <h1>プロフィール編集画面</h1>
 
     <!-- プロフィール編集フォーム -->
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-      
 
-        {% comment %} <div class="profile-image">
-            <label for="profile_image">
-                {% if user.profile_image %}
-                    <img src="{{ user.profile_image.url }}" alt="プロフィール画像" class="profile-thumbnail">
-                {% else %}
-                    <img src="{% static 'default-profile.png' %}" alt="デフォルト画像" class="profile-thumbnail">
-                {% endif %}
-                <input type="file" id="profile_image" name="profile_image" style="display: none;">
-            </label>
-            <p>画像をクリックするとファイル選択が可能です</p>
-        </div>
-         {% endcomment %}
-
-
-         <div class="profile-image">
+        <div class="profile-image">
             <label for="profile_image">
                 {% if user.userprofile and user.userprofile.profile_image %}
                     <img src="{{ user.userprofile.profile_image.url }}" alt="プロフィール画像" class="profile-thumbnail">
@@ -99,11 +31,8 @@ h1 {
                 {% endif %}
                 <input type="file" id="profile_image" name="profile_image" style="display: none;">
             </label>
-            <p>画像をクリックするとファイル選択が可能です</p>
+            <p>※画像をクリックするとファイル選択が可能です</p>
         </div>
-        
-
-        
 
         <!-- フォームフィールド -->
         <div class="form-group">
@@ -134,7 +63,5 @@ h1 {
         <!-- 送信ボタン -->
         <button type="submit" class="btn-submit">決定</button>
     </form>
-
-    <!-- スタイルの調整はstyle.cssに記述します -->
 </body>
 </html>
