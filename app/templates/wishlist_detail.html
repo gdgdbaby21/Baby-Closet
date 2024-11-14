@@ -6,10 +6,7 @@
 </head>
 <body>
     <h1>投稿詳細</h1>
-    {% comment %} <img src="{{ item.image.url }}" alt="Wishlist Item Image" style="width:200px;">
-    <p>価格: ¥{{ item.price }}</p>
-    <a href="{% url 'wishlist' %}">戻る</a> {% endcomment %}
-
+    
     <h1>{{ item.name }}</h1>
     <img src="{{ item.image_url }}" alt="{{ item.name }}">
     <p>値段: ¥{{ item.price }}</p>

@@ -42,6 +42,8 @@ from django.contrib import admin
 from django.urls import path
 from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -55,5 +57,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name="logout"),
     path('edit-profile/', EditProfileView.as_view(), name='edit_profile'),
     path('wishlist/item/<int:item_id>/', Wishlist_detailView.as_view(), name='wishlist_detail'),
-    path('wishlist/create/', Wishlist_createView.as_view, name='wishlist_create'),
-]
+    path('wishlist/create/', Wishlist_createView.as_view(), name='wishlist_create'),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

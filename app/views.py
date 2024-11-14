@@ -9,6 +9,7 @@ from django.contrib import messages
 from .models import UserProfile, WishlistItem
 from .forms import UserProfileForm, WishlistItemForm
 
+
 class PortfolioView(View):
     def get(self, request):
         return render(request, "portfolio.html")
@@ -57,7 +58,8 @@ class ProfileView(View):
 class WishlistView(View):
     def get(self, request):
         items = WishlistItem.objects.all()
-        return render(request, "wishlist.html", {"wishlist_items": items})
+        print(items)
+        return render(request, "wishlist.html", {"items": items})
 
 class ClothesView(View):
     def get(self, request):
@@ -87,25 +89,8 @@ def wishlist_view(request):
     print("Items in wishlist:", items)
     return render(request, "wishlist.html", {"items": items})
 
-# @login_required
-# def edit_profile(request):
-#     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-#     if request.method == 'POST':
-#         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'プロフィールが更新されました！')
-#             return redirect('profile')
-#     else:
-#         form = UserProfileForm(instance=user_profile)
-#         messages.error(request, 'プロフィールの更新に失敗しました。入力内容を確認してください。')
-#         else:
-#         # GETリクエストの場合、空のフォームを生成
-#         form = ProfileForm(instance=user_profile)
 
-        
-        
-#     return render(request, 'edit_profile.html', {'form': form})
+
 
 @login_required
 def edit_profile(request):
@@ -139,16 +124,15 @@ class Wishlist_detailView(View):
      item = get_object_or_404(WishlistItem, id=item_id)
      return render(request, 'wishlist_detail.html', {'item': item})
 
+
 class Wishlist_createView(View):
- def wishlist_create(request):
-    if request.method == 'POST':
+    def get(self, request):
+        form = WishlistItemForm()
+        return render(request, 'wishlist_create.html', {'form': form})
+
+    def post(self, request):
         form = WishlistItemForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('wishlist')
-    else:
-        form = WishlistItemForm()
-    return render(request, 'wishlist_create.html', {'form': form})
-
-
-
+        return render(request, 'wishlist_create.html', {'form': form})
