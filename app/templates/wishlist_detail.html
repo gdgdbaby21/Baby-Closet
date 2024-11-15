@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -15,8 +15,10 @@
     <p>メモ: {{ item.memo }}</p>
     
     <a href="{% url 'wishlist' %}">戻る</a>
-    <button>削除</button>
+    
+    <form action="{% url 'wishlist_delete' item.id %}" method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit">削除</button>
+    </form>
 </body>
-</html> {% endcomment %}
-
- {% endcomment %}
+</html>

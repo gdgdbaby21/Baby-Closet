@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
 from .models import UserProfile, WishlistItem
 from .forms import UserProfileForm, WishlistItemForm
+from django.urls import reverse_lazy
+from django.views.generic.edit import DeleteView
 
 
 class PortfolioView(View):
@@ -92,11 +94,11 @@ class EditProfileView(LoginRequiredMixin, View):
 
 
 
-@login_required
-def wishlist_view(request):
-    items = WishlistItem.objects.all()
-    print("Items in wishlist:", items)
-    return render(request, "wishlist.html", {"items": items})
+# @login_required
+# def wishlist_view(request):
+#     items = WishlistItem.objects.all()
+#     print("Items in wishlist:", items)
+#     return render(request, "wishlist.html", {"items": items})
 
 
 
@@ -121,4 +123,7 @@ class Wishlist_createView(View):
         if form.is_valid():
             form.save()
             return redirect('wishlist')
-            return render(request, 'wishlist_create.html', {'form': form})
+        
+class WishlistDeleteView(DeleteView):
+    model = WishlistItem
+    success_url = reverse_lazy('wishlist')

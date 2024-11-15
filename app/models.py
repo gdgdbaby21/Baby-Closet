@@ -42,7 +42,7 @@ class UserProfile(models.Model):
     
 #欲しいものリストの投稿情報保存のモデルの作成
 class WishlistItem(models.Model):
-    image = models.ImageField(upload_to='wishlist_images/', null=True, blank=True)
+    image = models.ImageField(upload_to='wishlist_images/', blank=True, null=True, default='wishlist_images/default.png')
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     brand = models.CharField(max_length=50, blank=True)
