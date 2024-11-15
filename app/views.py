@@ -53,7 +53,8 @@ class HomeView(LoginRequiredMixin, View):
 
 class ProfileView(View):
     def get(self, request):
-        return render(request, "profile.html")
+        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+        return render(request, "profile.html", {"user_profile": user_profile})
 
 class WishlistView(View):
     def get(self, request):
@@ -73,15 +74,23 @@ class EditProfileView(LoginRequiredMixin, View):
     def get(self, request):
         user_profile, created = UserProfile.objects.get_or_create(user=request.user)
         form = UserProfileForm(instance=user_profile)
-        return render(request, "edit_profile.html", {"form": form})
-
+        return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
+    
+    
     def post(self, request):
         user_profile, created = UserProfile.objects.get_or_create(user=request.user)
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
         if form.is_valid():
             form.save()
+            messages.success(request, 'プロフィールが更新されました！')
             return redirect("profile")
-        return render(request, "edit_profile.html", {"form": form})
+        else:
+            messages.error(request, 'プロフィールの更新に失敗しました。入力内容を確認してください。')
+            print(form.errors)
+        return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
+
+
+
 
 @login_required
 def wishlist_view(request):
@@ -89,29 +98,6 @@ def wishlist_view(request):
     print("Items in wishlist:", items)
     return render(request, "wishlist.html", {"items": items})
 
-
-
-
-@login_required
-def edit_profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-    
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
-        
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'プロフィールが更新されました！')
-            return redirect('profile')
-        else:
-            
-            messages.error(request, 'プロフィールの更新に失敗しました。入力内容を確認してください。')
-    else:
-        
-        form = UserProfileForm(instance=user_profile)
-
-    return render(request, 'edit_profile.html', {'form': form})
-        
 
 
 @login_required
@@ -135,4 +121,4 @@ class Wishlist_createView(View):
         if form.is_valid():
             form.save()
             return redirect('wishlist')
-        return render(request, 'wishlist_create.html', {'form': form})
+            return render(request, 'wishlist_create.html', {'form': form})

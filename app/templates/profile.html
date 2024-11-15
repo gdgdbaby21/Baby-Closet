@@ -21,7 +21,7 @@
     <!-- プロフィール情報の表示 -->
     <p>名前: {{ user_profile.name }}</p>
     <p>アカウント: {{ user_profile.account }}</p>
-    <p>性別: {{ user_profile.gender }}</p>
+    <p>性別: {{ user_profile.get_gender_display}}</p>
     <p>生年月日: {{ user_profile.birth_of_date }}</p>
     <p>自己紹介: {{ user_profile.bio }}</p>
 
