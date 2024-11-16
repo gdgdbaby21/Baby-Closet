@@ -26,7 +26,7 @@ class Meta:
     db_table = "users"
     
     
-#プロフィール情報の管理するモデルの作成
+#プロフィールのモデル
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
@@ -40,7 +40,7 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s profile"
     
-#欲しいものリストの投稿情報保存のモデルの作成
+#欲しいものリストのモデル
 class WishlistItem(models.Model):
     image = models.ImageField(upload_to='wishlist_images/', blank=True, null=True, default='wishlist_images/default.png')
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -51,3 +51,65 @@ class WishlistItem(models.Model):
 
     def __str__(self):
         return f"{self.id} - {self.price}円"
+    
+    
+#服管理画面のモデル
+from django.db import models
+
+class Clothes(models.Model):
+    GENDER_CHOICES = [
+        ('Male', '男性'),
+        ('Female', '女性'),
+        ('Unisex', 'ユニセックス'),
+    ]
+    
+    SIZE_CHOICES = [
+        ('50~60', '50~60'),
+        ('70', '70'),
+        ('80', '80'),
+        ('90', '90'),
+        ('100', '100'),
+        ('110', '110'),
+        ('120', '120'),
+        ('130', '130'),
+        ('140', '140'),
+    ]
+
+    GENRE_CHOICES = [
+        ('tops', 'トップス'),
+        ('skirts', 'スカート'),
+        ('outer', 'アウター'),
+        ('onepiece', 'ワンピース'),
+        ('pants', 'パンツ'),
+        ('hat', '帽子'),
+        ('maternity', 'マタニティ'),
+        ('other', 'その他'),
+    ]
+
+    COLOR_CHOICES = [
+        ('white', '白'),
+        ('black', '黒'),
+        ('gray', 'グレー'),
+        ('brown', '茶'),
+        ('beige', 'ベージュ'),
+        ('green', '緑'),
+        ('blue', '青'),
+        ('purple', '紫'),
+        ('yellow', '黄'),
+        ('pink', 'ピンク'),
+        ('red', '赤'),
+        ('orange', 'オレンジ'),
+        ('other', 'その他'),
+    ]
+
+    title = models.CharField(max_length=50)
+    size = models.CharField(max_length=10, choices=SIZE_CHOICES)
+    genre = models.CharField(max_length=50, choices=GENRE_CHOICES)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unisex')
+    color = models.CharField(max_length=50, choices=COLOR_CHOICES)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    memo = models.TextField(null=True, blank=True)
+    image = models.ImageField(upload_to='clothes_images/', null=True, blank=True)
+
+    def __str__(self):
+        return self.title

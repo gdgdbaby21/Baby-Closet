@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from app.models import User
 from django.contrib.auth import authenticate
-from .models import UserProfile, WishlistItem
+from .models import UserProfile, WishlistItem, Clothes
 import datetime
 
 
@@ -63,3 +63,82 @@ class WishlistItemForm(forms.ModelForm):
     class Meta:
         model = WishlistItem
         fields = ['image', 'price','brand', 'product_url', 'notes']
+        
+
+#服管理のフォーム
+class ClothesForm(forms.ModelForm):
+    class Meta:
+        model = Clothes
+        fields = ['title', 'size', 'gender', 'genre', 'color', 'price', 'memo', 'image']
+        
+
+#服管理検索ページのフォーム
+class ClothesSearchForm(forms.Form):
+    GENDER_CHOICES = [
+        ('', '選択'),
+        ('Male', '男性'),
+        ('Female', '女性'),
+    ]
+    
+    SIZE_CHOICES = [
+        ('', '選択'),
+        ('50-60', '50~60'),
+        ('70', '70'),
+        ('80', '80'),
+        ('90', '90'),
+        ('100', '100'),
+        ('110', '110'),
+        ('120', '120'),
+        ('130', '130'),
+        ('140', '140'),
+    ]
+    
+    COLOR_CHOICES = [
+        ('', '選択'),
+        ('white', '白'),
+        ('black', '黒'),
+        ('gray', 'グレー'),
+        ('brown', '茶'),
+        ('beige', 'ベージュ'),
+        ('green', '緑'),
+        ('blue', '青'),
+        ('purple', '紫'),
+        ('yellow', '黄'),
+        ('pink', 'ピンク'),
+        ('red', '赤'),
+        ('orange', 'オレンジ'),
+        ('other', 'その他'),
+    ]
+    
+    GENRE_CHOICES = [
+        ('', '選択'),
+        ('tops', 'トップス'),
+        ('skirts', 'スカート'),
+        ('outer', 'アウター'),
+        ('onepiece', 'ワンピース'),
+        ('pants', 'パンツ'),
+        ('hat', '帽子'),
+        ('maternity', 'マタニティ'),
+        ('other', 'その他'),
+    ]
+
+    gender = forms.ChoiceField(
+        choices=GENDER_CHOICES,
+        required=False,
+        label='性別'
+    )
+    size = forms.ChoiceField(
+        choices=SIZE_CHOICES,
+        required=False,
+        label='サイズ'
+    )
+    color = forms.ChoiceField(
+        choices=COLOR_CHOICES,
+        required=False,
+        label='カラー'
+    )
+    genre = forms.ChoiceField(
+        choices=GENRE_CHOICES,
+        required=False,
+        label='ジャンル'
+    )

@@ -6,10 +6,11 @@ from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
-from .models import UserProfile, WishlistItem
-from .forms import UserProfileForm, WishlistItemForm
+from .models import UserProfile, WishlistItem, Clothes
+from .forms import UserProfileForm, WishlistItemForm, ClothesSearchForm
 from django.urls import reverse_lazy
-from django.views.generic.edit import DeleteView
+from django.views.generic.edit import DeleteView, CreateView, FormView
+from django.db.models import Q
 
 
 class PortfolioView(View):
@@ -93,15 +94,6 @@ class EditProfileView(LoginRequiredMixin, View):
 
 
 
-
-# @login_required
-# def wishlist_view(request):
-#     items = WishlistItem.objects.all()
-#     print("Items in wishlist:", items)
-#     return render(request, "wishlist.html", {"items": items})
-
-
-
 @login_required
 def profile(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
@@ -127,3 +119,41 @@ class Wishlist_createView(View):
 class WishlistDeleteView(DeleteView):
     model = WishlistItem
     success_url = reverse_lazy('wishlist')
+    
+    
+class Clothes_createView(CreateView):
+    model = Clothes
+    fields = '__all__'
+    template_name = 'clothes_create.html'
+    success_url = reverse_lazy('clothes')
+    
+    
+class Clothes_searchView(FormView):
+    template_name = 'clothes.html'
+    form_class = ClothesSearchForm
+    # success_url = '/' #検索後のリダイレクト先
+    
+    def form_valid(self, form):
+        results = Clothes.objects.all()
+        
+        gender = form.cleaned_data.get('gender')
+        size = form.cleaned_data.get('size')
+        color = form.cleaned_data.get('color')
+        genre = form.cleaned_data.get('genre')
+
+        # 検索条件をフィルタリングに適用
+        if gender:
+            results = results.filter(gender=gender)
+        if size:
+            results = results.filter(size=size)
+        if color:
+            results = results.filter(color=color)
+        if genre:
+            results = results.filter(genre=genre)
+
+        # コンテキストに検索結果を追加してテンプレートに渡す
+        return self.render_to_response(self.get_context_data(form=form, results=results))
+
+    def form_invalid(self, form):
+        # フォームが無効な場合、エラーメッセージを含むコンテキストを渡す
+        return self.render_to_response(self.get_context_data(form=form, results=[]))
