@@ -7,10 +7,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
 from .models import UserProfile, WishlistItem, Clothes
-from .forms import UserProfileForm, WishlistItemForm, ClothesSearchForm
+from .forms import UserProfileForm, WishlistItemForm, ClothingSearchForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView, FormView
 from django.db.models import Q
+from django.views.generic.edit import FormView
+from django.views.generic.list import ListView
+
 
 
 class PortfolioView(View):
@@ -127,33 +130,35 @@ class Clothes_createView(CreateView):
     template_name = 'clothes_create.html'
     success_url = reverse_lazy('clothes')
     
-    
-class Clothes_searchView(FormView):
+
+class ClothingSearchView(FormView, ListView):
     template_name = 'clothes.html'
-    form_class = ClothesSearchForm
-    # success_url = '/' #検索後のリダイレクト先
+    form_class = ClothingSearchForm
+    model = Clothes
+    context_object_name = 'results'
+
+    def get_queryset(self):
+        queryset = Clothes.objects.all()
+        form = self.get_form()
+        if form.is_valid():
+            gender = form.cleaned_data.get('gender')
+            size = form.cleaned_data.get('size')
+            color = form.cleaned_data.get('color')
+            genre = form.cleaned_data.get('genre')
+
+            if gender:
+                queryset = queryset.filter(gender=gender)
+            if size:
+                queryset = queryset.filter(size__in=size)
+            if color:
+                queryset = queryset.filter(color__in=color)
+            if genre:
+                queryset = queryset.filter(genre=genre)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.get_form()
+        return context
     
-    def form_valid(self, form):
-        results = Clothes.objects.all()
-        
-        gender = form.cleaned_data.get('gender')
-        size = form.cleaned_data.get('size')
-        color = form.cleaned_data.get('color')
-        genre = form.cleaned_data.get('genre')
-
-        # 検索条件をフィルタリングに適用
-        if gender:
-            results = results.filter(gender=gender)
-        if size:
-            results = results.filter(size=size)
-        if color:
-            results = results.filter(color=color)
-        if genre:
-            results = results.filter(genre=genre)
-
-        # コンテキストに検索結果を追加してテンプレートに渡す
-        return self.render_to_response(self.get_context_data(form=form, results=results))
-
-    def form_invalid(self, form):
-        # フォームが無効な場合、エラーメッセージを含むコンテキストを渡す
-        return self.render_to_response(self.get_context_data(form=form, results=[]))
+    

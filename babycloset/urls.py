@@ -18,7 +18,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, Clothes_createView, Clothes_searchView
+from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, Clothes_createView, ClothingSearchView
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -38,7 +38,7 @@ urlpatterns = [
     path('wishlist/create/', Wishlist_createView.as_view(), name='wishlist_create'),
     path('wishlist/<int:pk>/delete/', WishlistDeleteView.as_view(), name='wishlist_delete'),
     path('clothes/create/', Clothes_createView.as_view(), name='clothes_create'),
-    path('search', Clothes_searchView.as_view(), name='search'),
+    path('clothing-search', ClothingSearchView.as_view(), name='clothing_search'),
 ]
 
 if settings.DEBUG:

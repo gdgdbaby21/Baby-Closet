@@ -2,44 +2,29 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品検索</title>
+    <title>服管理画面</title>
 </head>
 <body>
-    <h1>商品検索</h1>
+    <h1>服管理画面</h1>
     <form method="get">
+        {{ form.as_p }}
         <div>
             <label for="id_gender">性別:</label>
             {{ form.gender }}
         </div>
-
         <div>
             <label for="id_size">サイズ:</label>
             {{ form.size }}
         </div>
-
         <div>
             <label for="id_color">カラー:</label>
             {{ form.color }}
         </div>
-
         <div>
             <label for="id_genre">ジャンル:</label>
             {{ form.genre }}
         </div>
-
         <button type="submit">検索</button>
     </form>
-
-    <h2>検索結果</h2>
-    <ul>
-        {% for item in results %}
-            <li>
-                {{ item.title }} ({{ item.size }}, {{ item.color }}, {{ item.genre }}) - ¥{{ item.price }}
-            </li>
-        {% empty %}
-            <li>該当する商品はありません。</li>
-        {% endfor %}
-    </ul>
 </body>
 </html>

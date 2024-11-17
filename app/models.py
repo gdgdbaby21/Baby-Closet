@@ -54,13 +54,10 @@ class WishlistItem(models.Model):
     
     
 #服管理画面のモデル
-from django.db import models
-
 class Clothes(models.Model):
     GENDER_CHOICES = [
         ('Male', '男性'),
         ('Female', '女性'),
-        ('Unisex', 'ユニセックス'),
     ]
     
     SIZE_CHOICES = [
@@ -112,4 +109,4 @@ class Clothes(models.Model):
     image = models.ImageField(upload_to='clothes_images/', null=True, blank=True)
 
     def __str__(self):
-        return self.title
+        return f"{self.gender} - {self.size} - {self.color} - {self.genre}"
