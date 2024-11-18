@@ -131,21 +131,21 @@ class Clothes_createView(CreateView):
     success_url = reverse_lazy('clothes')
     
 
-class ClothingSearchView(FormView, ListView):
+class ClothingSearchView(FormView):
     template_name = 'clothes.html'
     form_class = ClothingSearchForm
     
-    def form_valid(self, form):
-        """
-        フォームが有効な場合の処理
-        """
-        products = Clothes.objects.all()
+    def get_context_data(self, **kwargs):
+        # デフォルトのコンテキストを取得
+        context = super().get_context_data(**kwargs)
 
-        # フォームから取得したデータでフィルタリング
-        gender = form.cleaned_data.get('gender')
-        size = form.cleaned_data.get('size')
-        color = form.cleaned_data.get('color')
-        genre = form.cleaned_data.get('genre')
+        products = Clothes.objects.all()
+        form = self.get_form()
+        if form.is_valid():
+            gender = form.cleaned_data.get('gender')
+            size = form.cleaned_data.get('size')
+            color = form.cleaned_data.get('color')
+            genre = form.cleaned_data.get('genre')
 
         if gender:
             products = products.filter(gender__in=gender)
@@ -157,13 +157,5 @@ class ClothingSearchView(FormView, ListView):
             products = products.filter(genre__in=genre)
 
         # フィルタリングされた結果をコンテキストに渡す
-        context = self.get_context_data(form=form, products=products)
-        return self.render_to_response(context)
-
-    def form_invalid(self, form):
-        """
-        フォームが無効な場合の処理
-        """
-        # 無効なフォームでも空の結果を返す
-        context = self.get_context_data(form=form, products=[])
-        return self.render_to_response(context)
+        context['products']  = products
+        return context

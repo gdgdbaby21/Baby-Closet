@@ -68,21 +68,21 @@ class WishlistItemForm(forms.ModelForm):
 class ClothingSearchForm(forms.Form):
     gender = forms.MultipleChoiceField(
         choices=Clothes.GENDER_CHOICES,
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.SelectMultiple(attrs={'class': 'select2'}),
         required=False
     )
     size = forms.MultipleChoiceField(
         choices=Clothes.SIZE_CHOICES,
-        widget=forms.SelectMultiple,
+        widget=forms.SelectMultiple(attrs={'class': 'select2'}),
         required=False
     )
     color = forms.MultipleChoiceField(
         choices=Clothes.COLOR_CHOICES,
-        widget=forms.SelectMultiple,
+        widget=forms.SelectMultiple(attrs={'class': 'select2'}),
         required=False
     )
     genre = forms.MultipleChoiceField(
         choices=Clothes.GENRE_CHOICES,
-        widget=forms.SelectMultiple,
+        widget=forms.SelectMultiple(attrs={'class': 'select2'}),
         required=False
     )
