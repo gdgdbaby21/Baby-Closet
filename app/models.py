@@ -101,12 +101,12 @@ class Clothes(models.Model):
 
     title = models.CharField(max_length=50)
     size = models.CharField(max_length=10, choices=SIZE_CHOICES)
-    genre = models.CharField(max_length=50, choices=GENRE_CHOICES)
+    genre = models.CharField(max_length=20, choices=GENRE_CHOICES)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unisex')
-    color = models.CharField(max_length=50, choices=COLOR_CHOICES)
+    color = models.CharField(max_length=10, choices=COLOR_CHOICES)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     memo = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to='clothes_images/', null=True, blank=True)
 
     def __str__(self):
-        return f"{self.gender} - {self.size} - {self.color} - {self.genre}"
+        return f"{self.get_gender_display()} {self.size} {self.color} {self.genre}"

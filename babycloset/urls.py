@@ -38,7 +38,7 @@ urlpatterns = [
     path('wishlist/create/', Wishlist_createView.as_view(), name='wishlist_create'),
     path('wishlist/<int:pk>/delete/', WishlistDeleteView.as_view(), name='wishlist_delete'),
     path('clothes/create/', Clothes_createView.as_view(), name='clothes_create'),
-    path('clothing-search', ClothingSearchView.as_view(), name='clothing_search'),
+    path('search', ClothingSearchView.as_view(), name='clothing_search'),
 ]
 
 if settings.DEBUG:

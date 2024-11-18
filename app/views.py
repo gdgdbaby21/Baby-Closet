@@ -134,31 +134,36 @@ class Clothes_createView(CreateView):
 class ClothingSearchView(FormView, ListView):
     template_name = 'clothes.html'
     form_class = ClothingSearchForm
-    model = Clothes
-    context_object_name = 'results'
-
-    def get_queryset(self):
-        queryset = Clothes.objects.all()
-        form = self.get_form()
-        if form.is_valid():
-            gender = form.cleaned_data.get('gender')
-            size = form.cleaned_data.get('size')
-            color = form.cleaned_data.get('color')
-            genre = form.cleaned_data.get('genre')
-
-            if gender:
-                queryset = queryset.filter(gender=gender)
-            if size:
-                queryset = queryset.filter(size__in=size)
-            if color:
-                queryset = queryset.filter(color__in=color)
-            if genre:
-                queryset = queryset.filter(genre=genre)
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = self.get_form()
-        return context
     
-    
+    def form_valid(self, form):
+        """
+        フォームが有効な場合の処理
+        """
+        products = Clothes.objects.all()
+
+        # フォームから取得したデータでフィルタリング
+        gender = form.cleaned_data.get('gender')
+        size = form.cleaned_data.get('size')
+        color = form.cleaned_data.get('color')
+        genre = form.cleaned_data.get('genre')
+
+        if gender:
+            products = products.filter(gender__in=gender)
+        if size:
+            products = products.filter(size__in=size)
+        if color:
+            products = products.filter(color__in=color)
+        if genre:
+            products = products.filter(genre__in=genre)
+
+        # フィルタリングされた結果をコンテキストに渡す
+        context = self.get_context_data(form=form, products=products)
+        return self.render_to_response(context)
+
+    def form_invalid(self, form):
+        """
+        フォームが無効な場合の処理
+        """
+        # 無効なフォームでも空の結果を返す
+        context = self.get_context_data(form=form, products=[])
+        return self.render_to_response(context)
