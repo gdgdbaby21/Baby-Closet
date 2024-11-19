@@ -9,11 +9,9 @@ from django.contrib import messages
 from .models import UserProfile, WishlistItem, Clothes
 from .forms import UserProfileForm, WishlistItemForm, ClothingSearchForm
 from django.urls import reverse_lazy
-from django.views.generic.edit import DeleteView, CreateView, FormView
 from django.db.models import Q
-from django.views.generic.edit import FormView
-from django.views.generic.list import ListView
-
+from django.views.generic.edit import FormView, DeleteView
+from django.views.generic import TemplateView
 
 
 class PortfolioView(View):
@@ -124,7 +122,7 @@ class WishlistDeleteView(DeleteView):
     success_url = reverse_lazy('wishlist')
     
     
-class Clothes_createView(CreateView):
+class ClothesCreateView(TemplateView):
     model = Clothes
     fields = '__all__'
     template_name = 'clothes_create.html'
