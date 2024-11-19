@@ -7,11 +7,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
 from .models import UserProfile, WishlistItem, Clothes
-from .forms import UserProfileForm, WishlistItemForm, ClothingSearchForm
+from .forms import UserProfileForm, WishlistItemForm, ClothingSearchForm, ClothingForm
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.views.generic.edit import FormView, DeleteView
-from django.views.generic import TemplateView
+# from django.views.generic import TemplateView
+from django.views.generic.edit import CreateView
 
 
 class PortfolioView(View):
@@ -122,11 +123,11 @@ class WishlistDeleteView(DeleteView):
     success_url = reverse_lazy('wishlist')
     
     
-class ClothesCreateView(TemplateView):
-    model = Clothes
-    fields = '__all__'
-    template_name = 'clothes_create.html'
-    success_url = reverse_lazy('clothes')
+# class ClothesCreateView(TemplateView):
+#     model = Clothes
+#     fields = '__all__'
+#     template_name = 'clothes_create.html'
+#     success_url = reverse_lazy('clothes')
     
 
 class ClothingSearchView(FormView):
@@ -134,7 +135,6 @@ class ClothingSearchView(FormView):
     form_class = ClothingSearchForm
     
     def get_context_data(self, **kwargs):
-        # デフォルトのコンテキストを取得
         context = super().get_context_data(**kwargs)
 
         products = Clothes.objects.all()
@@ -154,6 +154,12 @@ class ClothingSearchView(FormView):
         if genre:
             products = products.filter(genre__in=genre)
 
-        # フィルタリングされた結果をコンテキストに渡す
         context['products']  = products
         return context
+    
+    
+    class ClothesCreateView(CreateView):
+      model = Clothes
+      form_class = ClothingForm
+      template_name = 'clothes_create.html'
+      success_url = reverse_lazy('home')

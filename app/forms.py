@@ -86,3 +86,9 @@ class ClothingSearchForm(forms.Form):
         widget=forms.SelectMultiple(attrs={'class': 'select2'}),
         required=False
     )
+    
+#服管理のページのフォーム
+class ClothingForm(forms.ModelForm):
+    class Meta:
+        model = Clothes
+        fields = ['title', 'size', 'gender', 'color', 'genre', 'price', 'memo']
