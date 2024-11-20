@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -123,7 +123,7 @@
 
             <div class="form-group">
                 <label for="title">タイトル(必須):</label>
-                <input type="text" id="title" placeholder="入力してください">
+                <input type="text" id="title" name="title" placeholder="入力してください">
             </div>
 
             <div class="form-group">
@@ -191,6 +191,195 @@
             <div class="form-group">
                 <label for="memo">メモ:</label>
                 <textarea id="memo" placeholder="入力してください"></textarea>
+            </div>
+            <form method="post">
+            <div class="button-container">
+                <button type="submit">登録</button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        function previewImage(event) {
+            const preview = document.getElementById('preview');
+            preview.src = URL.createObjectURL(event.target.files[0]);
+        }
+    </script>
+</body>
+</html> {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>商品登録</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        .image-upload {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .image-upload img {
+            width: 150px;
+            height: 150px;
+            background-color: #ddd;
+            display: block;
+            margin: 0 auto 10px;
+            border-radius: 4px;
+        }
+
+        .image-upload label {
+            cursor: pointer;
+            display: inline-block;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .image-upload input {
+            display: none;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="image-upload">
+                <img src="#" alt="image" id="preview">
+                <label for="image-upload">画像を選択</label>
+                <input type="file" id="image-upload" name="image" accept="image/*" onchange="previewImage(event)">
+            </div>
+
+            <div class="form-group">
+                <label for="title">タイトル(必須):</label>
+                <input type="text" id="title" name="title" placeholder="入力してください">
+            </div>
+
+            <div class="form-group">
+                <label for="size">サイズ(必須):</label>
+                <select id="size" name="size">
+                    <option value="50~60">50~60</option>
+                    <option value="70">70</option>
+                    <option value="80">80</option>
+                    <option value="90">90</option>
+                    <option value="100">100</option>
+                    <option value="110">110</option>
+                    <option value="120">120</option>
+                    <option value="130">130</option>
+                    <option value="140">140</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">性別(必須):</label>
+                <select id="gender" name="gender">
+                    <option value="male">男</option>
+                    <option value="female">女</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="color">色(必須):</label>
+                <select id="color" name="color">
+                    <option value="white">白</option>
+                    <option value="black">黒</option>
+                    <option value="gray">グレー</option>
+                    <option value="brown">ブラウン</option>
+                    <option value="beige">ベージュ</option>
+                    <option value="green">緑</option>
+                    <option value="blue">ブルー</option>
+                    <option value="purple">紫</option>
+                    <option value="yellow">黄</option>
+                    <option value="pink">ピンク</option>
+                    <option value="red">赤</option>
+                    <option value="orange">オレンジ</option>
+                    <option value="other">その他</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="genre">ジャンル(必須):</label>
+                <select id="genre" name="genre">
+                    <option value="tops">トップス</option>
+                    <option value="pants">パンツ</option>
+                    <option value="outer">アウター</option>
+                    <option value="onepiece">ワンピース</option>
+                    <option value="hat">帽子</option>
+                    <option value="maternity">マタニティ</option>
+                    <option value="other">その他</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="price">購入価格:</label>
+                <input type="text" id="price" name="price" placeholder="入力してください">
+            </div>
+
+            <div class="form-group">
+                <label for="memo">メモ:</label>
+                <textarea id="memo" name="memo" placeholder="入力してください"></textarea>
             </div>
 
             <div class="button-container">

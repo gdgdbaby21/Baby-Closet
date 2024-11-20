@@ -2,14 +2,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from app.forms import SignupForm, LoginForm
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
 from .models import UserProfile, WishlistItem, Clothes
 from .forms import UserProfileForm, WishlistItemForm, ClothingSearchForm, ClothingForm
 from django.urls import reverse_lazy
-from django.db.models import Q
 from django.views.generic.edit import FormView, DeleteView, CreateView
 
 
@@ -49,6 +48,11 @@ class LoginView(View):
         return render(request, "login.html", context={
             "form": form
         })
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('login')
+
 
 class HomeView(LoginRequiredMixin, View):
     def get(self, request):
@@ -65,9 +69,9 @@ class WishlistView(View):
         print(items)
         return render(request, "wishlist.html", {"items": items})
 
-# class ClothesView(View):
-#     def get(self, request):
-#         return render(request, "clothes.html")
+class ClothesView(View):
+    def get(self, request):
+        return render(request, "clothes.html")
 
 class LogoutView(View):
     def get(self, request):
@@ -121,12 +125,6 @@ class WishlistDeleteView(DeleteView):
     success_url = reverse_lazy('wishlist')
     
     
-# class ClothesCreateView(TemplateView):
-#     model = Clothes
-#     fields = '__all__'
-#     template_name = 'clothes_create.html'
-#     success_url = reverse_lazy('clothes')
-    
 
 class ClothingSearchView(FormView):
     template_name = 'clothes.html'
@@ -156,8 +154,13 @@ class ClothingSearchView(FormView):
         return context
     
     
-    class ClothesCreateView(CreateView):
-      model = Clothes
-      form_class = ClothingForm
-      template_name = 'clothes_create.html'
-      success_url = reverse_lazy('home')
+class ClothesCreateView(CreateView):
+    model = Clothes
+    form_class = ClothingForm
+    template_name = 'clothes_create.html'
+    success_url = reverse_lazy('clothes')
+    
+    def form_invalid(self, form):
+        print("フォームエラー:", form.errors)  # バリデーションエラーを出力
+        return super().form_invalid(form)
+    
