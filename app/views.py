@@ -10,9 +10,7 @@ from .models import UserProfile, WishlistItem, Clothes
 from .forms import UserProfileForm, WishlistItemForm, ClothingSearchForm, ClothingForm
 from django.urls import reverse_lazy
 from django.db.models import Q
-from django.views.generic.edit import FormView, DeleteView
-# from django.views.generic import TemplateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import FormView, DeleteView, CreateView
 
 
 class PortfolioView(View):
@@ -67,9 +65,9 @@ class WishlistView(View):
         print(items)
         return render(request, "wishlist.html", {"items": items})
 
-class ClothesView(View):
-    def get(self, request):
-        return render(request, "clothes.html")
+# class ClothesView(View):
+#     def get(self, request):
+#         return render(request, "clothes.html")
 
 class LogoutView(View):
     def get(self, request):
