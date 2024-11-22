@@ -11,6 +11,7 @@ from .forms import UserProfileForm, WishlistItemForm, ClothingForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import DetailView
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 class PortfolioView(View):
@@ -129,13 +130,12 @@ class WishlistDeleteView(DeleteView):
 
 class ClothingSearchView(View):
     def get(self, request):
-        # クエリパラメータから条件を取得
         gender = request.GET.getlist('gender')
         size = request.GET.getlist('size')
         color = request.GET.getlist('color')
         genre = request.GET.getlist('genre')
 
-        # データをフィルタリング
+        
         clothes = Clothes.objects.all()
         if gender:
             clothes = clothes.filter(gender__in=gender)
@@ -146,7 +146,6 @@ class ClothingSearchView(View):
         if genre:
             clothes = clothes.filter(genre__in=genre)
 
-        # データをテンプレートに渡す
         return render(request, 'clothes.html', {'clothes': clothes})
     
     
@@ -161,7 +160,6 @@ class ClothesCreateView(CreateView):
         return super().form_invalid(form)
     
     def post(self, request, *args, **kwargs):
-        # デバッグ用: アップロードされたデータを確認
         print("POSTデータ:", request.POST)
         print("FILESデータ:", request.FILES)
         return super().post(request, *args, **kwargs)
@@ -179,6 +177,17 @@ class ClothesDetailView(DetailView):
     template_name = 'clothes_detail.html'
     context_object_name = 'item'
     
+    
+    
+class ClothesDeleteView(DeleteView):
+    model = Clothes  
+    success_url = reverse_lazy('clothes')
+    success_message = "%(title)s を削除しました。"
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        messages.success(self.request, self.success_message % dict(title=self.object.title))
+        return super().delete(request, *args, **kwargs)
+    
 
-        
     

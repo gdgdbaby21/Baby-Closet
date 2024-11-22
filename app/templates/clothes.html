@@ -14,7 +14,7 @@
         }
 
         header {
-            background-color: #007BFF;
+            background-color: #6c757d; /* グレー */
             color: white;
             padding: 15px;
             text-align: center;
@@ -24,6 +24,43 @@
             max-width: 1200px;
             margin: 20px auto;
             padding: 0 15px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #6c757d; /* グレー */
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #5a6268; /* グレーを濃く */
         }
 
         .card-grid {
@@ -65,7 +102,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #007BFF;
+            background-color: #6c757d; /* グレー */
             color: white;
             width: 50px;
             height: 50px;
@@ -80,7 +117,7 @@
         }
 
         .add-button:hover {
-            background-color: #0056b3;
+            background-color: #5a6268; /* グレーを濃く */
         }
 
         .card a {
@@ -90,10 +127,79 @@
     </style>
 </head>
 <body>
+    <!-- ヘッダー部分からタイトルを削除 -->
     <header>
-        <h1>服管理画面</h1>
     </header>
+
     <div class="container">
+        <!-- フィルタ検索フォーム -->
+        <form action="{% url 'clothing_search' %}" method="get">
+            <div>
+                <label for="gender">性別:</label>
+                <select id="gender" name="gender">
+                    <option value="">選択</option>
+                    <option value="male">男</option>
+                    <option value="female">女</option>
+                    <option value="other">その他</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="size">サイズ:</label>
+                <select id="size" name="size">
+                    <option value="">選択</option>
+                    <option value="50">50</option>
+                    <option value="60">60</option>
+                    <option value="70">70</option>
+                    <option value="80">80</option>
+                    <option value="90">90</option>
+                    <option value="100">100</option>
+                    <option value="110">110</option>
+                    <option value="120">120</option>
+                    <option value="130">130</option>
+                    <option value="140">140</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="color">カラー:</label>
+                <select id="color" name="color">
+                    <option value="">選択</option>
+                    <option value="white">白</option>
+                    <option value="black">黒</option>
+                    <option value="red">赤</option>
+                    <option value="blue">青</option>
+                    <option value="yellow">黄</option>
+                    <option value="green">緑</option>
+                    <option value="pink">ピンク</option>
+                    <option value="orange">オレンジ</option>
+                    <option value="gray">グレー</option>
+                    <option value="beige">ベージュ</option>
+                    <option value="other">その他</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="genre">ジャンル:</label>
+                <select id="genre" name="genre">
+                    <option value="">選択</option>
+                    <option value="tops">トップス</option>
+                    <option value="skirts">スカート</option>
+                    <option value="pants">パンツ</option>
+                    <option value="outerwear">アウター</option>
+                    <option value="dress">ワンピース</option>
+                    <option value="maternity">マタニティ</option>
+                    <option value="baby">ベビー</option>
+                    <option value="other">その他</option>
+                </select>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button type="submit">検索</button>
+            </div>
+        </form>
+
+        <!-- 登録済み商品の表示 -->
         <div class="card-grid">
             {% for item in clothes %}
             <div class="card">
@@ -106,11 +212,10 @@
                     <div class="card-title">{{ item.title }}</div>
                 </a>
             </div>
-            {% empty %}
-            <p>商品が登録されていません。</p>
             {% endfor %}
         </div>
     </div>
+
     <div class="add-button" onclick="window.location.href='{% url 'clothes_create' %}'">+</div>
 </body>
 </html>

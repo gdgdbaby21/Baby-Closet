@@ -18,9 +18,9 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, ClothesView, ClothesCreateView, ClothingSearchView, ClothesDetailView
-from django.contrib.auth import views as auth_views
+from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, ClothesView, ClothesCreateView, ClothingSearchView, ClothesDetailView, ClothesDeleteView
 from django.conf import settings
+from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 
 urlpatterns = [
@@ -40,6 +40,7 @@ urlpatterns = [
     path('clothes',ClothesView.as_view(), name='clothes'),
     path('search', ClothingSearchView.as_view(), name='clothing_search'),
     path('clothes/<int:pk>/', ClothesDetailView.as_view(), name='clothes_detail'),
+    path('delete/<int:pk>/', ClothesDeleteView.as_view(), name='delete_clothes'),
 ]
 
 if settings.DEBUG:

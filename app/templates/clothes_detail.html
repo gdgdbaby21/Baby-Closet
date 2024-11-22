@@ -14,5 +14,12 @@
     <p><strong>価格:</strong> {{ item.price }} 円</p>
     <p><strong>メモ:</strong> {{ item.memo }}</p>
     <a href="{% url 'clothes' %}">戻る</a>
+
+    <form action="{% url 'delete_clothes' item.id %}" method="post" style="margin-top: 20px;">
+        {% csrf_token %}
+        <button type="submit" style="background-color: red; color: white; border: none; padding: 10px 20px; cursor: pointer;">
+            削除
+        </button>
+    </form>
 </body>
 </html>

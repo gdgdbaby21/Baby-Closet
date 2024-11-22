@@ -1,13 +1,25 @@
-<form method="get">
-    {{ form.as_p }}
-    <button type="submit">検索</button>
-</form>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>検索結果</title>
+</head>
+<body>
+    <h1>検索結果</h1>
 
-<h2>検索結果</h2>
-<ul>
-    {% for product in products %}
-        <li>{{ product }}</li>
-    {% empty %}
-        <li>該当する商品が見つかりませんでした。</li>
-    {% endfor %}
-</ul>
+    <ul>
+        {% for item in clothes %}
+        <li>
+            <strong>{{ item.title }}</strong>
+            <p>サイズ: {{ item.size }}</p>
+            <p>性別: {{ item.get_gender_display }}</p>
+            <p>色: {{ item.color }}</p>
+            <p>ジャンル: {{ item.genre }}</p>
+            <p>価格: {{ item.price }} 円</p>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'clothes' %}">戻る</a>
+</body>
+</html>

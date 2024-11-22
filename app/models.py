@@ -58,6 +58,7 @@ class Clothes(models.Model):
     GENDER_CHOICES = [
         ('Male', '男性'),
         ('Female', '女性'),
+        ('Other', 'その他'),
     ]
     
     SIZE_CHOICES = [
@@ -80,6 +81,7 @@ class Clothes(models.Model):
         ('pants', 'パンツ'),
         ('hat', '帽子'),
         ('maternity', 'マタニティ'),
+        ('baby', 'ベビー'),
         ('other', 'その他'),
     ]
 
