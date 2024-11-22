@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ item.title }}</title>
+</head>
+<body>
+    <h1>{{ item.title }}</h1>
+    <img src="{{ item.image.url }}" alt="{{ item.title }}" style="max-width: 300px;">
+    <p><strong>サイズ:</strong> {{ item.size }}</p>
+    <p><strong>性別:</strong> {{ item.get_gender_display }}</p>
+    <p><strong>色:</strong> {{ item.color }}</p>
+    <p><strong>ジャンル:</strong> {{ item.genre }}</p>
+    <p><strong>価格:</strong> {{ item.price }} 円</p>
+    <p><strong>メモ:</strong> {{ item.memo }}</p>
+    <a href="{% url 'clothes' %}">戻る</a>
+</body>
+</html>

@@ -91,4 +91,4 @@ class ClothingSearchForm(forms.Form):
 class ClothingForm(forms.ModelForm):
     class Meta:
         model = Clothes
-        fields = ['title', 'size', 'gender', 'color', 'genre', 'price', 'memo']
+        fields = ['title', 'size', 'gender', 'color', 'genre', 'price', 'memo', 'image']

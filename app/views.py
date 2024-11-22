@@ -7,9 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
 from .models import UserProfile, WishlistItem, Clothes
-from .forms import UserProfileForm, WishlistItemForm, ClothingSearchForm, ClothingForm
+from .forms import UserProfileForm, WishlistItemForm, ClothingForm
 from django.urls import reverse_lazy
-from django.views.generic.edit import FormView, DeleteView, CreateView
+from django.views.generic.edit import DeleteView, CreateView
+from django.views.generic import DetailView
 
 
 class PortfolioView(View):
@@ -126,41 +127,58 @@ class WishlistDeleteView(DeleteView):
     
     
 
-class ClothingSearchView(FormView):
-    template_name = 'clothes.html'
-    form_class = ClothingSearchForm
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+class ClothingSearchView(View):
+    def get(self, request):
+        # クエリパラメータから条件を取得
+        gender = request.GET.getlist('gender')
+        size = request.GET.getlist('size')
+        color = request.GET.getlist('color')
+        genre = request.GET.getlist('genre')
 
-        products = Clothes.objects.all()
-        form = self.get_form()
-        if form.is_valid():
-            gender = form.cleaned_data.get('gender')
-            size = form.cleaned_data.get('size')
-            color = form.cleaned_data.get('color')
-            genre = form.cleaned_data.get('genre')
-
+        # データをフィルタリング
+        clothes = Clothes.objects.all()
         if gender:
-            products = products.filter(gender__in=gender)
+            clothes = clothes.filter(gender__in=gender)
         if size:
-            products = products.filter(size__in=size)
+            clothes = clothes.filter(size__in=size)
         if color:
-            products = products.filter(color__in=color)
+            clothes = clothes.filter(color__in=color)
         if genre:
-            products = products.filter(genre__in=genre)
+            clothes = clothes.filter(genre__in=genre)
 
-        context['products']  = products
-        return context
+        # データをテンプレートに渡す
+        return render(request, 'clothes.html', {'clothes': clothes})
     
     
 class ClothesCreateView(CreateView):
     model = Clothes
     form_class = ClothingForm
     template_name = 'clothes_create.html'
-    success_url = reverse_lazy('clothes')
+    success_url = reverse_lazy('clothes') 
     
     def form_invalid(self, form):
-        print("フォームエラー:", form.errors)  # バリデーションエラーを出力
+        print("フォームエラー:", form.errors)
         return super().form_invalid(form)
+    
+    def post(self, request, *args, **kwargs):
+        # デバッグ用: アップロードされたデータを確認
+        print("POSTデータ:", request.POST)
+        print("FILESデータ:", request.FILES)
+        return super().post(request, *args, **kwargs)
+    
+
+class ClothesView(View):
+    def get(self, request):
+        clothes = Clothes.objects.all()
+
+        return render(request, "clothes.html", {"clothes": clothes})
+
+
+class ClothesDetailView(DetailView):
+    model = Clothes
+    template_name = 'clothes_detail.html'
+    context_object_name = 'item'
+    
+
+        
     

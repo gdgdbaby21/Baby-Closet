@@ -2,106 +2,115 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服管理画面</title>
     <style>
-        .select2-container {
-            width: 100% !important; /* 各セレクトボックスを横幅100%に設定 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
         }
-        .form-group {
-            margin-bottom: 20px; /* 各セレクトボックスの間隔を調整 */
+
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 15px;
+            text-align: center;
         }
-        form {
-            max-width: 600px; /* フォームの幅を適切に設定 */
-            margin: 0 auto; /* フォームを中央揃え */
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
         }
-        .button-container {
-            text-align: center; /* ボタンを中央揃え */
-            margin-top: 20px; /* ボタン間の余白を設定 */
+
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .add-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007BFF;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .add-button:hover {
+            background-color: #0056b3;
+        }
+
+        .card a {
+            text-decoration: none;
+            color: inherit;
         }
     </style>
 </head>
 <body>
-    <h1 style="text-align: center;">服管理画面</h1>
-    <form method="get">
-        <div class="form-group">
-            <label for="gender">性別:</label>
-            <select id="gender" class="select2" multiple="multiple" name="gender">
-                <option value="Male">男性</option>
-                <option value="Female">女性</option>
-            </select>
+    <header>
+        <h1>服管理画面</h1>
+    </header>
+    <div class="container">
+        <div class="card-grid">
+            {% for item in clothes %}
+            <div class="card">
+                <a href="{% url 'clothes_detail' item.id %}">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.title }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/200?text=No+Image" alt="画像なし">
+                    {% endif %}
+                    <div class="card-title">{{ item.title }}</div>
+                </a>
+            </div>
+            {% empty %}
+            <p>商品が登録されていません。</p>
+            {% endfor %}
         </div>
-        <div class="form-group">
-            <label for="size">サイズ:</label>
-            <select id="size" class="select2" multiple="multiple" name="size">
-                <option value="50-60">50-60</option>
-                <option value="70">70</option>
-                <option value="80">80</option>
-                <option value="90">90</option>
-                <option value="100">100</option>
-                <option value="110">110</option>
-                <option value="120">120</option>
-                <option value="130">130</option>
-                <option value="140">140</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="color">カラー:</label>
-            <select id="color" class="select2" multiple="multiple" name="color">
-                <option value="white">白</option>
-                <option value="black">黒</option>
-                <option value="gray">グレー</option>
-                <option value="brown">茶</option>
-                <option value="beige">ベージュ</option>
-                <option value="green">緑</option>
-                <option value="blue">青</option>
-                <option value="purple">紫</option>
-                <option value="yellow">黄</option>
-                <option value="pink">ピンク</option>
-                <option value="red">赤</option>
-                <option value="orange">オレンジ</option>
-                <option value="other">その他</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="genre">ジャンル:</label>
-            <select id="genre" class="select2" multiple="multiple" name="genre">
-                <option value="tops">トップス</option>
-                <option value="skirts">スカート</option>
-                <option value="outer">アウター</option>
-                <option value="onepiece">ワンピース</option>
-                <option value="pants">パンツ</option>
-                <option value="hat">帽子</option>
-                <option value="maternity">マタニティ</option>
-                <option value="other">その他</option>
-            </select>
-        </div>
-        <div class="button-container">
-            <button type="submit">検索</button>
-            <!-- Django の URL に対応したリンク -->
-            <button type="button" id="create-button">投稿</button>
-        </div>
-    </form>
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Select2 JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // 全てのセレクトボックスにSelect2を適用
-            $('.select2').select2({
-                placeholder: "選択してください",
-                allowClear: true,
-                width: '100%' // セレクトボックスの幅を100%に設定
-            });
-
-            // 投稿ボタンをクリックしたときの遷移処理
-            $('#create-button').on('click', function() {
-                // Django の URL パスに対応させる
-                window.location.href = '/clothes/create/';
-            });
-        });
-    </script>
+    </div>
+    <div class="add-button" onclick="window.location.href='{% url 'clothes_create' %}'">+</div>
 </body>
 </html>
