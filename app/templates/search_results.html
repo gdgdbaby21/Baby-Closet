@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>検索結果</title>
+    <style>
+        .results-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .result-item {
+            text-align: center;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            width: 200px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .result-item img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .result-item-title {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>検索結果</h1>
+
+    {% if clothes %}
+        <div class="results-container">
+            {% for item in clothes %}
+            <div class="result-item">
+                <a href="{% url 'clothes_detail' item.id %}">
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}">
+                </a>
+                <div class="result-item-title">{{ item.title }}</div>
+                <p>価格: {{ item.price }} 円</p>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>該当する結果はありません。</p>
+        <!-- デバッグ用 -->
+        <pre>{{ clothes }}</pre>
+
+    {% endif %}
+
+    <a href="{% url 'clothes' %}">戻る</a>
+</body>
+</html>

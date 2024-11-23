@@ -10,8 +10,8 @@ from .models import UserProfile, WishlistItem, Clothes
 from .forms import UserProfileForm, WishlistItemForm, ClothingForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
-from django.views.generic import DetailView
-from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic import DetailView, ListView
+from django.db.models import Q
 
 
 class PortfolioView(View):
@@ -134,8 +134,11 @@ class ClothingSearchView(View):
         size = request.GET.getlist('size')
         color = request.GET.getlist('color')
         genre = request.GET.getlist('genre')
-
         
+        
+        results = Clothes.objects.all()
+
+
         clothes = Clothes.objects.all()
         if gender:
             clothes = clothes.filter(gender__in=gender)
@@ -146,7 +149,8 @@ class ClothingSearchView(View):
         if genre:
             clothes = clothes.filter(genre__in=genre)
 
-        return render(request, 'clothes.html', {'clothes': clothes})
+        # return render(request, 'clothes.html', {'clothes': clothes})
+        return render(request, 'search_results.html', {'results': results})
     
     
 class ClothesCreateView(CreateView):
@@ -188,6 +192,39 @@ class ClothesDeleteView(DeleteView):
         self.object = self.get_object()
         messages.success(self.request, self.success_message % dict(title=self.object.title))
         return super().delete(request, *args, **kwargs)
-    
+
+
+
+class SearchResultsView(ListView):
+    model = Clothes
+    template_name = 'search_results.html'
+    context_object_name = 'clothes'
 
     
+    def get_queryset(self):
+        gender = self.request.GET.get('gender', '')
+        size = self.request.GET.get('size', '')
+        color = self.request.GET.get('color', '')
+        genre = self.request.GET.get('genre', '')
+
+        
+        queryset = Clothes.objects.all()
+        
+        # フィルタリング条件のデバッグ
+        print("検索条件:")
+        print(f"性別: {gender}, サイズ: {size}, 色: {color}, ジャンル: {genre}")
+
+
+        if gender:
+            queryset = queryset.filter(gender=gender)
+        if size:
+            queryset = queryset.filter(size=size)
+        if color:
+            queryset = queryset.filter(color=color)
+        if genre:
+            queryset = queryset.filter(genre=genre)
+            
+        # フィルタリング後のクエリセットをデバッグ
+        print("フィルタリング後のクエリセット:", queryset)
+        
+        return queryset

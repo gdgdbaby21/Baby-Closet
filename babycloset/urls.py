@@ -18,7 +18,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, ClothesView, ClothesCreateView, ClothingSearchView, ClothesDetailView, ClothesDeleteView
+from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, ClothesView, ClothesCreateView, ClothingSearchView, ClothesDetailView, ClothesDeleteView, SearchResultsView
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
@@ -41,6 +41,7 @@ urlpatterns = [
     path('search', ClothingSearchView.as_view(), name='clothing_search'),
     path('clothes/<int:pk>/', ClothesDetailView.as_view(), name='clothes_detail'),
     path('delete/<int:pk>/', ClothesDeleteView.as_view(), name='delete_clothes'),
+    path('search-results/', SearchResultsView.as_view(), name='search-results'),
 ]
 
 if settings.DEBUG:
