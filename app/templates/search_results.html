@@ -32,7 +32,7 @@
 <body>
     <h1>検索結果</h1>
 
-    {% if clothes %}
+    {% if clothes.exists %}
         <div class="results-container">
             {% for item in clothes %}
             <div class="result-item">
@@ -47,13 +47,11 @@
     {% else %}
         <p>該当する結果はありません。</p>
         <!-- デバッグ用 -->
-        <pre>{{ clothes }}</pre>
+        <pre>{{ clothes|default_if_none:"No clothes object found" }}</pre>
 
-    {% endif %}
+   
     </div>
-{% else %}
-    <p>該当する結果はありません。</p>
-    <pre>{{ clothes }}</pre>
+
 {% endif %}
 
 

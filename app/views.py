@@ -127,31 +127,6 @@ class WishlistDeleteView(DeleteView):
     
     
 
-class ClothingSearchView(View):
-    def get(self, request):
-        gender = request.GET.getlist('gender')
-        size = request.GET.getlist('size')
-        color = request.GET.getlist('color')
-        genre = request.GET.getlist('genre')
-        
-        
-        results = Clothes.objects.all()
-
-
-        clothes = Clothes.objects.all()
-        if gender:
-            clothes = clothes.filter(gender__in=gender)
-        if size:
-            clothes = clothes.filter(size__in=size)
-        if color:
-            clothes = clothes.filter(color__in=color)
-        if genre:
-            clothes = clothes.filter(genre__in=genre)
-
-        return render(request, 'clothes.html', {'clothes': clothes})
-        # return render(request, 'search_results.html', {'results': results})
-    
-    
 class ClothesCreateView(CreateView):
     model = Clothes
     form_class = ClothingForm
@@ -201,7 +176,6 @@ class SearchResultsView(ListView):
 
     def get_queryset(self):
         queryset = Clothes.objects.all()
-        print("GETリクエスト:", self.request.GET)
 
         gender = self.request.GET.getlist('gender')
         size = self.request.GET.getlist('size')
@@ -217,6 +191,4 @@ class SearchResultsView(ListView):
         if genre:
            queryset = queryset.filter(genre__in=genre)
 
-        print("フィルタリング後のクエリセット:", queryset.query)  # SQLクエリ確認
-        print("フィルタリング結果:", list(queryset))  # データ内容確認
         return queryset

@@ -133,13 +133,13 @@
 
     <div class="container">
         <!-- フィルタ検索フォーム -->
-        <form method="get" action="{% url 'clothing_search' %}">
+        <form method="get" action="{% url 'search-results' %}">
                 <label for="gender">性別:</label>
                 <select id="gender" name="gender">
                     <option value="">選択</option>
-                    <option value="male">男性</option>
-                    <option value="female">女性</option>
-                    <option value="other">その他</option>
+                    <option value="Male">男性</option>
+                    <option value="Female">女性</option>
+                    <option value="Other">その他</option>
                 </select>
 
 
