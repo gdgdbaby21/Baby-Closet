@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from app.forms import SignupForm, LoginForm
@@ -149,8 +148,8 @@ class ClothingSearchView(View):
         if genre:
             clothes = clothes.filter(genre__in=genre)
 
-        # return render(request, 'clothes.html', {'clothes': clothes})
-        return render(request, 'search_results.html', {'results': results})
+        return render(request, 'clothes.html', {'clothes': clothes})
+        # return render(request, 'search_results.html', {'results': results})
     
     
 class ClothesCreateView(CreateView):
@@ -200,31 +199,24 @@ class SearchResultsView(ListView):
     template_name = 'search_results.html'
     context_object_name = 'clothes'
 
-    
     def get_queryset(self):
-        gender = self.request.GET.get('gender', '')
-        size = self.request.GET.get('size', '')
-        color = self.request.GET.get('color', '')
-        genre = self.request.GET.get('genre', '')
-
-        
         queryset = Clothes.objects.all()
-        
-        # フィルタリング条件のデバッグ
-        print("検索条件:")
-        print(f"性別: {gender}, サイズ: {size}, 色: {color}, ジャンル: {genre}")
+        print("GETリクエスト:", self.request.GET)
 
+        gender = self.request.GET.getlist('gender')
+        size = self.request.GET.getlist('size')
+        color = self.request.GET.getlist('color')
+        genre = self.request.GET.getlist('genre')
 
         if gender:
-            queryset = queryset.filter(gender=gender)
+            queryset = queryset.filter(gender__in=gender)
         if size:
-            queryset = queryset.filter(size=size)
+            queryset = queryset.filter(size__in=size)
         if color:
-            queryset = queryset.filter(color=color)
+            queryset = queryset.filter(color__in=color)
         if genre:
-            queryset = queryset.filter(genre=genre)
-            
-        # フィルタリング後のクエリセットをデバッグ
-        print("フィルタリング後のクエリセット:", queryset)
-        
+           queryset = queryset.filter(genre__in=genre)
+
+        print("フィルタリング後のクエリセット:", queryset.query)  # SQLクエリ確認
+        print("フィルタリング結果:", list(queryset))  # データ内容確認
         return queryset

@@ -50,6 +50,12 @@
         <pre>{{ clothes }}</pre>
 
     {% endif %}
+    </div>
+{% else %}
+    <p>該当する結果はありません。</p>
+    <pre>{{ clothes }}</pre>
+{% endif %}
+
 
     <a href="{% url 'clothes' %}">戻る</a>
 </body>
