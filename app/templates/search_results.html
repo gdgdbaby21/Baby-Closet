@@ -32,7 +32,7 @@
 <body>
     <h1>検索結果</h1>
 
-    {% if clothes.exists %}
+    {% if clothes %}
         <div class="results-container">
             {% for item in clothes %}
             <div class="result-item">
@@ -40,20 +40,12 @@
                     <img src="{{ item.image.url }}" alt="{{ item.title }}">
                 </a>
                 <div class="result-item-title">{{ item.title }}</div>
-                <p>価格: {{ item.price }} 円</p>
             </div>
             {% endfor %}
         </div>
     {% else %}
         <p>該当する結果はありません。</p>
-        <!-- デバッグ用 -->
-        <pre>{{ clothes|default_if_none:"No clothes object found" }}</pre>
-
-   
-    </div>
-
-{% endif %}
-
+    {% endif %}
 
     <a href="{% url 'clothes' %}">戻る</a>
 </body>

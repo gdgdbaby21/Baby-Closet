@@ -177,18 +177,29 @@ class SearchResultsView(ListView):
     def get_queryset(self):
         queryset = Clothes.objects.all()
 
-        gender = self.request.GET.getlist('gender')
-        size = self.request.GET.getlist('size')
-        color = self.request.GET.getlist('color')
-        genre = self.request.GET.getlist('genre')
 
+        gender = self.request.GET.get('gender')
+        size = self.request.GET.get('size')
+        color = self.request.GET.get('color')
+        genre = self.request.GET.get('genre')
+
+        
+        print(f"検索条件: gender={gender}, size={size}, color={color}, genre={genre}")
+
+
+        query = Q()
         if gender:
-            queryset = queryset.filter(gender__in=gender)
+            query |= Q(gender=gender)
         if size:
-            queryset = queryset.filter(size__in=size)
+            query |= Q(size=size)
         if color:
-            queryset = queryset.filter(color__in=color)
+            query |= Q(color=color)
         if genre:
-           queryset = queryset.filter(genre__in=genre)
+            query |= Q(genre=genre)
+
+        if query:
+            queryset = queryset.filter(query)
+
+        print(f"フィルタリング結果: {queryset}")
 
         return queryset
