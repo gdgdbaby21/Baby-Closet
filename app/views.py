@@ -5,11 +5,11 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
-from .models import UserProfile, WishlistItem, Clothes
+from .models import UserProfile, WishlistItem, Clothes, Post
 from .forms import UserProfileForm, WishlistItemForm, ClothingForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, TemplateView
 from django.db.models import Q
 
 
@@ -55,9 +55,20 @@ class LogoutView(View):
         return redirect('login')
 
 
+# class HomeView(LoginRequiredMixin, View):
+#     def get(self, request):
+#         return render(request, "home.html")
+    
 class HomeView(LoginRequiredMixin, View):
+    login_url = '/login/' 
+    redirect_field_name = 'next'
+
     def get(self, request):
-        return render(request, "home.html")
+        posts = Post.objects.all()
+        return render(request, "home.html", {"posts": posts})
+
+    
+
 
 class ProfileView(View):
     def get(self, request):
@@ -203,3 +214,20 @@ class SearchResultsView(ListView):
         print(f"フィルタリング結果: {queryset}")
 
         return queryset
+    
+
+class HashtagSearchView(ListView):
+    model = Post
+    template_name = 'posts/hashtag_search.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')
+        if query:
+            return Post.objects.filter(hashtags__name__icontains=query)
+        return Post.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q', '')
+        return context

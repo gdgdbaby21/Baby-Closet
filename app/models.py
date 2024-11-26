@@ -112,3 +112,22 @@ class Clothes(models.Model):
 
     def __str__(self):
         return f"{self.get_gender_display()} {self.size} {self.color} {self.genre}"
+    
+
+#ハッシュタグ検索のモデル  
+class Hashtag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+#コーディネート投稿のモデル
+class Post(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='posts/images/')
+    caption = models.TextField(blank=True, null=True)
+    hashtags = models.ManyToManyField(Hashtag, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} - {self.caption[:20]}'
