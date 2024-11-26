@@ -218,13 +218,13 @@ class SearchResultsView(ListView):
 
 class HashtagSearchView(ListView):
     model = Post
-    template_name = 'posts/hashtag_search.html'
+    template_name = 'hashtag_results.html'
     context_object_name = 'posts'
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')
         if query:
-            return Post.objects.filter(hashtags__name__icontains=query)
+            return Post.objects.filter(hashtags__name__icontains=query).distinct()
         return Post.objects.none()
 
     def get_context_data(self, **kwargs):

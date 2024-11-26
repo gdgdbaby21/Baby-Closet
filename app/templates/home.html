@@ -1,12 +1,18 @@
-
-
 {% extends 'base.html' %}
 
-{% block title %}ホーム - サイト名{% endblock %}
 
 {% block content %}
-    <h2>ホームページ</h2>
+<div class="container">
+    
+
+    <!-- ハッシュタグ検索フォーム -->
+    <form method="get" action="{% url 'hashtag_search' %}" class="search-form">
+        <input type="text" name="q" placeholder="ハッシュタグ検索" value="{{ query }}" required>
+        <button type="submit">検索</button>
+    </form>
+
     <p>ここにホームページの内容を書く。</p>
+</div>
 {% endblock %}
 
 
@@ -18,7 +24,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baby Closet</title>
 </head>
+<body>
     <h1>ホーム</h1>
-   <a href="{% url 'login' %}">アプリへ</a>
+    <a href="{% url 'login' %}">アプリへ</a>
 </body>
 </html>
