@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>投稿詳細</h1>
+    <div class="post-detail">
+        <!-- 投稿画像 -->
+        <div class="image-wrapper">
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 50%; height: auto;">
+        </div>
+
+        <!-- メモ -->
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.caption }}</p>
+
+        <!-- 削除ボタン -->
+        {% if request.user == post.user %}
+        <div class="delete-button">
+            <form action="{% url 'post_delete' post.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">削除</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- 戻るリンク -->
+        <a href="{% url 'home' %}" class="btn btn-secondary">ホームに戻る</a>
+    </div>
+</div>
+{% endblock %}

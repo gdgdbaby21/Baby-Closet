@@ -121,12 +121,24 @@ class Hashtag(models.Model):
     def __str__(self):
         return self.name
 
+#コーディネート投稿で使用したアイテムのモデル
+class Item(models.Model):
+    name = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='items/images/')
+
+    def __str__(self):
+        return self.name
+
+
 #コーディネート投稿のモデル
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='posts/images/')
+    title = models.CharField(max_length=50, default='Untitled')  
     caption = models.TextField(blank=True, null=True)
-    hashtags = models.ManyToManyField(Hashtag, blank=True)
+    # hashtags = models.ManyToManyField(Hashtag, blank=True)
+    items = models.ManyToManyField(Item, blank=True)
+    is_public = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -1,31 +1,30 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 <div class="container">
-    
-
     <!-- ハッシュタグ検索フォーム -->
     <form method="get" action="{% url 'hashtag_search' %}" class="search-form">
         <input type="text" name="q" placeholder="ハッシュタグ検索" value="{{ query }}" required>
         <button type="submit">検索</button>
     </form>
 
-    <p>ここにホームページの内容を書く。</p>
+    <!-- 投稿ボタン -->
+    <div class="post-button-wrapper">
+        <a href="{% url 'create_post' %}" class="post-button">投稿</a>
+    </div>
+
+    <!-- 投稿一覧 (仮のセクション) -->
+    <h2>New Post</h2>
+    {% for post in posts %}
+        <div class="post-item">
+            <p>@{{ post.user.username }}</p>
+            <div class="image-wrapper">
+               <a href="{% url 'post_detail' post.pk %}">
+                   <img src="{{ post.image.url }}" alt="投稿画像" style="max-width: 300px;">
+            </div>
+            <p><strong>{{ post.title }}</strong></p>
+            <p>{{ post.caption }}</p>
+        </div>
+    {% endfor %}
 </div>
 {% endblock %}
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baby Closet</title>
-</head>
-<body>
-    <h1>ホーム</h1>
-    <a href="{% url 'login' %}">アプリへ</a>
-</body>
-</html>

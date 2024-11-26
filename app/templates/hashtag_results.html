@@ -5,25 +5,18 @@
 {% block content %}
 <div class="container">
     <h1>ハッシュタグ検索結果</h1>
-    
-
-    <!-- 検索されたハッシュタグ -->
     {% if query %}
         <h2>#{{ query }}</h2>
     {% endif %}
 
-    <!-- 検索結果の投稿 -->
     {% if posts %}
         <div class="post-list">
             {% for post in posts %}
                 <div class="post-item">
                     <p>@{{ post.user.username }}</p>
-                    <div class="image-wrapper">
-                        <img src="{{ post.image.url }}" alt="{{ post.caption }}" class="post-image">
-                    </div>
-                    <div class="post-meta">
-                        <p>いいね: {{ post.likes.count }} | コメント: {{ post.comments.count }}</p>
-                    </div>
+                    <img src="{{ post.image.url }}" alt="{{ post.caption }}" style="max-width: 200px;">
+                    <p>{{ post.caption }}</p>
+                    <p>いいね: {{ post.likes.count }} | コメント: {{ post.comments.count }}</p>
                 </div>
             {% endfor %}
         </div>

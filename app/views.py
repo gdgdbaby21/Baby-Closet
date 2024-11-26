@@ -2,14 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from app.forms import SignupForm, LoginForm
 from django.contrib.auth import login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
 from .models import UserProfile, WishlistItem, Clothes, Post
-from .forms import UserProfileForm, WishlistItemForm, ClothingForm
+from .forms import UserProfileForm, WishlistItemForm, ClothingForm, PostForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DetailView, ListView
 from django.db.models import Q
 
 
@@ -231,3 +231,35 @@ class HashtagSearchView(ListView):
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q', '')
         return context
+    
+
+class CreatePostView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'create_post.html'
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+    
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'post_detail.html'
+    context_object_name = 'post'
+    
+    
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        post = Post.objects.get(pk=pk)
+        if request.user == post.user:
+            post.delete()
+            return redirect('home')
+        else:
+            return redirect('post_detail', pk=pk)  # 投稿者以外は詳細画面に戻る
+
+    # 投稿者のみ削除可能にする
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.user

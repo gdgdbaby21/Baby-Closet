@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>コーディネート投稿</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- メイン画像のアップロード -->
+        <div>
+            <label for="id_image">写真を選択</label>
+            {{ form.image }}
+        </div>
+        
+        <!-- タイトル入力 -->
+        <div>
+            <label for="id_title">タイトル</label>
+            {{ form.title }}
+        </div>
+
+        <!-- メモ入力 -->
+        <div>
+            <label for="id_caption">メモ</label>
+            {{ form.caption }}
+        </div>
+
+        <!-- 使用したアイテムの選択 -->
+        <div>
+            <label>使用したアイテムの情報</label>
+            {{ form.items }}
+        </div>
+
+        <!-- 公開設定 -->
+        <div>
+            <label for="id_is_public">
+                {{ form.is_public }} ユーザーに公開する
+            </label>
+        </div>
+
+        <!-- 投稿ボタン -->
+        <button type="submit">投稿</button>
+    </form>
+</div>
+{% endblock %}

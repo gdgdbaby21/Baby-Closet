@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from app.models import User
 from django.contrib.auth import authenticate
-from .models import UserProfile, WishlistItem, Clothes
+from .models import UserProfile, WishlistItem, Clothes, Post, Item
 
 
 class SignupForm(UserCreationForm):
@@ -92,3 +92,25 @@ class ClothingForm(forms.ModelForm):
     class Meta:
         model = Clothes
         fields = ['title', 'size', 'gender', 'color', 'genre', 'price', 'memo', 'image']
+        
+
+#コーディネート投稿のフォーム
+class PostForm(forms.ModelForm):
+    items = forms.ModelMultipleChoiceField(
+        queryset=Item.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = Post
+        fields = ['image', 'title', 'caption', 'items', 'is_public']
+        widgets = {
+            'caption': forms.Textarea(attrs={
+                'placeholder': 'メモを入力してください',
+                'rows': 3
+            }),
+            'title': forms.TextInput(attrs={
+                'placeholder': 'タイトルを入力してください'
+            }),
+        }
