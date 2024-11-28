@@ -17,14 +17,25 @@
     <h2>New Post</h2>
     {% for post in posts %}
         <div class="post-item">
-            <p>@{{ post.user.username }}</p>
+            <p>
+                @
+                {% if post.user.account %}
+                    {{ post.user.account }}
+                {% else %}
+                    Unknown User
+                {% endif %}
+            </p>
             <div class="image-wrapper">
-               <a href="{% url 'post_detail' post.pk %}">
-                   <img src="{{ post.image.url }}" alt="投稿画像" style="max-width: 300px;">
+               {% if post.image %}
+                   <a href="{% url 'post_detail' post.pk %}">
+                       <img src="{{ post.image.url }}" alt="投稿画像" style="max-width: 300px;">
+                   </a>
+               {% else %}
+                   <p>No image available</p>
+               {% endif %}
             </div>
             <p><strong>{{ post.title }}</strong></p>
             <p>{{ post.caption }}</p>
         </div>
-    {% endfor %}
-</div>
+    {% endfor %}  
 {% endblock %}

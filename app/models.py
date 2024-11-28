@@ -11,11 +11,11 @@ class User(AbstractUser):
     groups = None
     user_permissions = None
     
-    
-username = models.CharField(max_length=50, unique=True)
-email = models.EmailField(max_length=50, unique=True)
-created_at = models.DateTimeField(auto_now_add=True)
-updated_at = models.DateTimeField(auto_now=True)
+
+    username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(max_length=50, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 USERNAME_FIELD = "username"

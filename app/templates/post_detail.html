@@ -6,7 +6,7 @@
     <div class="post-detail">
         <!-- 投稿画像 -->
         <div class="image-wrapper">
-            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 50%; height: auto;">
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 20%; height: auto;">
         </div>
 
         <!-- メモ -->
@@ -14,7 +14,7 @@
         <p>{{ post.caption }}</p>
 
         <!-- 削除ボタン -->
-        {% if request.user == post.user %}
+        {% if user.is_authenticated and post.user == user %}
         <div class="delete-button">
             <form action="{% url 'post_delete' post.pk %}" method="post">
                 {% csrf_token %}

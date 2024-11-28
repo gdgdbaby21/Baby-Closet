@@ -251,15 +251,18 @@ class PostDetailView(DetailView):
     
     
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def get_object(self):
+        return get_object_or_404(Post, pk=self.kwargs['pk'])
+    
     def post(self, request, pk, *args, **kwargs):
-        post = Post.objects.get(pk=pk)
+        post = self.get_object()
         if request.user == post.user:
             post.delete()
             return redirect('home')
         else:
-            return redirect('post_detail', pk=pk)  # 投稿者以外は詳細画面に戻る
-
-    # 投稿者のみ削除可能にする
+            return redirect('post_detail', pk=pk)
+        
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.user
+        
