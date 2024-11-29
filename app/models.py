@@ -43,7 +43,7 @@ class UserProfile(models.Model):
 #欲しいものリストのモデル
 class WishlistItem(models.Model):
     image = models.ImageField(upload_to='wishlist_images/', blank=True, null=True, default='wishlist_images/default.png')
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=0)
     created_at = models.DateTimeField(auto_now_add=True)
     brand = models.CharField(max_length=50, blank=True)
     product_url = models.URLField(max_length=255, blank=True)
@@ -134,7 +134,7 @@ class Item(models.Model):
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='posts/images/')
-    title = models.CharField(max_length=50, default='Untitled')  
+    title = models.CharField(max_length=50, default='')  
     caption = models.TextField(blank=True, null=True)
     # hashtags = models.ManyToManyField(Hashtag, blank=True)
     items = models.ManyToManyField(Item, blank=True)

@@ -11,7 +11,7 @@
     <p><strong>性別:</strong> {{ item.get_gender_display }}</p>
     <p><strong>色:</strong> {{ item.get_color_display }}</p>
     <p><strong>ジャンル:</strong> {{ item.get_genre_display }}</p>
-    <p><strong>価格:</strong> {{ item.price|floatformat:0 }} 円</p>
+    <p><strong>価格:</strong> ¥{{ item.price|floatformat:0 }} </p>
     <p><strong>メモ:</strong> {{ item.memo }}</p>
     <a href="{% url 'clothes' %}">戻る</a>
 

@@ -14,13 +14,13 @@
     </div>
 
     <!-- 投稿一覧 (仮のセクション) -->
-    <h2>New Post</h2>
+ <h2>New Post</h2>
     {% for post in posts %}
         <div class="post-item">
             <p>
                 @
-                {% if post.user.account %}
-                    {{ post.user.account }}
+                {% if post.user.userprofile.account %}
+                    {{ post.user.userprofile.account }}
                 {% else %}
                     Unknown User
                 {% endif %}
@@ -39,3 +39,4 @@
         </div>
     {% endfor %}  
 {% endblock %}
+

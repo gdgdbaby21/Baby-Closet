@@ -55,9 +55,6 @@ class LogoutView(View):
         return redirect('login')
 
 
-# class HomeView(LoginRequiredMixin, View):
-#     def get(self, request):
-#         return render(request, "home.html")
     
 class HomeView(LoginRequiredMixin, View):
     login_url = '/login/' 
@@ -265,4 +262,8 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.user
+    
+    def post_list(request):
+        posts = Post.objects.select_related("user__userprofile").all()
+        return render(request, "your_template.html", {"posts": posts})
         
