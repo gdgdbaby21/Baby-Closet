@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.timezone import now
-
-
+import re
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class User(AbstractUser):
@@ -121,6 +122,7 @@ class Hashtag(models.Model):
     def __str__(self):
         return self.name
 
+
 #コーディネート投稿で使用したアイテムのモデル
 class Item(models.Model):
     name = models.CharField(max_length=50)
@@ -136,10 +138,19 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts/images/')
     title = models.CharField(max_length=50, default='')  
     caption = models.TextField(blank=True, null=True)
-    # hashtags = models.ManyToManyField(Hashtag, blank=True)
     items = models.ManyToManyField(Item, blank=True)
+    hashtags = models.ManyToManyField(Hashtag, blank=True)
     is_public = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.user.username} - {self.caption[:20]}'
+    
+    
+@receiver(post_save, sender=Post)
+def extract_and_save_hashtags(sender, instance, **kwargs):
+    if instance.caption:
+        hashtags = set(re.findall(r"#(\w+)", instance.caption))
+        for tag_name in hashtags:
+            hashtag, created = Hashtag.objects.get_or_create(name=tag_name)
+            instance.hashtags.add(hashtag)

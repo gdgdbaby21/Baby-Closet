@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
     <!-- ハッシュタグ検索フォーム -->
-    <form method="get" action="{% url 'hashtag_search' %}" class="search-form">
+    <form method="get" action="{% url 'hashtag_search' hashtag_name='example' %}" class="search-form">
         <input type="text" name="q" placeholder="ハッシュタグ検索" value="{{ query }}" required>
         <button type="submit">検索</button>
     </form>

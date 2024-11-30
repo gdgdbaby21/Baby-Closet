@@ -5,7 +5,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
-from .models import UserProfile, WishlistItem, Clothes, Post
+from .models import UserProfile, WishlistItem, Clothes, Post, Hashtag
 from .forms import UserProfileForm, WishlistItemForm, ClothingForm, PostForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
@@ -218,15 +218,25 @@ class HashtagSearchView(ListView):
     template_name = 'hashtag_results.html'
     context_object_name = 'posts'
 
+    # def get_queryset(self):
+        # query = self.request.GET.get('q', '')
+        # if query:
+        #     return Post.objects.filter(hashtags__name__icontains=query).distinct()
+        # return Post.objects.none()
     def get_queryset(self):
-        query = self.request.GET.get('q', '')
-        if query:
-            return Post.objects.filter(hashtags__name__icontains=query).distinct()
-        return Post.objects.none()
+        hashtag_name = self.kwargs.get('hashtag_name')  # URLパラメータからハッシュタグ名を取得
+        hashtag = get_object_or_404(Hashtag, name=hashtag_name)
+        return Post.objects.filter(hashtags=hashtag, is_public=True).order_by('-created_at')
+    
 
+    # def get_context_data(self, **kwargs):
+        # context = super().get_context_data(**kwargs)
+        # context['query'] = self.request.GET.get('q', '')
+        # return context
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['query'] = self.request.GET.get('q', '')
+        hashtag_name = self.kwargs.get('hashtag_name')
+        context['hashtag'] = get_object_or_404(Hashtag, name=hashtag_name)
         return context
     
 
