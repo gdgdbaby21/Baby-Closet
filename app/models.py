@@ -142,15 +142,12 @@ class Post(models.Model):
     hashtags = models.ManyToManyField(Hashtag, blank=True)
     is_public = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.caption:
+            hashtags = set(re.findall(r"#(\w+)", self.caption))
+            for tag_name in hashtags:
+                hashtag, created = Hashtag.objects.get_or_create(name=tag_name)
+                self.hashtags.add(hashtag)
 
-    def __str__(self):
-        return f'{self.user.username} - {self.caption[:20]}'
-    
-    
-@receiver(post_save, sender=Post)
-def extract_and_save_hashtags(sender, instance, **kwargs):
-    if instance.caption:
-        hashtags = set(re.findall(r"#(\w+)", instance.caption))
-        for tag_name in hashtags:
-            hashtag, created = Hashtag.objects.get_or_create(name=tag_name)
-            instance.hashtags.add(hashtag)

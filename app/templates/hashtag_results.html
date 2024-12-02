@@ -13,10 +13,9 @@
         <div class="post-list">
             {% for post in posts %}
                 <div class="post-item">
-                    <p>@{{ post.user.username }}</p>
+                    <p>@{{ post.user.userprofile.account}}</p>
                     <img src="{{ post.image.url }}" alt="{{ post.caption }}" style="max-width: 200px;">
                     <p>{{ post.caption }}</p>
-                    <p>いいね: {{ post.likes.count }} | コメント: {{ post.comments.count }}</p>
                 </div>
             {% endfor %}
         </div>
@@ -25,3 +24,4 @@
     {% endif %}
 </div>
 {% endblock %}
+

@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import DetailView, ListView
 from django.db.models import Q
-
+from urllib.parse import unquote
 
 class PortfolioView(View):
     def get(self, request):
@@ -211,33 +211,25 @@ class SearchResultsView(ListView):
         print(f"フィルタリング結果: {queryset}")
 
         return queryset
-    
 
+  
 class HashtagSearchView(ListView):
     model = Post
     template_name = 'hashtag_results.html'
     context_object_name = 'posts'
-
-    # def get_queryset(self):
-        # query = self.request.GET.get('q', '')
-        # if query:
-        #     return Post.objects.filter(hashtags__name__icontains=query).distinct()
-        # return Post.objects.none()
+   
     def get_queryset(self):
-        hashtag_name = self.kwargs.get('hashtag_name')  # URLパラメータからハッシュタグ名を取得
+        
+        query_param = self.request.GET.get('q', None)
+        if query_param:
+            hashtag_name = unquote(query_param).lstrip('#')
+        else:
+            hashtag_name = self.kwargs.get('hashtag_name')
+
+        print(f"Searching for hashtag: {hashtag_name}")
+
         hashtag = get_object_or_404(Hashtag, name=hashtag_name)
         return Post.objects.filter(hashtags=hashtag, is_public=True).order_by('-created_at')
-    
-
-    # def get_context_data(self, **kwargs):
-        # context = super().get_context_data(**kwargs)
-        # context['query'] = self.request.GET.get('q', '')
-        # return context
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        hashtag_name = self.kwargs.get('hashtag_name')
-        context['hashtag'] = get_object_or_404(Hashtag, name=hashtag_name)
-        return context
     
 
 class CreatePostView(LoginRequiredMixin, CreateView):
