@@ -4,8 +4,11 @@ from django.utils.timezone import now
 import re
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth import get_user_model
 
 
+
+#ユーザーのモデル
 class User(AbstractUser):
     first_name = None
     last_name = None
@@ -151,3 +154,30 @@ class Post(models.Model):
                 hashtag, created = Hashtag.objects.get_or_create(name=tag_name)
                 self.hashtags.add(hashtag)
 
+
+#いいね機能のモデル
+User = get_user_model()
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ('user', 'post')
+
+    def __str__(self):
+        return f"{self.user.username} likes {self.post.title}"
+
+
+#コメント機能のモデル
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.post.title}"

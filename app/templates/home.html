@@ -9,15 +9,17 @@
     </form>
 
     <!-- 投稿ボタン -->
-    <div class="post-button-wrapper">
-        <a href="{% url 'create_post' %}" class="post-button">投稿</a>
+    <div class="post-button-wrapper mb-4">
+        <a href="{% url 'create_post' %}" class="post-button btn btn-primary">投稿</a>
     </div>
 
-    <!-- 投稿一覧 (仮のセクション) -->
- <h2>New Post</h2>
-    {% for post in posts %}
-        <div class="post-item">
-            <p>
+    <!-- 投稿一覧 -->
+    <h2>New Post</h2>
+    <div class="post-list d-flex flex-wrap">
+        {% for post in posts %}
+        <div class="post-item mb-4 me-4" style="width: 200px;">
+            <!-- アカウント名 -->
+            <p class="text-muted mb-2">
                 @
                 {% if post.user.userprofile.account %}
                     {{ post.user.userprofile.account }}
@@ -25,18 +27,28 @@
                     Unknown User
                 {% endif %}
             </p>
+
+            <!-- 投稿画像 -->
             <div class="image-wrapper">
                {% if post.image %}
                    <a href="{% url 'post_detail' post.pk %}">
-                       <img src="{{ post.image.url }}" alt="投稿画像" style="max-width: 300px;">
+                       <img src="{{ post.image.url }}" alt="投稿画像" class="img-fluid rounded" style="width: 100%; height: auto;">
                    </a>
                {% else %}
                    <p>No image available</p>
                {% endif %}
             </div>
-            <p><strong>{{ post.title }}</strong></p>
-            <p>{{ post.caption }}</p>
-        </div>
-    {% endfor %}  
-{% endblock %}
 
+            <!-- 投稿タイトル -->
+            <p class="mt-2"><strong>{{ post.title }}</strong></p>
+
+            <!-- いいね数とコメント数 -->
+            <div class="post-meta">
+                <span>♥ {{ post.likes.count }} いいね</span>
+                <span>💬 {{ post.comments.count }} コメント</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

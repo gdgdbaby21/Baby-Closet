@@ -5,13 +5,17 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
-from .models import UserProfile, WishlistItem, Clothes, Post, Hashtag
+from .models import UserProfile, WishlistItem, Clothes, Post, Hashtag, Like, Comment
 from .forms import UserProfileForm, WishlistItemForm, ClothingForm, PostForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import DetailView, ListView
 from django.db.models import Q
 from urllib.parse import unquote
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
 
 class PortfolioView(View):
     def get(self, request):
@@ -268,4 +272,28 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     def post_list(request):
         posts = Post.objects.select_related("user__userprofile").all()
         return render(request, "your_template.html", {"posts": posts})
-        
+    
+
+class LikeView(LoginRequiredMixin, View):
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if not created:
+            like.delete()
+            liked = False
+        else:
+            liked = True
+        return JsonResponse({"liked": liked, "like_count": post.likes.count()})
+    
+class CommentView(LoginRequiredMixin, View):
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+        content = request.POST.get("content")
+        if content:
+            comment = Comment.objects.create(user=request.user, post=post, content=content)
+            return JsonResponse({
+                "user_account": comment.user.userprofile.account,
+                "content": comment.content,
+                "created_at": comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            })
+        return JsonResponse({"error": "コメント内容が空です。"}, status=400)
