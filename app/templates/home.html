@@ -2,11 +2,76 @@
 
 {% block content %}
 <div class="container">
-    <!-- ハッシュタグ検索フォーム -->
-    <form method="get" action="{% url 'hashtag_search' hashtag_name='example' %}" class="search-form">
-        <input type="text" name="q" placeholder="ハッシュタグ検索" value="{{ query }}" required>
-        <button type="submit">検索</button>
-    </form>
+    <style>
+        .post-list {
+            display: flex;
+            flex-wrap: wrap; /* 横並びが折り返される */
+            gap: 20px; /* アイテム間のスペース */
+            justify-content: flex-start; /* 左揃え */
+        }
+
+        .post-item {
+            width: 300px; /* 各投稿カードの幅を固定 */
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .post-meta {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+
+    <!-- 投稿一覧 -->
+    <h2>New Post</h2>
+    <div class="post-list">
+        {% for post in posts %}
+        <div class="post-item">
+            <!-- アカウント名 -->
+            <p class="text-muted">
+                @
+                {% if post.user.userprofile.account %}
+                    {{ post.user.userprofile.account }}
+                {% else %}
+                    Unknown User
+                {% endif %}
+            </p>
+
+            <!-- 投稿画像 -->
+            <div class="image-wrapper">
+               {% if post.image %}
+                   <a href="{% url 'post_detail' post.pk %}">
+                       <img src="{{ post.image.url }}" alt="投稿画像">
+                   </a>
+               {% else %}
+                   <p>No image available</p>
+               {% endif %}
+            </div>
+
+            <!-- 投稿タイトル -->
+            <p class="mt-2"><strong>{{ post.title }}</strong></p>
+
+            <!-- いいね数とコメント数 -->
+            <div class="post-meta">
+                <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
+                <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
+            </div>
+
+            <!-- 投稿キャプション -->
+            <p>{{ post.caption }}</p>
+        </div>
+        {% endfor %}
+    </div>
 
     <!-- 人気ハッシュタグとその投稿 -->
     <div class="popular-hashtags mt-4">
@@ -14,14 +79,14 @@
         {% for hashtag, posts in hashtag_posts.items %}
         <div class="hashtag-section mb-5">
             <h4>#{{ hashtag.name }}</h4>
-            <div class="post-list d-flex flex-wrap">
+            <div class="post-list">
                 {% for post in posts %}
-                <div class="post-item mb-4 me-4" style="width: 200px;">
+                <div class="post-item">
                     <!-- アカウント名 -->
-                    <p class="text-muted mb-2">
+                    <p class="text-muted">
                         @
-                        {% if post.user.username %}
-                            {{ post.user.username }}
+                        {% if post.user.userprofile.account %}
+                            {{ post.user.userprofile.account }}
                         {% else %}
                             Unknown User
                         {% endif %}
@@ -30,7 +95,7 @@
                     <!-- 投稿画像 -->
                     <div class="image-wrapper">
                         <a href="{% url 'post_detail' post.pk %}">
-                            <img src="{{ post.image.url }}" alt="投稿画像" class="img-fluid rounded" style="width: 100%; height: auto;">
+                            <img src="{{ post.image.url }}" alt="投稿画像">
                         </a>
                     </div>
 
@@ -39,8 +104,8 @@
 
                     <!-- いいね数とコメント数 -->
                     <div class="post-meta">
-                        <span>♥ {{ post.likes }} いいね</span>
-                        <span>💬 {{ post.comments }} コメント</span>
+                        <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
+                        <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
                     </div>
                 </div>
                 {% endfor %}
