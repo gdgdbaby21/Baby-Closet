@@ -121,6 +121,7 @@ class Clothes(models.Model):
 #ハッシュタグ検索のモデル  
 class Hashtag(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    popularity = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -142,7 +143,7 @@ class Post(models.Model):
     title = models.CharField(max_length=50, default='')  
     caption = models.TextField(blank=True, null=True)
     items = models.ManyToManyField(Item, blank=True)
-    hashtags = models.ManyToManyField(Hashtag, blank=True)
+    hashtags = models.ManyToManyField(Hashtag, related_name='posts') 
     is_public = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     

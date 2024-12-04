@@ -10,7 +10,7 @@ from .forms import UserProfileForm, WishlistItemForm, ClothingForm, PostForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import DetailView, ListView
-from django.db.models import Q
+from django.db.models import Q, Count
 from urllib.parse import unquote
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -60,15 +60,37 @@ class LogoutView(View):
 
 
     
-class HomeView(LoginRequiredMixin, View):
-    login_url = '/login/' 
-    redirect_field_name = 'next'
+class HomeView(LoginRequiredMixin, ListView):
+    # login_url = '/login/' 
+    # redirect_field_name = 'next'
 
-    def get(self, request):
-        posts = Post.objects.all()
-        return render(request, "home.html", {"posts": posts})
+    # def get(self, request):
+    #     posts = Post.objects.all()
+    #     return render(request, "home.html", {"posts": posts})
+    model = Post
+    template_name = 'home.html'
+    context_object_name = 'posts'
+    # queryset = Post.objects.all()
+    login_url = "/login/"
 
-    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # 人気ハッシュタグを投稿数で並び替え（上位3件を取得）
+        popular_hashtags = Hashtag.objects.annotate(
+            post_count=Count('posts')
+        ).order_by('-popularity', '-post_count')[:3]
+
+        # 人気ハッシュタグごとの投稿データを取得
+        hashtag_posts = {
+            hashtag: hashtag.posts.all()[:5]  # 各ハッシュタグに関連する上位5件の投稿
+            for hashtag in popular_hashtags
+        }
+
+        context['popular_hashtags'] = popular_hashtags
+        context['hashtag_posts'] = hashtag_posts
+        return context
+
 
 
 class ProfileView(View):
@@ -223,7 +245,6 @@ class HashtagSearchView(ListView):
     context_object_name = 'posts'
    
     def get_queryset(self):
-        
         query_param = self.request.GET.get('q', None)
         if query_param:
             hashtag_name = unquote(query_param).lstrip('#')
@@ -233,7 +254,7 @@ class HashtagSearchView(ListView):
         print(f"Searching for hashtag: {hashtag_name}")
 
         hashtag = get_object_or_404(Hashtag, name=hashtag_name)
-        return Post.objects.filter(hashtags=hashtag, is_public=True).order_by('-created_at')
+        return Post.objects.filter(hashtags=hashtag).order_by("-created_at")
     
 
 class CreatePostView(LoginRequiredMixin, CreateView):
