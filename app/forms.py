@@ -95,11 +95,32 @@ class ClothingForm(forms.ModelForm):
         
 
 #コーディネート投稿のフォーム
+# class PostForm(forms.ModelForm):
+#     items = forms.ModelMultipleChoiceField(
+#         queryset=Item.objects.all(),
+#         required=False,
+#         widget=forms.CheckboxSelectMultiple
+#     )
+
+#     class Meta:
+#         model = Post
+#         fields = ['image', 'title', 'caption', 'items', 'is_public']
+#         widgets = {
+#             'caption': forms.Textarea(attrs={
+#                 'placeholder': 'メモを入力してください',
+#                 'rows': 3
+#             }),
+#             'title': forms.TextInput(attrs={
+#                 'placeholder': 'タイトルを入力してください'
+#             }),
+#         }
+
 class PostForm(forms.ModelForm):
     items = forms.ModelMultipleChoiceField(
         queryset=Item.objects.all(),
         required=False,
-        widget=forms.CheckboxSelectMultiple
+        widget=forms.CheckboxSelectMultiple,
+        label="使用したアイテム"
     )
 
     class Meta:

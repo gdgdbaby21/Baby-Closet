@@ -5,7 +5,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
-from .models import UserProfile, WishlistItem, Clothes, Post, Hashtag, Like, Comment
+from .models import UserProfile, WishlistItem, Clothes, Post, Hashtag, Like, Comment, Item
 from .forms import UserProfileForm, WishlistItemForm, ClothingForm, PostForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
@@ -15,6 +15,7 @@ from urllib.parse import unquote
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.views.generic.list import ListView
 
 
 class PortfolioView(View):
@@ -318,3 +319,46 @@ class CommentView(LoginRequiredMixin, View):
                 "created_at": comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
             })
         return JsonResponse({"error": "コメント内容が空です。"}, status=400)
+    
+
+class RegisterItemView(CreateView):
+    model = Item
+    fields = ['name', 'image', 'description']
+    template_name = 'register_item.html'
+    success_url = reverse_lazy('create_post')
+    
+    
+class ItemSelectionView(ListView):
+    model = Item
+    template_name = 'modal.html'
+    context_object_name = 'items'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        keyword = self.request.GET.get('keyword', '')
+        category = self.request.GET.get('category', '')
+        size = self.request.GET.get('size', '')
+
+        if keyword:
+            queryset = queryset.filter(name__icontains=keyword)
+        if category:
+            queryset = queryset.filter(category=category)
+        if size:
+            queryset = queryset.filter(size=size)
+
+        return queryset
+    
+    
+
+
+class ModalView(ListView):
+    template_name = 'modal.html'  # 使用するテンプレート
+    context_object_name = 'items'  # テンプレート内で使用する変数名
+
+    def get_queryset(self):
+        # アイテム情報を取得してリストとして返す
+        return [
+            {'id': 1, 'name': 'ワンピース', 'image': '/static/images/item1.jpg', 'size': 'M'},
+            {'id': 2, 'name': 'トップス', 'image': '/static/images/item2.jpg', 'size': 'L'},
+        ]

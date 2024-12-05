@@ -131,6 +131,7 @@ class Hashtag(models.Model):
 class Item(models.Model):
     name = models.CharField(max_length=50)
     image = models.ImageField(upload_to='items/images/')
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -142,7 +143,7 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts/images/')
     title = models.CharField(max_length=50, default='')  
     caption = models.TextField(blank=True, null=True)
-    items = models.ManyToManyField(Item, blank=True)
+    items = models.ManyToManyField(Item, related_name='posts')
     hashtags = models.ManyToManyField(Hashtag, related_name='posts') 
     is_public = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

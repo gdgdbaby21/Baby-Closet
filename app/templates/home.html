@@ -9,7 +9,7 @@
             gap: 20px; /* アイテム間のスペース */
             justify-content: flex-start; /* 左揃え */
         }
-
+    
         .post-item {
             width: 300px; /* 各投稿カードの幅を固定 */
             background-color: #fff;
@@ -18,13 +18,18 @@
             padding: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
+    
+        .image-wrapper {
+            text-align: center; /* 画像を中央揃え */
+        }
+    
         .image-wrapper img {
-            width: 100%;
-            height: auto;
+            max-width: 100%; /* 親要素の幅に収まる */
+            height: auto; /* アスペクト比を保つ */
+            max-height: 200px; /* 最大高さを指定 */
             border-radius: 8px;
         }
-
+    
         .post-meta {
             margin-top: 10px;
             font-size: 14px;
@@ -32,8 +37,13 @@
         }
     </style>
 
+    <!-- 投稿一覧ヘッダー -->
+    <div class="post-header">
+        <h2>New Post</h2>
+        <a href="{% url 'create_post' %}" class="new-post-button">投稿する</a>
+    </div>
+
     <!-- 投稿一覧 -->
-    <h2>New Post</h2>
     <div class="post-list">
         {% for post in posts %}
         <div class="post-item">
