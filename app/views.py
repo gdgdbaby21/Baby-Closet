@@ -201,6 +201,20 @@ class ClothesDeleteView(DeleteView):
         self.object = self.get_object()
         messages.success(self.request, self.success_message % dict(title=self.object.title))
         return super().delete(request, *args, **kwargs)
+    
+    
+class ClothesOptionsView(View):
+    def get(self, request, *args, **kwargs):
+        genres = Clothes.objects.values_list('genre', flat=True).distinct()
+        colors = Clothes.objects.values_list('color', flat=True).distinct()
+        sizes = Clothes.objects.values_list('size', flat=True).distinct()
+        
+        return JsonResponse({
+            'genres': list(genres),
+            'colors': list(colors),
+            'sizes': list(sizes),
+        })
+        
 
 
 
@@ -362,3 +376,4 @@ class ModalView(ListView):
             {'id': 1, 'name': 'ワンピース', 'image': '/static/images/item1.jpg', 'size': 'M'},
             {'id': 2, 'name': 'トップス', 'image': '/static/images/item2.jpg', 'size': 'L'},
         ]
+
