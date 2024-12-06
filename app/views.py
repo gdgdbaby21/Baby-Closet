@@ -13,8 +13,6 @@ from django.views.generic import DetailView, ListView
 from django.db.models import Q, Count
 from urllib.parse import unquote
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 from django.views.generic.list import ListView
 
 
@@ -62,16 +60,9 @@ class LogoutView(View):
 
     
 class HomeView(LoginRequiredMixin, ListView):
-    # login_url = '/login/' 
-    # redirect_field_name = 'next'
-
-    # def get(self, request):
-    #     posts = Post.objects.all()
-    #     return render(request, "home.html", {"posts": posts})
     model = Post
     template_name = 'home.html'
     context_object_name = 'posts'
-    # queryset = Post.objects.all()
     login_url = "/login/"
 
     def get_context_data(self, **kwargs):
@@ -204,18 +195,16 @@ class ClothesDeleteView(DeleteView):
     
     
 class ClothesOptionsView(View):
-    def get(self, request, *args, **kwargs):
+    def get(self, request):#requestは現在未使用
         genres = Clothes.objects.values_list('genre', flat=True).distinct()
         colors = Clothes.objects.values_list('color', flat=True).distinct()
         sizes = Clothes.objects.values_list('size', flat=True).distinct()
-        
+
         return JsonResponse({
             'genres': list(genres),
             'colors': list(colors),
             'sizes': list(sizes),
         })
-        
-
 
 
 class SearchResultsView(ListView):
@@ -342,38 +331,36 @@ class RegisterItemView(CreateView):
     success_url = reverse_lazy('create_post')
     
     
-class ItemSelectionView(ListView):
-    model = Item
-    template_name = 'modal.html'
-    context_object_name = 'items'
+class FilterClothesView(View):
+    def get(self, request, *args, **kwargs):
+        # フロントエンドからのクエリパラメータを取得
+        genre = request.GET.get('genre')
+        color = request.GET.get('color')
+        size = request.GET.get('size')
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
+        # クエリセットの初期化
+        clothes = Clothes.objects.all()
 
-        keyword = self.request.GET.get('keyword', '')
-        category = self.request.GET.get('category', '')
-        size = self.request.GET.get('size', '')
-
-        if keyword:
-            queryset = queryset.filter(name__icontains=keyword)
-        if category:
-            queryset = queryset.filter(category=category)
+        # フィルタリング条件の追加
+        if genre:
+            clothes = clothes.filter(genre=genre)
+        if color:
+            clothes = clothes.filter(color=color)
         if size:
-            queryset = queryset.filter(size=size)
+            clothes = clothes.filter(size=size)
 
-        return queryset
-    
-    
-
-
-class ModalView(ListView):
-    template_name = 'modal.html'  # 使用するテンプレート
-    context_object_name = 'items'  # テンプレート内で使用する変数名
-
-    def get_queryset(self):
-        # アイテム情報を取得してリストとして返す
-        return [
-            {'id': 1, 'name': 'ワンピース', 'image': '/static/images/item1.jpg', 'size': 'M'},
-            {'id': 2, 'name': 'トップス', 'image': '/static/images/item2.jpg', 'size': 'L'},
+        # レスポンスデータの構築
+        data = [
+            {
+                'id': item.id,
+                'name': item.title,
+                'image': item.image.url if item.image else '',
+                'genre': item.genre,
+                'color': item.color,
+                'size': item.size,
+            }
+            for item in clothes
         ]
 
+        # JSONレスポンスを返す
+        return JsonResponse({'items': data})

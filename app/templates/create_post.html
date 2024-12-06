@@ -119,99 +119,91 @@
         let selectedItems = []; // 選択されたアイテムを保持
 
         document.addEventListener('DOMContentLoaded', () => {
+            // フィルタをロード
             loadFilters();
-    
-            // フィルターの初期化（ジャンル、カラー、サイズ）
-            function loadFilters() {
-                fetch('/api/clothes-options/')
-                    .then(response => response.json())
-                    .then(data => {
-                        populateSelect('genre-select', data.genres);
-                        populateSelect('color-select', data.colors);
-                        populateSelect('size-select', data.sizes);
-                    })
-                    .catch(error => console.error('Error loading filters:', error));
-            }
-    
-            // セレクトボックスにデータを追加
-            function populateSelect(selectId, options) {
-                const select = document.getElementById(selectId);
-                select.innerHTML = '<option value="">選択</option>';
-                options.forEach(option => {
-                    const opt = document.createElement('option');
-                    opt.value = option;
-                    opt.textContent = option;
-                    select.appendChild(opt);
-                });
-            }
-    
-            // アイテムをフィルタリングして表示
-            function filterItems() {
-                const genre = document.getElementById('genre-select').value;
-                const color = document.getElementById('color-select').value;
-                const size = document.getElementById('size-select').value;
-    
-                fetch(`/api/clothes-options/?genre=${genre}&color=${color}&size=${size}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const preview = document.getElementById('item-preview');
-                        preview.innerHTML = '';
-    
-                        data.items.forEach(item => {
-                            const card = document.createElement('div');
-                            card.className = 'card me-2 mb-2';
-                            card.style.width = '100px';
-                            card.onclick = () => selectItem(card, item);
-    
-                            card.innerHTML = `
-                                <img src="${item.image}" class="card-img-top" alt="${item.name}">
-                                <div class="card-body">
-                                    <p class="card-text">${item.name}</p>
-                                </div>
-                            `;
-                            preview.appendChild(card);
-                        });
-                    })
-                    .catch(error => console.error('Error fetching items:', error));
-            }
-    
-            // アイテム選択
-            function selectItem(card, item) {
-                if (card.classList.contains('selected')) {
-                    card.classList.remove('selected');
-                    selectedItems = selectedItems.filter(i => i.id !== item.id);
-                } else {
-                    card.classList.add('selected');
-                    selectedItems.push(item);
-                }
-            }
-    
-            // 選択したアイテムを保存
-            function saveSelectedItems() {
-                const selectedContainer = document.getElementById('selected-items');
-                selectedContainer.innerHTML = ''; // 初期化
-    
-                selectedItems.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'card me-2 mb-2';
-                    card.style.width = '150px';
-    
-                    card.innerHTML = `
-                        <img src="${item.image}" class="card-img-top" alt="${item.name}">
-                        <div class="card-body">
-                            <p class="card-text">${item.name}</p>
-                            <p class="card-text">ジャンル: ${item.genre}</p>
-                            <p class="card-text">カラー: ${item.color}</p>
-                            <p class="card-text">サイズ: ${item.size}</p>
-                        </div>
-                        <input type="hidden" name="items" value="${item.id}">
-                    `;
-                    selectedContainer.appendChild(card);
-                });
-    
-                // モーダルを閉じる
-                const modal = bootstrap.Modal.getInstance(document.getElementById('itemModal'));
-                modal.hide();
-            }
         });
-    </script>
+
+        function loadFilters() {
+            fetch('/api/clothes-options/')
+                .then(response => response.json())
+                .then(data => {
+                    populateSelect('genre-select', data.genres);
+                    populateSelect('color-select', data.colors);
+                    populateSelect('size-select', data.sizes);
+                })
+                .catch(error => console.error('Error loading filters:', error));
+        }
+
+        function populateSelect(selectId, options) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">選択</option>';
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                select.appendChild(opt);
+            });
+        }
+
+        function filterItems() {
+            const genre = document.getElementById('genre-select').value;
+            const color = document.getElementById('color-select').value;
+            const size = document.getElementById('size-select').value;
+
+            fetch(`/api/filter-clothes/?genre=${genre}&color=${color}&size=${size}`)
+                .then(response => response.json())
+                .then(data => {
+                    const preview = document.getElementById('item-preview');
+                    preview.innerHTML = '';
+
+                    data.items.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'card me-2 mb-2';
+                        card.style.width = '150px';
+                        card.onclick = () => selectItem(card, item);
+
+                        card.innerHTML = `
+                            <img src="${item.image}" class="card-img-top" alt="${item.name}">
+                            <div class="card-body">
+                                <p class="card-text">${item.name}</p>
+                                <p class="card-text">ジャンル: ${item.genre}</p>
+                                <p class="card-text">カラー: ${item.color}</p>
+                                <p class="card-text">サイズ: ${item.size}</p>
+                            </div>
+                        `;
+                        preview.appendChild(card);
+                    });
+                })
+                .catch(error => console.error('Error fetching filtered items:', error));
+        }
+
+        function selectItem(card, item) {
+            if (card.classList.contains('selected')) {
+                card.classList.remove('selected');
+                selectedItems = selectedItems.filter(i => i.id !== item.id);
+            } else {
+                card.classList.add('selected');
+                selectedItems.push(item);
+            }
+        }
+
+        function saveSelectedItems() {
+            const selectedContainer = document.getElementById('selected-items');
+            selectedContainer.innerHTML = '';
+
+            selectedItems.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card me-2 mb-2';
+                card.style.width = '150px';
+
+                card.innerHTML = `
+                    <img src="${item.image}" class="card-img-top" alt="${item.name}">
+                    <div class="card-body">
+                        <p class="card-text">${item.name}</p>
+                        <p class="card-text">ジャンル: ${item.genre}</p>
+                        <p class="card-text">カラー: ${item.color}</p>
+                        <p class="card-text">サイズ: ${item.size}</p>
+                    </div>
+                    <input type="hidden" name="items" value="${item.id}">
+                `;
+                selectedContainer.appendChild
