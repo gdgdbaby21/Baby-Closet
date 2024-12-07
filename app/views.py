@@ -9,7 +9,8 @@ from .models import UserProfile, WishlistItem, Clothes, Post, Hashtag, Like, Com
 from .forms import UserProfileForm, WishlistItemForm, ClothingForm, PostForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic.list import ListView
 from django.db.models import Q, Count
 from urllib.parse import unquote
 from django.http import JsonResponse
@@ -261,15 +262,39 @@ class HashtagSearchView(ListView):
         return Post.objects.filter(hashtags=hashtag).order_by("-created_at")
     
 
-class CreatePostView(LoginRequiredMixin, CreateView):
-    model = Post
-    form_class = PostForm
+class CreatePostView(TemplateView):
     template_name = 'create_post.html'
-    success_url = reverse_lazy('home')
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['genres'] = Clothes.GENRE_CHOICES
+        context['colors'] = Clothes.COLOR_CHOICES
+        context['sizes'] = Clothes.SIZE_CHOICES
+        return context
+    
+
+
+class FilterItemsView(ListView):
+    model = Clothes
+    template_name = 'filtered_items.html'
+    context_object_name = 'items'
+
+    def get_queryset(self):
+        genre = self.request.GET.get('genre')
+        color = self.request.GET.get('color')
+        size = self.request.GET.get('size')
+
+        queryset = Clothes.objects.all()
+
+        if genre:
+            queryset = queryset.filter(genre=genre)
+        if color:
+            queryset = queryset.filter(color=color)
+        if size:
+            queryset = queryset.filter(size=size)
+
+        return queryset
+
     
     
 class PostDetailView(DetailView):
@@ -329,38 +354,29 @@ class RegisterItemView(CreateView):
     fields = ['name', 'image', 'description']
     template_name = 'register_item.html'
     success_url = reverse_lazy('create_post')
-    
-    
-class FilterClothesView(View):
+
+
+class ClothesOptionsView(TemplateView):
     def get(self, request, *args, **kwargs):
-        # フロントエンドからのクエリパラメータを取得
-        genre = request.GET.get('genre')
-        color = request.GET.get('color')
-        size = request.GET.get('size')
+        return JsonResponse({
+            'genres': Clothes.GENRE_CHOICES,
+            'sizes': Clothes.SIZE_CHOICES,
+            'colors': Clothes.COLOR_CHOICES,
+        })
+    
 
-        # クエリセットの初期化
+class ClothesListView(View):
+    def get(self, request, *args, **kwargs):
         clothes = Clothes.objects.all()
-
-        # フィルタリング条件の追加
-        if genre:
-            clothes = clothes.filter(genre=genre)
-        if color:
-            clothes = clothes.filter(color=color)
-        if size:
-            clothes = clothes.filter(size=size)
-
-        # レスポンスデータの構築
         data = [
             {
                 'id': item.id,
-                'name': item.title,
-                'image': item.image.url if item.image else '',
-                'genre': item.genre,
-                'color': item.color,
+                'title': item.title,
+                'genre': item.get_genre_display(),
                 'size': item.size,
+                'color': item.get_color_display(),
+                'image': item.image.url if item.image else None,
             }
             for item in clothes
         ]
-
-        # JSONレスポンスを返す
-        return JsonResponse({'items': data})
+        return JsonResponse({'clothes': data})

@@ -1,209 +1,163 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>コーディネート投稿</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .modal-body .card {
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.2s, background-color 0.2s;
-        }
-
-        .modal-body .card.selected {
-            border-color: #007bff;
-            background-color: #f0f8ff;
-        }
-
-        .modal-body .card img {
-            height: 150px;
-            object-fit: cover;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
 </head>
 <body>
-    <main class="py-4">
-        <div class="container">
-            <h1>コーディネート投稿</h1>
-            <form method="post" enctype="multipart/form-data">
-                <!-- メイン画像のアップロード -->
-                <div class="mb-3">
-                    <label for="id_image">写真を選択</label>
-                    <input type="file" id="id_image" name="image" class="form-control">
-                </div>
-                
-                <!-- タイトル入力 -->
-                <div class="mb-3">
-                    <label for="id_title">タイトル</label>
-                    <input type="text" id="id_title" name="title" class="form-control">
-                </div>
-
-                <!-- メモ入力 -->
-                <div class="mb-3">
-                    <label for="id_caption">メモ</label>
-                    <textarea id="id_caption" name="caption" class="form-control"></textarea>
-                </div>
-
-                <!-- 使用したアイテムの選択 -->
-                <div class="d-flex align-items-center mb-3">
-                    <label for="id_items" class="me-3">使用したアイテムの情報</label>
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#itemModal">
-                        + 追加
-                    </button>
-                </div>
-                <div id="selected-items" class="mt-2">
-                    <!-- 選択したアイテムを表示 -->
-                </div>
-
-                <!-- 公開設定 -->
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="id_is_public" name="is_public">
-                    <label for="id_is_public" class="form-check-label">ユーザーに公開する</label>
-                </div>
-
-                <!-- 投稿ボタン -->
-                <button type="submit" class="btn btn-primary mt-3">投稿</button>
-            </form>
+    <div class="container mt-5">
+        <h1>コーディネート投稿</h1>
+        <form method="POST">
+            {% csrf_token %}
+            
+        <!-- 写真を選択 -->
+        <div class="mb-3">
+            <label for="photo" class="form-label">写真を選択:</label>
+            <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
         </div>
-    </main>
+        
+        <!-- タイトル -->
+        <div class="mb-3">
+            <label for="title" class="form-label">タイトル:</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="タイトルを入力してください" required>
+        </div>
+        
+        <!-- メモ -->
+        <div class="mb-3">
+            <label for="memo" class="form-label">メモ:</label>
+            <textarea class="form-control" id="memo" name="memo" rows="3" placeholder="メモを入力してください"></textarea>
+        </div>
+        
+        <!-- 使用したアイテムの情報 -->
+        <div class="mb-3">
+            <label>使用したアイテムの情報:</label>
+            <ul id="selected-items-list" class="list-unstyled">
+                <!-- 選択されたアイテムがここに表示されます -->
+            </ul>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemModal">
+                アイテムを追加
+            </button>
+        </div>
+        
+        <!-- ユーザーに公開する -->
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="isPublic" name="is_public" value="1">
+            <label class="form-check-label" for="isPublic">
+                ユーザーに公開する
+            </label>
+        </div>
 
-    <!-- モーダル -->
+        <!-- 投稿ボタン -->
+        <button type="submit" class="btn btn-success">投稿</button>
+    </form>
+</div>
+
+    <!-- アイテム選択条件モーダル -->
     <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="itemModalLabel">アイテムを追加</h5>
+                    <h5 class="modal-title">アイテムを選択</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- フィルタ -->
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="genre-select" class="form-label">ジャンル</label>
-                            <select id="genre-select" class="form-select" onchange="filterItems()">
-                                <option value="">選択</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="color-select" class="form-label">カラー</label>
-                            <select id="color-select" class="form-select" onchange="filterItems()">
-                                <option value="">選択</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="size-select" class="form-label">サイズ</label>
-                            <select id="size-select" class="form-select" onchange="filterItems()">
-                                <option value="">選択</option>
-                            </select>
-                        </div>
+                    <!-- プルダウンメニュー -->
+                    <div class="form-group">
+                        <label for="genre-select">ジャンル:</label>
+                        <select id="genre-select" class="form-select">
+                            <option value="" selected>選択してください</option>
+                            {% for genre in genres %}
+                            <option value="{{ genre.0 }}">{{ genre.1 }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-
-                    <!-- アイテムのプレビュー -->
-                    <div class="d-flex flex-wrap mt-3" id="item-preview">
-                        <!-- アイテム表示用 -->
+                    <div class="form-group mt-3">
+                        <label for="color-select">カラー:</label>
+                        <select id="color-select" class="form-select">
+                            <option value="" selected>選択してください</option>
+                            {% for color in colors %}
+                            <option value="{{ color.0 }}">{{ color.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="size-select">サイズ:</label>
+                        <select id="size-select" class="form-select">
+                            <option value="" selected>選択してください</option>
+                            {% for size in sizes %}
+                            <option value="{{ size.0 }}">{{ size.1 }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                    <button type="button" class="btn btn-primary" onclick="saveSelectedItems()">確定</button>
+                    <button type="button" class="btn btn-primary" id="loadFilteredItems">検索</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- スクリプト -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- アイテムリスト表示モーダル -->
+    <div class="modal fade" id="filteredItemModal" tabindex="-1" aria-labelledby="filteredItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">アイテムの選択</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
+                </div>
+                <div class="modal-body" id="filtered-items-container">
+                    <!-- filtered_items.html の内容がここにロードされます -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                    <button type="button" class="btn btn-primary" id="confirmSelection">選択して反映</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let selectedItems = []; // 選択されたアイテムを保持
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // フィルタをロード
-            loadFilters();
-        });
-
-        function loadFilters() {
-            fetch('/api/clothes-options/')
-                .then(response => response.json())
-                .then(data => {
-                    populateSelect('genre-select', data.genres);
-                    populateSelect('color-select', data.colors);
-                    populateSelect('size-select', data.sizes);
-                })
-                .catch(error => console.error('Error loading filters:', error));
-        }
-
-        function populateSelect(selectId, options) {
-            const select = document.getElementById(selectId);
-            select.innerHTML = '<option value="">選択</option>';
-            options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option;
-                opt.textContent = option;
-                select.appendChild(opt);
-            });
-        }
-
-        function filterItems() {
+        // 検索ボタンがクリックされたとき
+        document.getElementById('loadFilteredItems').addEventListener('click', function () {
             const genre = document.getElementById('genre-select').value;
             const color = document.getElementById('color-select').value;
             const size = document.getElementById('size-select').value;
 
-            fetch(`/api/filter-clothes/?genre=${genre}&color=${color}&size=${size}`)
-                .then(response => response.json())
-                .then(data => {
-                    const preview = document.getElementById('item-preview');
-                    preview.innerHTML = '';
-
-                    data.items.forEach(item => {
-                        const card = document.createElement('div');
-                        card.className = 'card me-2 mb-2';
-                        card.style.width = '150px';
-                        card.onclick = () => selectItem(card, item);
-
-                        card.innerHTML = `
-                            <img src="${item.image}" class="card-img-top" alt="${item.name}">
-                            <div class="card-body">
-                                <p class="card-text">${item.name}</p>
-                                <p class="card-text">ジャンル: ${item.genre}</p>
-                                <p class="card-text">カラー: ${item.color}</p>
-                                <p class="card-text">サイズ: ${item.size}</p>
-                            </div>
-                        `;
-                        preview.appendChild(card);
-                    });
-                })
-                .catch(error => console.error('Error fetching filtered items:', error));
-        }
-
-        function selectItem(card, item) {
-            if (card.classList.contains('selected')) {
-                card.classList.remove('selected');
-                selectedItems = selectedItems.filter(i => i.id !== item.id);
-            } else {
-                card.classList.add('selected');
-                selectedItems.push(item);
+            if (!genre || !color || !size) {
+                alert('すべての項目を選択してください。');
+                return;
             }
-        }
 
-        function saveSelectedItems() {
-            const selectedContainer = document.getElementById('selected-items');
-            selectedContainer.innerHTML = '';
+            // フィルタリングされたアイテムを取得
+            fetch(`{% url 'item_filter' %}?genre=${genre}&color=${color}&size=${size}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('filtered-items-container').innerHTML = html;
+                    const modal = new bootstrap.Modal(document.getElementById('filteredItemModal'));
+                    modal.show();
+                });
+        });
 
-            selectedItems.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card me-2 mb-2';
-                card.style.width = '150px';
+        // 確定ボタンで選択内容を反映
+        document.getElementById('confirmSelection').addEventListener('click', function () {
+            const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+            const selectedItemsList = document.getElementById('selected-items-list');
 
-                card.innerHTML = `
-                    <img src="${item.image}" class="card-img-top" alt="${item.name}">
-                    <div class="card-body">
-                        <p class="card-text">${item.name}</p>
-                        <p class="card-text">ジャンル: ${item.genre}</p>
-                        <p class="card-text">カラー: ${item.color}</p>
-                        <p class="card-text">サイズ: ${item.size}</p>
-                    </div>
-                    <input type="hidden" name="items" value="${item.id}">
-                `;
-                selectedContainer.appendChild
+            selectedCheckboxes.forEach((checkbox) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'd-flex align-items-center mb-2';
+                listItem.innerHTML = checkbox.parentElement.innerHTML; // 選択したアイテムのHTMLをそのままコピー
+                selectedItemsList.appendChild(listItem);
+            });
+
+            // モーダルを閉じる
+            const modal = bootstrap.Modal.getInstance(document.getElementById('filteredItemModal'));
+            modal.hide();
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

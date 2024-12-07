@@ -18,7 +18,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, ClothesView, ClothesCreateView, ClothesDetailView, ClothesDeleteView, SearchResultsView, HashtagSearchView, CreatePostView, PostDetailView, PostDeleteView, LikeView, CommentView, FilterClothesView, ClothesOptionsView
+from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, ClothesView, ClothesCreateView, ClothesDetailView, ClothesDeleteView, SearchResultsView, HashtagSearchView, CreatePostView, PostDetailView, PostDeleteView, LikeView, CommentView, ClothesOptionsView,ClothesListView, FilterItemsView
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
@@ -47,8 +47,9 @@ urlpatterns = [
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
     path('post/<int:post_id>/like/', LikeView.as_view(), name='like_post'),
     path('post/<int:post_id>/comment/', CommentView.as_view(), name='comment_post'),
-    path('api/filter-clothes/', FilterClothesView.as_view(), name='filter-clothes'),
+    path('clothes/list/', ClothesListView.as_view(), name='clothes_list'),
     path('api/clothes-options/', ClothesOptionsView.as_view(), name='clothes-options'),
+    path('items/filter/', FilterItemsView.as_view(), name='item_filter'),
     
 ]
 
