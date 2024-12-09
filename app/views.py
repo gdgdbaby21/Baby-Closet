@@ -262,8 +262,36 @@ class HashtagSearchView(ListView):
         return Post.objects.filter(hashtags=hashtag).order_by("-created_at")
     
 
-class CreatePostView(TemplateView):
+class CreatePostView(LoginRequiredMixin, CreateView):
+    model = Post
     template_name = 'create_post.html'
+    form_class = PostForm
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.user = self.request.user
+
+        print("Post Data:", form.cleaned_data)
+        print("FILES Data:", self.request.FILES)
+        
+        if 'image' not in self.request.FILES:
+            print("No image uploaded!")
+            return self.form_invalid(form)
+        
+        post.save()
+        
+        item_ids = self.request.POST.getlist('items')
+        if item_ids:
+            items = Item.objects.filter(id__in=item_ids)
+            post.items.set(items)
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        
+        print("Form Errors:", form.errors)
+        return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -271,7 +299,6 @@ class CreatePostView(TemplateView):
         context['colors'] = Clothes.COLOR_CHOICES
         context['sizes'] = Clothes.SIZE_CHOICES
         return context
-    
 
 
 class FilterItemsView(ListView):
