@@ -156,6 +156,16 @@ class Post(models.Model):
                 hashtag, created = Hashtag.objects.get_or_create(name=tag_name)
                 self.hashtags.add(hashtag)
 
+# プロパティでいいね数を取得
+    @property
+    def likes_count(self):
+        return self.likes.count()
+
+    # プロパティでコメント数を取得
+    @property
+    def comments_count(self):
+        return self.comments.count()
+
 
 #いいね機能のモデル
 User = get_user_model()

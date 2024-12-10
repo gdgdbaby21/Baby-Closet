@@ -85,11 +85,15 @@ class HomeView(LoginRequiredMixin, ListView):
         return context
 
 
-
 class ProfileView(View):
     def get(self, request):
         user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-        return render(request, "profile.html", {"user_profile": user_profile})
+        user_posts = Post.objects.filter(user=request.user).order_by('-created_at')
+        return render(request, "profile.html", {
+            "user_profile": user_profile,
+            "user_posts": user_posts,
+        })
+        
 
 class WishlistView(View):
     def get(self, request):
