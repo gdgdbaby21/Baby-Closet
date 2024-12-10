@@ -1,46 +1,41 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <title>プロフィール</title>
-</head>
-<body>
-    <h1>プロフィールページ</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-    <!-- プロフィール画像の表示 -->
+
+{% block content %}
+<div class="profile-container">
+
+
     <div class="profile-image">
         {% if user_profile.profile_image %}
-            <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像" style="width: 150px; height: 150px; border-radius: 50%;">
+            <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像">
         {% else %}
-            <!-- デフォルト画像を表示 -->
-            <img src="{% static 'default-profile.png' %}" alt="デフォルト画像" style="width: 150px; height: 150px; border-radius: 50%;">
+            <img src="{% static 'default-profile.png' %}" alt="デフォルト画像">
         {% endif %}
     </div>
 
-    <!-- プロフィール情報の表示 -->
-    <p>名前: {{ user_profile.name }}</p>
-    <p>アカウント: {{ user_profile.account }}</p>
-    <p>性別: {{ user_profile.get_gender_display }}</p>
-    <p>生年月日: {{ user_profile.birth_of_date }}</p>
-    <p>自己紹介: {{ user_profile.bio }}</p>
-
-    <!-- プロフィール編集リンク -->
-    <p><a href="{% url 'edit_profile' %}">プロフィール編集</a></p>
     
-    <!-- ホームに戻るリンク -->
-    <p><a href="{% url 'home' %}">ホームに戻る</a></p>
+    <div class="profile-details">
+        <p>名前: {{ user_profile.name }}</p>
+        <p>アカウント: {{ user_profile.account }}</p>
+        <p>性別: {{ user_profile.get_gender_display }}</p>
+        <p>生年月日: {{ user_profile.birth_of_date }}</p>
+        <p>自己紹介: {{ user_profile.bio }}</p>
+    </div>
 
-    <!-- 投稿リストの表示 -->
+    
+    <p><a href="{% url 'edit_profile' %}">プロフィール編集</a></p>
+
+    
     <h2>マイコーディネート一覧</h2>
-    <div class="post-list" style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <div class="post-list">
         {% for post in user_posts %}
         <div class="post-item" style="border: 1px solid #ccc; padding: 10px; text-align: center; width: 150px;">
-            <!-- 画像クリックでpost_detailページに遷移 -->
+            
             <a href="{% url 'post_detail' post.id %}">
                 <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; height: 150px; object-fit: cover;">
             </a>
-            <!-- タイトルの表示 -->
+            
             <h3>{{ post.title }}</h3>
             <div>
                 <span>♥ {{ post.likes_count }}</span>
@@ -51,5 +46,5 @@
         <p>投稿がありません。</p>
         {% endfor %}
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

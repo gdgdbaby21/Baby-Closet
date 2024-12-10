@@ -1,0 +1,61 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #f8f8f8;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.header-menu {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    padding: 0;
+    margin: 0;
+}
+
+.header-menu li a {
+    text-decoration: none;
+    color: #333;
+    padding: 10px 20px;
+    display: block;
+}
+
+.header-menu li a:hover {
+    background-color: #ddd;
+    border-radius: 5px;
+}
+
+.profile-container {
+    display: flex; /* フレックスボックスを使用 */
+    flex-direction: column; /* 上から下へのレイアウト */
+    align-items: center; /* 水平方向の中央揃え */
+    justify-content: center; /* 垂直方向の中央揃え */
+    height: 100vh; /* 画面全体の高さ */
+    text-align: center; /* テキストの中央揃え */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.profile-image img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* 円形にする */
+    margin-bottom: 20px; /* 下にスペースを追加 */
+}
+
+.profile-details p {
+    margin: 5px 0; /* プロフィール項目の間に少し余白を追加 */
+}
+
+.post-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center; /* 投稿リストを中央揃え */
+}
