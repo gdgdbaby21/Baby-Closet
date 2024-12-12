@@ -2,18 +2,21 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    text-align: center; /* 全体の中央揃え */
+    box-sizing: border-box;
 }
 
 header {
     background-color: #f8f8f8;
     padding: 10px 20px;
     border-bottom: 1px solid #ddd;
+    text-align: center; /* ヘッダーの文字も中央揃え */
 }
 
 .header-menu {
     list-style: none;
     display: flex;
-    justify-content: space-around;
+    justify-content: center; /* メニュー項目の中央揃え */
     padding: 0;
     margin: 0;
 }
@@ -30,13 +33,14 @@ header {
     border-radius: 5px;
 }
 
+/* プロフィールセクション */
 .profile-container {
-    display: flex; /* フレックスボックスを使用 */
-    flex-direction: column; /* 上から下へのレイアウト */
-    align-items: center; /* 水平方向の中央揃え */
-    justify-content: center; /* 垂直方向の中央揃え */
-    height: 100vh; /* 画面全体の高さ */
-    text-align: center; /* テキストの中央揃え */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -45,17 +49,42 @@ header {
 .profile-image img {
     width: 150px;
     height: 150px;
-    border-radius: 50%; /* 円形にする */
-    margin-bottom: 20px; /* 下にスペースを追加 */
+    border-radius: 50%;
+    margin-bottom: 20px;
 }
 
 .profile-details p {
-    margin: 5px 0; /* プロフィール項目の間に少し余白を追加 */
+    margin: 5px 0;
 }
 
+.header-profile-image {
+    width: 40px; /* 画像の横幅を指定 */
+    height: 40px; /* 画像の縦幅を指定 */
+    border-radius: 50%; /* 画像を円形にする */
+    object-fit: cover; /* 円形内に収める */
+    display: block; /* 画像の余白をなくす */
+    margin-left: 10px; /* 必要に応じて調整 */
+}
+
+/* 投稿リスト */
 .post-list {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    justify-content: center; /* 投稿リストを中央揃え */
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.post-list-item {
+    width: 200px;
+    height: 200px;
+    background-color: #ddd;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }

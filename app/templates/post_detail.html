@@ -1,105 +1,118 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container">
-    <h1>投稿詳細</h1>
-    <div class="post-detail d-flex">
-        <!-- 投稿画像 -->
-        <div class="image-wrapper me-4" style="flex-shrink: 0;">
-            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 200px; height: auto;">
-        </div>
-
-        <!-- 投稿情報 -->
-        <div class="post-info">
-            <!-- 投稿者情報 -->
-            <div class="post-user mb-3">
-                <a href="{% url 'profile' %}">
-                    <img src="{{ post.user.userprofile.profile_image.url }}" alt="プロフィール画像" style="width: 50px; height: 50px; border-radius: 50%;">
-                </a>
-                <strong>{{ post.user.username }}</strong>
-            </div>
-
-            <!-- 投稿タイトルとキャプション -->
-            <h2>{{ post.title }}</h2>
-            <p>{{ post.caption }}</p>
-
-            <!-- 投稿削除ボタン -->
-            {% if user == post.user %}
-            <div class="delete-button mt-3">
-                <form action="{% url 'post_delete' post.pk %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">削除</button>
-                </form>
-            </div>
-            {% endif %}
-
-            <!-- いいね機能 -->
-            <div class="like-section mt-3">
-                <button id="like-button" class="btn btn-primary" data-post-id="{{ post.id }}">
-                    {% if user in post.likes.all %}
-                    ♥ いいねを取り消す
-                    {% else %}
-                    ♡ いいね
-                    {% endif %}
-                </button>
-                <span id="like-count">{{ post.likes.count }}</span> いいね
-            </div>
-
-            <!-- コメント一覧 -->
-            <div class="comments mt-3">
-                <h3>コメント</h3>
-                <ul id="comment-list">
-                    {% for comment in post.comments.all %}
-                    <li>
-                        <strong>{{ comment.user.userprofile.account }}</strong>: {{ comment.content }}
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <!-- コメント投稿フォーム -->
-            {% if user.is_authenticated %}
-            <form id="comment-form" method="post" data-post-id="{{ post.id }}" class="mt-3">
-                {% csrf_token %}
-                <textarea name="content" class="form-control" placeholder="コメントを入力..."></textarea>
-                <button type="submit" class="btn btn-primary mt-2">送信</button>
-            </form>
+<div class="container d-flex justify-content-center align-items-center flex-column" style="min-height: 100vh; text-align: center; background-color: #f8f9fa;">
+    <!-- 投稿情報 -->
+    <div class="post-info">
+        <div class="profile-image">
+            <a href="{% url 'profile' %}">
+            {% if user_profile.profile_image %}
+                <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像">
             {% else %}
-            <p>コメントを投稿するにはログインしてください。</p>
+                <img src="{% static 'default-profile.png' %}" alt="デフォルト画像">
             {% endif %}
         </div>
+        <!-- 投稿者情報 -->
+    <div class="post-user-info">
+        <a href="{% url 'profile' %}" style="text-decoration: none; color: #333;">
+            <strong>{{ user_profile.user.username }}</strong>
+        </a>
+    </div>
+</div>
+
+    <!-- 投稿画像 -->
+    <div class="image-wrapper mb-4">
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid" style="width: 30%; max-width: 300px; border-radius: 10px;">
+    </div>
+
+
+        <!-- 投稿タイトルとキャプション -->
+        <h2>{{ post.title }}</h2>
+        <p class="mb-4">{{ post.caption }}</p>
+
+        <!-- 投稿削除ボタン -->
+        {% if user == post.user %}
+        <div class="delete-button mt-3">
+            <form action="{% url 'post_delete' post.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">削除</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- いいね機能 -->
+        <div class="like-section mt-3">
+            <button id="like-button" class="btn btn-primary" data-post-id="{{ post.id }}" style="font-size: 24px; color: {% if user in post.likes.all %}black{% else %}gray{% endif %};">
+                {% if user in post.likes.all %}
+                ♥
+                {% else %}
+                ♡
+                {% endif %}
+            </button>
+            <p id="like-count" class="mt-2">{{ post.likes.count }} いいね</p>
+        </div>
+
+        <!-- コメント一覧 -->
+        <div class="comments mt-5">
+            <h3>コメント</h3>
+            <ul id="comment-list" class="list-unstyled">
+                {% for comment in post.comments.all %}
+                <li>
+                    <strong>{{ comment.user.userprofile.account }}</strong>: {{ comment.content }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- コメント投稿フォーム -->
+        {% if user.is_authenticated %}
+        <form id="comment-form" method="post" data-post-id="{{ post.id }}" class="mt-4">
+            {% csrf_token %}
+            <textarea name="content" class="form-control mb-2" placeholder="コメントを入力..." style="resize: none;"></textarea>
+            <button type="submit" class="btn btn-primary">送信</button>
+        </form>
+        {% else %}
+        <p class="mt-3">コメントを投稿するにはログインしてください。</p>
+        {% endif %}
     </div>
 </div>
 
 <script>
-    // いいねボタンの処理
-    document.getElementById('like-button').addEventListener('click', function () {
-        const postId = this.dataset.postId;
-        fetch(`/post/${postId}/like/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('いいね処理に失敗しました');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const likeButton = document.getElementById('like-button');
-            const likeCount = document.getElementById('like-count');
-            if (data.liked) {
-                likeButton.innerHTML = '♥ いいねを取り消す';
-            } else {
-                likeButton.innerHTML = '♡ いいね';
-            }
-            likeCount.textContent = data.like_count;
-        })
-        .catch(error => {
-            console.error('エラー:', error);
-            alert('いいねの処理中に問題が発生しました。');
+    document.addEventListener('DOMContentLoaded', function () {
+        const likeButton = document.getElementById('like-button');
+        const likeCount = document.getElementById('like-count');
+
+        likeButton.addEventListener('click', function () {
+            const postId = likeButton.dataset.postId;
+
+            fetch(`/post/${postId}/like/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('いいねの処理に失敗しました');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.liked) {
+                    likeButton.textContent = '♥';
+                    likeButton.style.color = 'black';
+                } else {
+                    likeButton.textContent = '♡';
+                    likeButton.style.color = 'gray';
+                }
+                likeCount.textContent = `${data.like_count} いいね`;
+            })
+            .catch(error => {
+                console.error('エラー:', error);
+                alert('いいねの処理に失敗しました。');
+            });
         });
     });
 </script>
