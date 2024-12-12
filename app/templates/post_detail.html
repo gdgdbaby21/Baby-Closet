@@ -4,66 +4,61 @@
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center flex-column" style="min-height: 100vh; text-align: center; background-color: #f8f9fa;">
     <!-- 投稿情報 -->
-    <div class="post-info">
-        <div class="profile-image">
-            <a href="{% url 'profile' %}">
-            {% if user_profile.profile_image %}
-                <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像">
-            {% else %}
-                <img src="{% static 'default-profile.png' %}" alt="デフォルト画像">
-            {% endif %}
+    <div class="post-info d-flex align-items-center justify-content-center" style="margin-bottom: 20px;">
+        <!-- プロフィール画像とアカウント -->
+        <div class="profile-and-account d-flex align-items-center" style="gap: 10px;">
+            <!-- プロフィール画像 -->
+            <div class="profile-image">
+                <a href="{% url 'profile' %}">
+                    {% if user_profile.profile_image %}
+                        <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'default-profile.png' %}" alt="デフォルト画像" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                    {% endif %}
+                </a>
+            </div>
+
+            <!-- アカウント情報 -->
+            <div class="post-user-info">
+                <a href="{% url 'profile' %}" style="text-decoration: none; color: #333; font-size: 14px;">
+                    <strong>@{{ user_profile.account }}</strong>
+                </a>
+            </div>
         </div>
-        <!-- 投稿者情報 -->
-    <div class="post-user-info">
-        <a href="{% url 'profile' %}" style="text-decoration: none; color: #333;">
-            <strong>{{ user_profile.user.username }}</strong>
-        </a>
     </div>
-</div>
+
 
     <!-- 投稿画像 -->
     <div class="image-wrapper mb-4">
         <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid" style="width: 30%; max-width: 300px; border-radius: 10px;">
     </div>
 
-
-        <!-- 投稿タイトルとキャプション -->
-        <h2>{{ post.title }}</h2>
-        <p class="mb-4">{{ post.caption }}</p>
-
+    <div class="action-buttons">
         <!-- 投稿削除ボタン -->
         {% if user == post.user %}
-        <div class="delete-button mt-3">
+        <div class="delete-button">
             <form action="{% url 'post_delete' post.pk %}" method="post">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-danger">削除</button>
+                <button type="submit">🗑️</button>
             </form>
         </div>
         {% endif %}
-
-        <!-- いいね機能 -->
-        <div class="like-section mt-3">
-            <button id="like-button" class="btn btn-primary" data-post-id="{{ post.id }}" style="font-size: 24px; color: {% if user in post.likes.all %}black{% else %}gray{% endif %};">
+    
+        <!-- いいねボタン -->
+        <div class="like-section">
+            <button id="like-button" class="{% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
                 {% if user in post.likes.all %}
                 ♥
                 {% else %}
                 ♡
                 {% endif %}
             </button>
-            <p id="like-count" class="mt-2">{{ post.likes.count }} いいね</p>
+            <p>{{ post.likes.count }}</p>
         </div>
-
-        <!-- コメント一覧 -->
-        <div class="comments mt-5">
-            <h3>コメント</h3>
-            <ul id="comment-list" class="list-unstyled">
-                {% for comment in post.comments.all %}
-                <li>
-                    <strong>{{ comment.user.userprofile.account }}</strong>: {{ comment.content }}
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
+    </div>
+    
+        
+            
 
         <!-- コメント投稿フォーム -->
         {% if user.is_authenticated %}

@@ -66,6 +66,31 @@ header {
     margin-left: 10px; /* 必要に応じて調整 */
 }
 
+.rounded-profile-image {
+    border-radius: 50%; /* 画像を円形にする */
+    object-fit: cover; /* 枠内に画像を収める */
+    display: block; /* 不要な余白を防ぐ */
+}
+
+.small-profile-image {
+    width: 10px; /* 横幅を小さく設定 */
+    height: 10px; /* 高さを横幅と同じに設定 */
+}
+
+.profile-and-account {
+    display: flex;
+    align-items: center; /* 縦方向の中央揃え */
+    justify-content: center; /* 横方向の中央揃え */
+    gap: 40px; /* 画像とアカウントの間隔 */
+}
+
+.post-user-info {
+    font-size: 14px; /* アカウント情報の文字サイズ */
+    color: #333; /* アカウント情報の文字色 */
+    text-align: center; /* テキストを中央揃え（必要に応じて） */
+}
+
+
 /* 投稿リスト */
 .post-list {
     display: flex;
@@ -87,4 +112,36 @@ header {
     justify-content: center;
     align-items: center;
     text-align: center;
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px; /* ボタン間の間隔 */
+    margin-top: 20px; /* 上の余白 */
+}
+
+.action-buttons button {
+    border: none;
+    background: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.action-buttons .delete-button button {
+    color: red;
+}
+
+.action-buttons .like-section button {
+    color: gray;
+}
+
+.action-buttons .like-section button.liked {
+    color: black;
+}
+
+.action-buttons .like-section p {
+    margin: 0;
+    font-size: 14px;
 }

@@ -10,7 +10,6 @@
         font-family: Arial, sans-serif;
     }
 
-    /* ナビゲーションバー用 */
     .navbar {
         width: 100%;
         padding: 10px 20px;
@@ -34,7 +33,7 @@
 
     .container {
         max-width: 600px;
-        margin: 50px auto; /* ページ中央に配置 */
+        margin: 50px auto;
         padding: 20px;
         background-color: #fff;
         border-radius: 8px;
@@ -62,7 +61,7 @@
     }
 
     .form-group label {
-        flex: 0 0 150px; /* ラベルの固定幅 */
+        flex: 0 0 150px;
         text-align: right;
         margin-right: 10px;
         font-weight: bold;
@@ -96,7 +95,7 @@
 </style>
 
 <div class="container">
-    <!-- プロフィール画像 -->
+    
     <div class="profile-image">
         <label for="profile_image">
             {% if user.userprofile and user.userprofile.profile_image %}
@@ -106,10 +105,10 @@
             {% endif %}
             <input type="file" id="profile_image" name="profile_image" style="display: none;">
         </label>
-        <p>画像をクリックしてアップロード</p>
+        <p>※画像をクリックしてアップロード</p>
     </div>
 
-    <!-- 入力フィールド -->
+    
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
@@ -133,7 +132,7 @@
             {{ form.bio }}
         </div>
 
-        <!-- ボタン -->
+        
         <button type="submit" class="btn-submit">決定</button>
     </form>
 </div>

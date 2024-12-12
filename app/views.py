@@ -333,7 +333,14 @@ class PostDetailView(DetailView):
     template_name = 'post_detail.html'
     context_object_name = 'post'
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.get_object()
+        context['user_profile'] = get_object_or_404(UserProfile, user=post.user)
+        return context
     
+
+
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     def get_object(self):
         return get_object_or_404(Post, pk=self.kwargs['pk'])
