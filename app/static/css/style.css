@@ -47,10 +47,12 @@ header {
 }
 
 .profile-image img {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    margin-bottom: 20px;
+    width: 100px; /* 画像の幅 */
+    height: 100px; /* 画像の高さ */
+    border-radius: 50%; /* 円形にする */
+    object-fit: cover; /* 枠内に画像を収める */
+    display: block;
+    margin: 0 auto; /* 画像を中央揃えにする */
 }
 
 .profile-details p {
@@ -58,8 +60,8 @@ header {
 }
 
 .header-profile-image {
-    width: 40px; /* 画像の横幅を指定 */
-    height: 40px; /* 画像の縦幅を指定 */
+    width: 20px; /* 画像の横幅を指定 */
+    height: 20px; /* 画像の縦幅を指定 */
     border-radius: 50%; /* 画像を円形にする */
     object-fit: cover; /* 円形内に収める */
     display: block; /* 画像の余白をなくす */
@@ -144,4 +146,29 @@ header {
 .action-buttons .like-section p {
     margin: 0;
     font-size: 14px;
+}
+
+.comments {
+    text-align: center;
+}
+
+#comment-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#comment-list li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* コメントと削除ボタンの間隔 */
+    margin-bottom: 10px;
+}
+
+.delete-comment {
+    background: none;
+    border: none;
+    color: red;
+    cursor: pointer;
 }

@@ -15,6 +15,7 @@ from django.db.models import Q, Count
 from urllib.parse import unquote
 from django.http import JsonResponse
 from django.views.generic.list import ListView
+import json
 
 
 class PortfolioView(View):
@@ -371,12 +372,20 @@ class LikeView(LoginRequiredMixin, View):
             liked = False
         else:
             liked = True
-        return JsonResponse({"liked": liked, "like_count": post.likes.count()})
-    
+        
+        # JSONレスポンスを構造化
+        return JsonResponse({
+            "liked": liked,
+            "like_count": post.likes.count()  # いいね数
+        })
+
+
 class CommentView(LoginRequiredMixin, View):
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
-        content = request.POST.get("content")
+        data = json.loads(request.body)  # リクエストボディをJSONとして解析
+        content = data.get("content")
+
         if content:
             comment = Comment.objects.create(user=request.user, post=post, content=content)
             return JsonResponse({
@@ -385,6 +394,13 @@ class CommentView(LoginRequiredMixin, View):
                 "created_at": comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
             })
         return JsonResponse({"error": "コメント内容が空です。"}, status=400)
+    
+    
+class DeleteCommentView(LoginRequiredMixin, View):
+    def delete(self, request, comment_id):
+        comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+        comment.delete()
+        return JsonResponse({"message": "コメントが削除されました。"})
     
 
 class RegisterItemView(CreateView):
