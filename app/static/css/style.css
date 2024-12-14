@@ -46,14 +46,6 @@ header {
     box-sizing: border-box;
 }
 
-.profile-image img {
-    width: 100px; /* 画像の幅 */
-    height: 100px; /* 画像の高さ */
-    border-radius: 50%; /* 円形にする */
-    object-fit: cover; /* 枠内に画像を収める */
-    display: block;
-    margin: 0 auto; /* 画像を中央揃えにする */
-}
 
 .profile-details p {
     margin: 5px 0;
