@@ -2,16 +2,13 @@
 {% load static %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
     <style>
         .wishlist-container {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             justify-content: center;
+            margin-top: 30px;
         }
         .item-card {
             width: 150px;
@@ -19,17 +16,43 @@
             border: 1px solid #ddd;
             padding: 10px;
             border-radius: 8px;
-            cursor: pointer; 
+            cursor: pointer;
             text-decoration: none;
             color: inherit;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
         }
         .item-card img {
             max-width: 100%;
             height: auto;
+            border-radius: 4px;
+        }
+        .add-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #6c757d;
+            color: white;
+            border-radius: 50%;
+            font-size: 36px;
+            text-align: center;
+            line-height: 60px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .add-button:hover {
+            background-color: #5a6268;
+            transform: scale(1.1);
         }
     </style>
-</head>
-<body>
 
     <div class="wishlist-container">
         {% for item in items %}
@@ -47,7 +70,5 @@
         {% endfor %}
     </div>
     
-    <a href="{% url 'wishlist_create' %}">投稿</a>
-</body>
-</html>
+    <div class="add-button" onclick="window.location.href='{% url 'wishlist_create' %}'">+</div>
 {% endblock %}

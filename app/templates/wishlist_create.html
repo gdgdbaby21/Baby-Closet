@@ -1,63 +1,123 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>投稿ページ</title>
-</head>
-<body>
     <style>
-        /* フォーム全体のスタイル */
-        form {
-            width: 300px; /* 任意の幅 */
-            margin: 0 auto; /* 中央に配置 */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
         }
 
-        /* フィールドごとの間隔を調整 */
+        .form-container {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: left;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        /* ラベルのスタイル */
         label {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
+            color: #555;
         }
 
-        /* テキストフィールドとボタンのスタイル調整 */
-        input[type="text"], input[type="number"], textarea, input[type="url"], input[type="file"], button {
+        input[type="text"], 
+        input[type="number"], 
+        input[type="url"], 
+        input[type="file"], 
+        textarea {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
             box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, 
+        textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color:#6c757d;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #5a6268;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: #495057;
+            text-decoration: underline;
         }
     </style>
-    <h1>欲しいものリストに追加</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        <!-- 画像 -->
-        <label for="id_image">画像:</label>
-        {{ form.image }}
-        
-        <!-- 価格 -->
-        <label for="id_price">価格:</label>
-        {{ form.price }}
-
-        <!-- ブランド -->
-        <label for="id_brand">ブランド:</label>
-        {{ form.brand }}
-        
-        <!-- 商品URL -->
-        <label for="id_product_url">商品URL:</label>
-        {{ form.product_url }}
-        
-        <!-- メモ -->
-        <label for="id_notes">メモ:</label>
-        {{ form.notes }}
-        
-        <button type="submit">登録</button>
-    </form>
-    <a href="{% url 'wishlist' %}">戻る</a>
+</head>
+<body>
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_image">画像:</label>
+                {{ form.image }}
+            </div>
+            <div class="form-group">
+                <label for="id_price">価格:</label>
+                {{ form.price }}
+            </div>
+            <div class="form-group">
+                <label for="id_brand">ブランド:</label>
+                {{ form.brand }}
+            </div>
+            <div class="form-group">
+                <label for="id_product_url">商品URL:</label>
+                {{ form.product_url }}
+            </div>
+            <div class="form-group">
+                <label for="id_notes">メモ:</label>
+                {{ form.notes }}
+            </div>
+            <button type="submit">登録</button>
+        </form>
+        <a href="{% url 'wishlist' %}" class="back-link">戻る</a>
+    </div>
 </body>
 </html>
-
+{% endblock %}
