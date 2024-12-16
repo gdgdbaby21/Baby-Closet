@@ -3,22 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <title>投稿詳細</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        
+        .item-image {
+            max-width: 300px;
+            height: auto;
+        }
+
+        
+        .button-container {
+            display: flex; 
+            gap: 10px; 
+            margin-top: 20px;
+        }
+
+        
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        
+        a {
+            text-decoration: none;
+            color: #007BFF;
+            padding: 10px 20px;
+            border: 1px solid #007BFF;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        a:hover {
+            background-color: #007BFF;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <h1>投稿詳細</h1>
-    
     <h1>{{ item.name }}</h1>
-    <img src="{{ item.image_url }}" alt="{{ item.name }}">
+    <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-image">
+    
     <p>値段: ¥{{ item.price }}</p>
     <p>ブランド: {{ item.brand }}</p>
-    <p>商品URL: <a href="{{ item.url }}">{{ item.url }}</a></p>
-    <p>メモ: {{ item.memo }}</p>
+    <p>商品URL: 
+        {% if item.product_url %}
+            <a href="{{ item.product_url }}" target="_blank">{{ item.product_url }}</a>
+        {% else %}
+            商品URLは登録されていません
+        {% endif %}
+    </p>
+    <p>メモ: {{ item.notes|default:"メモはありません" }}</p>
     
-    <a href="{% url 'wishlist' %}">戻る</a>
-    
-    <form action="{% url 'wishlist_delete' item.id %}" method="post" style="display: inline;">
-        {% csrf_token %}
-        <button type="submit">削除</button>
-    </form>
+    <div class="button-container">
+        <a href="{% url 'wishlist' %}">戻る</a>
+        <form action="{% url 'wishlist_delete' item.id %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit">削除</button>
+        </form>
+    </div>
 </body>
 </html>

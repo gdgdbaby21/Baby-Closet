@@ -1,9 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>欲しいものリスト</title>
-    {% load static %}
     <style>
         .wishlist-container {
             display: flex;
@@ -17,9 +19,9 @@
             border: 1px solid #ddd;
             padding: 10px;
             border-radius: 8px;
-            cursor: pointer; /* 枠全体をクリック可能に見せる */
-            text-decoration: none; /* リンクの下線を消す */
-            color: inherit; /* リンクの文字色を継承 */
+            cursor: pointer; 
+            text-decoration: none;
+            color: inherit;
         }
         .item-card img {
             max-width: 100%;
@@ -28,7 +30,6 @@
     </style>
 </head>
 <body>
-    <h1>欲しいものリスト</h1>
 
     <div class="wishlist-container">
         {% for item in items %}
@@ -49,55 +50,4 @@
     <a href="{% url 'wishlist_create' %}">投稿</a>
 </body>
 </html>
-
-
-
-{% comment %} <!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>欲しいものリスト</title>
-    {% load static %}
-    <style>
-        .wishlist-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-        .item-card {
-            width: 150px;
-            text-align: center;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .item-card img {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
-</head>
-<body>
-    <h1>欲しいものリスト</h1>
-
-<div class="wishlist-container">
-    {% for item in items %}
-        <div class="item-card">
-            <a href="{% url 'wishlist_detail' item.id %}">
-                {% if item.image %}
-                    <img src="{{ item.image.url }}" alt="{{ item.name }}">
-                {% else %}
-                    <img src="{% static 'default_image.jpg' %}" alt="No image available">
-                {% endif %}
-            </a>
-            <p><a href="{% url 'wishlist_detail' item.id %}">{{ item.name }}</a></p>
-            <p>¥{{ item.price|floatformat:0 }}</p>
-        </div>
-    {% empty %}
-        <p>欲しいものリストに商品がありません。</p>
-    {% endfor %}
-</div>
-<a href="{% url 'wishlist_create' %}">投稿</a>
-</body>
-</html> {% endcomment %}
+{% endblock %}
