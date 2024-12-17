@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    text-align: center; /* 全体の中央揃え */
+    text-align: center; 
     box-sizing: border-box;
 }
 
@@ -10,13 +10,14 @@ header {
     background-color: #f8f8f8;
     padding: 10px 20px;
     border-bottom: 1px solid #ddd;
-    text-align: center; /* ヘッダーの文字も中央揃え */
+    text-align: center;
+
 }
 
 .header-menu {
     list-style: none;
     display: flex;
-    justify-content: center; /* メニュー項目の中央揃え */
+    justify-content: center; 
     padding: 0;
     margin: 0;
 }
