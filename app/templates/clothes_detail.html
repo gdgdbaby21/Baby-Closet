@@ -1,8 +1,45 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>{{ item.title }}</title>
+    <style>
+        .post-list {
+            display: flex;
+            flex-wrap: wrap; /* 横並びにして、必要に応じて折り返し */
+            gap: 20px; /* 各投稿の間隔 */
+            justify-content: flex-start; /* 左揃え */
+        }
+
+        .post-item {
+            width: 200px; /* 各投稿の幅を固定 */
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .image-wrapper img {
+            max-width: 100%; /* 親要素の幅に収まる */
+            height: auto; /* アスペクト比を保つ */
+            max-height: 150px; /* 最大高さを設定 */
+            border-radius: 4px;
+        }
+
+        .post-item p {
+            font-size: 14px;
+            color: #555;
+            margin-top: 8px;
+        }
+    </style>
 </head>
 <body>
     <h1>{{ item.title }}</h1>
@@ -21,5 +58,24 @@
             削除
         </button>
     </form>
+
+    <h2>この服を使用しているコーディネート一覧</h2>
+    {% if related_posts %}
+        <div class="post-list">
+            {% for post in related_posts %}
+                <div class="post-item">
+                    <div class="image-wrapper">
+                        <a href="{% url 'post_detail' post.pk %}">
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                        </a>
+                    </div>
+                    <p><strong>{{ post.title }}</strong></p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>この服を使用しているコーディネート投稿はありません。</p>
+    {% endif %}
 </body>
 </html>
+{% endblock %}

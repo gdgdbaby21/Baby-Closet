@@ -3,15 +3,49 @@
 {% block content %}
 <div class="container">
     <style>
-        .post-list {
+        .search-bar {
+            margin-top: 20px; /* ナビゲーションバーとの間隔 */
             display: flex;
-            flex-wrap: wrap; /* 横並びが折り返される */
-            gap: 20px; /* アイテム間のスペース */
-            justify-content: flex-start; /* 左揃え */
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border: none; /* 枠線を削除 */
+            border-radius: 8px;
+            background-color: transparent; /* 背景色を透明に設定 */
         }
     
+        .search-bar input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc; /* 入力フィールドのみに枠線を適用 */
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+    
+        .search-bar button {
+            padding: 10px 20px;
+            background-color:  #6c757d; 
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    
+        .search-bar button:hover {
+            background-color: #5a6268; 
+        }
+
+        .post-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
+        }
+
         .post-item {
-            width: 300px; /* 各投稿カードの幅を固定 */
+            width: 300px;
             height: 400px;
             background-color: #fff;
             border: 1px solid #ddd;
@@ -22,20 +56,21 @@
             flex-direction: column;
             justify-content: space-between;
         }
-    
+
         .image-wrapper {
-            text-align: center; /* 画像を中央揃え */
+            text-align: center;
         }
-    
+
         .image-wrapper img {
-            max-width: 100%; /* 親要素の幅に収まる */
-            height: auto; /* アスペクト比を保つ */
-            max-height: 150px; /* 最大高さを指定 */
+            max-width: 100%;
+            height: auto;
+            max-height: 150px;
             object-fit: cover;
             border-radius: 8px;
         }
-    
-        .post-meta, .post-caption {
+
+        .post-meta,
+        .post-caption {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -44,6 +79,20 @@
             color: #555;
         }
     </style>
+
+    <!-- ハッシュタグ検索バー -->
+    <div class="search-bar">
+        <form action="{% url 'hashtag_search' %}" method="get">
+            <input 
+                type="text" 
+                name="q" 
+                placeholder="#ハッシュタグ検索" 
+                aria-label="ハッシュタグ検索"
+                required
+            >
+            <button type="submit">検索</button>
+        </form>
+    </div>
 
     <!-- 投稿一覧ヘッダー -->
     <div class="post-header">
@@ -55,7 +104,6 @@
     <div class="post-list">
         {% for post in posts %}
         <div class="post-item">
-            <!-- アカウント名 -->
             <p class="text-muted">
                 @
                 {% if post.user.userprofile.account %}
@@ -65,7 +113,6 @@
                 {% endif %}
             </p>
 
-            <!-- 投稿画像 -->
             <div class="image-wrapper">
                {% if post.image %}
                    <a href="{% url 'post_detail' post.pk %}">
@@ -76,62 +123,54 @@
                {% endif %}
             </div>
 
-            <!-- 投稿タイトル -->
             <p class="mt-2"><strong>{{ post.title }}</strong></p>
 
-            <!-- いいね数とコメント数 -->
             <div class="post-meta">
                 <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
                 <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
             </div>
 
-            <!-- 投稿キャプション -->
             <p>{{ post.caption }}</p>
         </div>
         {% endfor %}
     </div>
 
-    <!-- 人気ハッシュタグとその投稿 -->
-    <!-- 人気ハッシュタグとその投稿 -->
-<div class="popular-hashtags mt-4">
-    <h3>人気のハッシュタグ</h3>
-    {% for hashtag, posts in hashtag_posts.items %}
-        {% if posts|length > 0 %}
-        <div class="hashtag-section mb-5">
-            <h4>#{{ hashtag.name }}</h4>
-            <div class="post-list">
-                {% for post in posts %}
-                <div class="post-item">
-                    <!-- アカウント名 -->
-                    <p class="text-muted">
-                        @
-                        {% if post.user.userprofile.account %}
-                            {{ post.user.userprofile.account }}
-                        {% else %}
-                            Unknown User
-                        {% endif %}
-                    </p>
+    <div class="popular-hashtags mt-4">
+        <h3>人気のハッシュタグ</h3>
+        {% for hashtag, posts in hashtag_posts.items %}
+            {% if posts|length > 0 %}
+            <div class="hashtag-section mb-5">
+                <h4>#{{ hashtag.name }}</h4>
+                <div class="post-list">
+                    {% for post in posts %}
+                    <div class="post-item">
+                        <p class="text-muted">
+                            @
+                            {% if post.user.userprofile.account %}
+                                {{ post.user.userprofile.account }}
+                            {% else %}
+                                Unknown User
+                            {% endif %}
+                        </p>
 
-                    <!-- 投稿画像 -->
-                    <div class="image-wrapper">
-                        <a href="{% url 'post_detail' post.pk %}">
-                            <img src="{{ post.image.url }}" alt="投稿画像">
-                        </a>
+                        <div class="image-wrapper">
+                            <a href="{% url 'post_detail' post.pk %}">
+                                <img src="{{ post.image.url }}" alt="投稿画像">
+                            </a>
+                        </div>
+
+                        <p class="mt-2"><strong>{{ post.title }}</strong></p>
+
+                        <div class="post-meta">
+                            <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
+                            <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
+                        </div>
                     </div>
-
-                    <!-- 投稿タイトル -->
-                    <p class="mt-2"><strong>{{ post.title }}</strong></p>
-
-                    <!-- いいね数とコメント数 -->
-                    <div class="post-meta">
-                        <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
-                        <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
-                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
-        </div>
-        {% endif %}
-    {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

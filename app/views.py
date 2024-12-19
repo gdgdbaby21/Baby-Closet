@@ -187,6 +187,12 @@ class ClothesDetailView(DetailView):
     template_name = 'clothes_detail.html'
     context_object_name = 'item'
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # この服に関連するコーディネート投稿を取得
+        context['related_posts'] = Post.objects.filter(items__clothes=self.object).distinct()
+        return context
+    
     
     
 class ClothesDeleteView(DeleteView):
@@ -277,14 +283,14 @@ class CreatePostView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.user = self.request.user
-        post.save()
+        post.save()  # まず投稿データを保存
         
-        # 使用したアイテムを関連付け
         item_ids = self.request.POST.getlist('items')
         if item_ids:
             items = Item.objects.filter(id__in=item_ids)
             post.items.set(items)
-
+            post.save()  # アイテム関連付け後に再度保存
+            
         print("Post Data:", form.cleaned_data)
         return super().form_valid(form)
 

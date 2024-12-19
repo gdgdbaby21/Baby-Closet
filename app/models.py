@@ -169,13 +169,13 @@ class Item(models.Model):
         ('other', 'その他'),
     ]
 
-    # フィールド定義
     name = models.CharField(max_length=50)
     image = models.ImageField(upload_to='items/images/')
     description = models.TextField(blank=True, null=True)
     genre = models.CharField(max_length=20, choices=GENRE_CHOICES, default='tops')
     color = models.CharField(max_length=20, choices=COLOR_CHOICES, default='white')
     size = models.CharField(max_length=10, choices=SIZE_CHOICES, default='M')
+    clothes = models.ForeignKey(Clothes, on_delete=models.CASCADE, related_name='items', null=True, blank=True)
 
 
 
