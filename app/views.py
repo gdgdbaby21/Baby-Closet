@@ -281,18 +281,19 @@ class CreatePostView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):
+        print("POSTデータ:", self.request.POST)# POSTデータを確認
+        print("フォームのクリーンデータ:", form.cleaned_data)
+        
         post = form.save(commit=False)
         post.user = self.request.user
         post.save()  # まず投稿データを保存
         
-        item_ids = self.request.POST.getlist('items')
-        if item_ids:
-            items = Item.objects.filter(id__in=item_ids)
+        items = form.cleaned_data.get('items')
+        print("関連付けるアイテム:", items)  # アイテムが取得できているか確認
+        if items:
             post.items.set(items)
-            post.save()  # アイテム関連付け後に再度保存
             
-        print("Post Data:", form.cleaned_data)
-        return super().form_valid(form)
+            return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
