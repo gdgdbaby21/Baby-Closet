@@ -124,14 +124,14 @@ class Clothes(models.Model):
     
 
 #ハッシュタグ検索のモデル  
-class Hashtag(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    name = models.CharField(max_length=50, unique=True)
-    popularity = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
+class Hashtag(models.Model):  
+   user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, default=1)
+   name = models.CharField(max_length=50, unique=True)
+   popularity = models.IntegerField(default=0)
+   created_at = models.DateTimeField(auto_now_add=True)
+   updated_at = models.DateTimeField(auto_now=True)
+   
+   def __str__(self):
         return self.word
 
 
