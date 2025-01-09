@@ -185,12 +185,12 @@ class ClothesView(View):
 class ClothesDetailView(DetailView):
     model = Clothes
     template_name = 'clothes_detail.html'
-    context_object_name = 'item'
+    context_object_name = 'clothes'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # この服に関連するコーディネート投稿を取得
-        context['related_posts'] = Post.objects.filter(items__clothes=self.object).distinct()
+
+        context['related_posts'] = self.object.get_related_posts()
         return context
     
     
@@ -281,19 +281,20 @@ class CreatePostView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):
-        print("POSTデータ:", self.request.POST)# POSTデータを確認
+        print("POSTデータ:", self.request.POST)
         print("フォームのクリーンデータ:", form.cleaned_data)
         
         post = form.save(commit=False)
         post.user = self.request.user
-        post.save()  # まず投稿データを保存
+        post.save()
         
         items = form.cleaned_data.get('items')
-        print("関連付けるアイテム:", items)  # アイテムが取得できているか確認
+        print("関連付けるアイテム:", items)
         if items:
             post.items.set(items)
-            
-            return super().form_valid(form)
+        
+        # 成功時のレスポンスを返す
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -122,10 +122,13 @@ class Clothes(models.Model):
     def __str__(self):
         return f"{self.get_gender_display()} {self.size} {self.color} {self.genre}"
     
+    def get_related_posts(self):
+        """この服が関連付けられている投稿を取得"""
+        return Post.objects.filter(items=self)
 
 #ハッシュタグ検索のモデル  
 class Hashtag(models.Model):  
-   user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, default=1)
+   user = models.ForeignKey(User, on_delete=models.CASCADE)
    name = models.CharField(max_length=50, unique=True)
    popularity = models.IntegerField(default=0)
    created_at = models.DateTimeField(auto_now_add=True)
