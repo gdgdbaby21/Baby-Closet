@@ -102,6 +102,11 @@ class PostForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         label="使用したアイテム"
     )
+    clothes = forms.ModelMultipleChoiceField(
+        queryset=Clothes.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+    )
 
     class Meta:
         model = Post
