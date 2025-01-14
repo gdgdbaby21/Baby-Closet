@@ -9,13 +9,13 @@
     <style>
         .post-list {
             display: flex;
-            flex-wrap: wrap; /* 横並びにして、必要に応じて折り返し */
-            gap: 20px; /* 各投稿の間隔 */
-            justify-content: flex-start; /* 左揃え */
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
         }
 
         .post-item {
-            width: 200px; /* 各投稿の幅を固定 */
+            width: 200px;
             background-color: #f9f9f9;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -28,9 +28,9 @@
         }
 
         .image-wrapper img {
-            max-width: 100%; /* 親要素の幅に収まる */
-            height: auto; /* アスペクト比を保つ */
-            max-height: 150px; /* 最大高さを設定 */
+            max-width: 100%;
+            height: auto;
+            max-height: 150px;
             border-radius: 4px;
         }
 
@@ -42,31 +42,35 @@
     </style>
 </head>
 <body>
-    <h1>{{ item.title }}</h1>
-    <img src="{{ item.image.url }}" alt="{{ item.title }}" style="max-width: 300px;">
-    <p><strong>サイズ:</strong> {{ item.size }}</p>
-    <p><strong>性別:</strong> {{ item.get_gender_display }}</p>
-    <p><strong>色:</strong> {{ item.get_color_display }}</p>
-    <p><strong>ジャンル:</strong> {{ item.get_genre_display }}</p>
-    <p><strong>価格:</strong> ¥{{ item.price|floatformat:0 }} </p>
-    <p><strong>メモ:</strong> {{ item.memo }}</p>
+    {% if clothes %}
+    <h1>{{ clothes.title }}</h1>
+    <img src="{{ clothes.image.url }}" alt="{{ clothes.title }}" style="max-width: 300px;">
+    <p><strong>サイズ:</strong> {{ clothes.size }}</p>
+    <p><strong>性別:</strong> {{ clothes.get_gender_display }}</p>
+    <p><strong>色:</strong> {{ clothes.get_color_display }}</p>
+    <p><strong>ジャンル:</strong> {{ clothes.get_genre_display }}</p>
+    <p><strong>価格:</strong> ¥{{ clothes.price|floatformat:0 }} </p>
+    <p><strong>メモ:</strong> {{ clothes.memo }}</p>
     <a href="{% url 'clothes' %}">戻る</a>
 
-    <form action="{% url 'delete_clothes' item.id %}" method="post" style="margin-top: 20px;">
+    <form action="{% url 'delete_clothes' clothes.id %}" method="post" style="margin-top: 20px;">
         {% csrf_token %}
         <button type="submit" style="background-color: red; color: white; border: none; padding: 10px 20px; cursor: pointer;">
             削除
         </button>
     </form>
+{% else %}
+    <p>この服の情報が見つかりませんでした。</p>
+{% endif %}
 
-    <h2>この服を使用しているコーディネート一覧</h2>
+    {% comment %} <h2>この服を使用しているコーディネート一覧</h2>
     {% if related_posts %}
         <div class="post-list">
             {% for post in related_posts %}
                 <div class="post-item">
                     <div class="image-wrapper">
                         <a href="{% url 'post_detail' post.pk %}">
-                            <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                            <img src="{{ post.image.url if post.image else '/static/default_image.jpg' }}" alt="{{ post.title }}">
                         </a>
                     </div>
                     <p><strong>{{ post.title }}</strong></p>
@@ -75,7 +79,7 @@
         </div>
     {% else %}
         <p>この服を使用しているコーディネート投稿はありません。</p>
-    {% endif %}
+    {% endif %} {% endcomment %}
 </body>
 </html>
 {% endblock %}

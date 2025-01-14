@@ -182,6 +182,17 @@ class ClothesView(View):
         return render(request, "clothes.html", {"clothes": clothes})
 
 
+# class ClothesDetailView(DetailView):
+#     model = Clothes
+#     template_name = 'clothes_detail.html'
+#     context_object_name = 'clothes'
+    
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+
+#         context['related_posts'] = self.object.get_related_posts()
+#         return context
+
 class ClothesDetailView(DetailView):
     model = Clothes
     template_name = 'clothes_detail.html'
@@ -189,10 +200,11 @@ class ClothesDetailView(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         context['related_posts'] = self.object.get_related_posts()
         return context
-    
+
+
+
     
     
 class ClothesDeleteView(DeleteView):

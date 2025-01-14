@@ -123,8 +123,9 @@ class Clothes(models.Model):
         return f"{self.get_gender_display()} {self.size} {self.color} {self.genre}"
     
     def get_related_posts(self):
-        """この服が関連付けられている投稿を取得"""
-        return Post.objects.filter(items=self)
+        return self.items.all()
+
+
 
 #ハッシュタグ検索のモデル  
 class Hashtag(models.Model):  
