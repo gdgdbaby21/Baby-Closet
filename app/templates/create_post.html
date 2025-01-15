@@ -42,7 +42,7 @@
                 <textarea class="form-control" id="caption" name="caption" rows="3" placeholder="メモを入力してください"></textarea>
             </div>
             
-            <!-- 使用したアイテムの情報 -->
+            {% comment %} <!-- 使用したアイテムの情報 -->
             <div class="mb-3">
                 <label>使用したアイテムの情報:</label>
                 <ul id="selected-items-list" class="list-unstyled"> 
@@ -51,7 +51,7 @@
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemModal">
                     アイテムを追加
                 </button>
-            </div>
+            </div> {% endcomment %}
             
             <!-- ユーザーに公開する -->
             <div class="form-check mb-3">
@@ -66,7 +66,7 @@
         </form>
     </div>
 
-    <!-- アイテム選択条件モーダル -->
+    {% comment %} <!-- アイテム選択条件モーダル -->
     <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -129,7 +129,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> {% endcomment %}
 
     <script>
         // 検索ボタンがクリックされたとき
@@ -144,7 +144,7 @@
             }
 
             // フィルタリングされたアイテムを取得
-            fetch(`{% url 'item_filter' %}?genre=${genre}&color=${color}&size=${size}`)
+            fetch({% url 'item_filter' %}?genre=${genre}&color=${color}&size=${size})
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('filtered-items-container').innerHTML = html;

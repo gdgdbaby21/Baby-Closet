@@ -106,11 +106,13 @@ class PostForm(forms.ModelForm):
         queryset=Clothes.objects.all(),
         required=False,
         widget=forms.CheckboxSelectMultiple,
+        label="関連する服"
     )
 
     class Meta:
         model = Post
-        fields = ['image', 'title', 'caption', 'items', 'is_public']
+        # fields = ['image', 'title', 'caption', 'items', 'is_public']
+        fields = ['title', 'caption', 'image', 'is_public', 'items', 'clothes']
         widgets = {
             'caption': forms.Textarea(attrs={
                 'placeholder': 'メモを入力してください',
