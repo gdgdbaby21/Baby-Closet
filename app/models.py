@@ -32,9 +32,9 @@ class User(AbstractUser):
 #ユーザープロフィールのモデル
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     name = models.CharField(max_length=50)
     account = models.CharField(max_length=50)
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     gender = models.CharField(max_length=10, choices=[('male', '男性'), ('female', '女性')])
     birth_of_date = models.DateField(null=True, blank=True)
     bio = models.TextField(max_length=500, blank=True)
@@ -45,7 +45,7 @@ class UserProfile(models.Model):
         return f"{self.user.username}'s profile"
 
 
-#欲しいものリストのモデル
+#欲しい服リストのモデル
 class WishlistItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='wishlist_images/', blank=True, null=True, default='wishlist_images/default.png')
@@ -59,7 +59,20 @@ class WishlistItem(models.Model):
     def __str__(self):
         return f"{self.id} - {self.price}円"
     
-    
+
+
+#ハッシュタグ検索のモデル  
+class Hashtag(models.Model):  
+   user = models.ForeignKey(User, on_delete=models.CASCADE)
+   name = models.CharField(max_length=50, unique=True)
+   popularity = models.IntegerField(default=0)
+   created_at = models.DateTimeField(auto_now_add=True)
+   updated_at = models.DateTimeField(auto_now=True)
+   
+   def __str__(self):
+        return self.word
+
+
 #服管理画面のモデル
 class Clothes(models.Model):
     GENDER_CHOICES = [
@@ -111,13 +124,14 @@ class Clothes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     size = models.CharField(max_length=10, choices=SIZE_CHOICES)
-    genre = models.CharField(max_length=20, choices=GENRE_CHOICES)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unisex')
     color = models.CharField(max_length=10, choices=COLOR_CHOICES)
+    genre = models.CharField(max_length=20, choices=GENRE_CHOICES)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     memo = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to='clothes_images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.get_gender_display()} {self.size} {self.color} {self.genre}"
@@ -126,50 +140,6 @@ class Clothes(models.Model):
         return self.items.all()
 
 
-
-#ハッシュタグ検索のモデル  
-class Hashtag(models.Model):  
-   user = models.ForeignKey(User, on_delete=models.CASCADE)
-   name = models.CharField(max_length=50, unique=True)
-   popularity = models.IntegerField(default=0)
-   created_at = models.DateTimeField(auto_now_add=True)
-   updated_at = models.DateTimeField(auto_now=True)
-   
-   def __str__(self):
-        return self.word
-
-
-
-#コーディネート投稿のモデル
-class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='posts/images/')
-    title = models.CharField(max_length=50, default='')  
-    # items = models.ManyToManyField(Item, related_name='posts', blank=True)
-    caption = models.TextField(blank=True, null=True)
-    clothes = models.ManyToManyField(Clothes, related_name='posts', blank=True)
-    hashtags = models.ManyToManyField(Hashtag, related_name='posts') 
-    is_public = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.caption:
-            hashtags = set(re.findall(r"#(\w+)", self.caption))
-            for tag_name in hashtags:
-                hashtag, created = Hashtag.objects.get_or_create(name=tag_name)
-                self.hashtags.add(hashtag)
-
-# プロパティでいいね数を取得
-    @property
-    def likes_count(self):
-        return self.likes.count()
-
-    # プロパティでコメント数を取得
-    @property
-    def comments_count(self):
-        return self.comments.count()
-    
     
 #コーディネート投稿で使用したアイテムのモデル
 class Item(models.Model):
@@ -220,9 +190,42 @@ class Item(models.Model):
     ]
     
     
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="items")
+    # post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="items")
     clothes = models.ForeignKey(Clothes, on_delete=models.CASCADE, related_name='items', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+
+#コーディネート投稿のモデル
+class Post(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    clothes = models.ManyToManyField(Clothes, related_name='posts', blank=True)
+    hashtags = models.ManyToManyField(Hashtag, related_name='posts') 
+    items = models.ManyToManyField(Item, related_name='posts', blank=True)
+    image = models.ImageField(upload_to='posts/images/')
+    title = models.CharField(max_length=50, default='')
+    is_public = models.BooleanField(default=True)
+    caption = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.caption:
+            hashtags = set(re.findall(r"#(\w+)", self.caption))
+            for tag_name in hashtags:
+                hashtag, created = Hashtag.objects.get_or_create(name=tag_name)
+                self.hashtags.add(hashtag)
+
+# プロパティでいいね数を取得
+    @property
+    def likes_count(self):
+        return self.likes.count()
+
+    # プロパティでコメント数を取得
+    @property
+    def comments_count(self):
+        return self.comments.count()
+
 
 
 #いいね機能のモデル

@@ -9,7 +9,7 @@
 <body>
     <div class="container mt-5">
         <h1>コーディネート投稿</h1>
-        
+
         <!-- エラーメッセージの表示 -->
         {% if form.errors %}
         <div class="alert alert-danger">
@@ -20,7 +20,7 @@
             </ul>
         </div>
         {% endif %}
-        
+
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             
@@ -29,30 +29,30 @@
                 <label for="image" class="form-label">写真を選択:</label>
                 <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
             </div>
-            
+
             <!-- タイトル -->
             <div class="mb-3">
                 <label for="title" class="form-label">タイトル:</label>
                 <input type="text" class="form-control" id="title" name="title" placeholder="タイトルを入力してください" required>
             </div>
-            
+
             <!-- メモ -->
             <div class="mb-3">
                 <label for="caption" class="form-label">メモ:</label>
                 <textarea class="form-control" id="caption" name="caption" rows="3" placeholder="メモを入力してください"></textarea>
             </div>
-            
-            {% comment %} <!-- 使用したアイテムの情報 -->
+
+            <!-- 使用したアイテムの情報 -->
             <div class="mb-3">
                 <label>使用したアイテムの情報:</label>
-                <ul id="selected-items-list" class="list-unstyled"> 
+                <ul id="selected-items-list" class="list-unstyled">
                     <!-- 選択されたアイテムがここに表示されます -->
                 </ul>
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemModal">
                     アイテムを追加
                 </button>
-            </div> {% endcomment %}
-            
+            </div>
+
             <!-- ユーザーに公開する -->
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="is_public" name="is_public" value="1">
@@ -60,13 +60,13 @@
                     ユーザーに公開する
                 </label>
             </div>
-            
+
             <!-- 投稿ボタン -->
             <button type="submit" class="btn btn-success">投稿</button>
         </form>
     </div>
 
-    {% comment %} <!-- アイテム選択条件モーダル -->
+    <!-- アイテム選択条件モーダル -->
     <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -129,46 +129,65 @@
                 </div>
             </div>
         </div>
-    </div> {% endcomment %}
+    </div>
 
     <script>
-        // 検索ボタンがクリックされたとき
-        document.getElementById('loadFilteredItems').addEventListener('click', function () {
-            const genre = document.getElementById('genre-select').value;
-            const color = document.getElementById('color-select').value;
-            const size = document.getElementById('size-select').value;
+        document.addEventListener('DOMContentLoaded', function () {
+            // 検索ボタンがクリックされたとき
+            document.getElementById('loadFilteredItems').addEventListener('click', function () {
+                const genre = document.getElementById('genre-select').value;
+                const color = document.getElementById('color-select').value;
+                const size = document.getElementById('size-select').value;
 
-            if (!genre || !color || !size) {
-                alert('すべての項目を選択してください。');
-                return;
-            }
+                if (!genre || !color || !size) {
+                    alert('すべての項目を選択してください。');
+                    return;
+                }
 
-            // フィルタリングされたアイテムを取得
-            fetch({% url 'item_filter' %}?genre=${genre}&color=${color}&size=${size})
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('filtered-items-container').innerHTML = html;
-                    const modal = new bootstrap.Modal(document.getElementById('filteredItemModal'));
-                    modal.show();
-                });
-        });
-
-        // 確定ボタンで選択内容を反映
-        document.getElementById('confirmSelection').addEventListener('click', function () {
-            const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
-            const selectedItemsList = document.getElementById('selected-items-list');
-
-            selectedCheckboxes.forEach((checkbox) => {
-                const listItem = document.createElement('li');
-                listItem.className = 'd-flex align-items-center mb-2';
-                listItem.innerHTML = checkbox.parentElement.innerHTML; // 選択したアイテムのHTMLをそのままコピー
-                selectedItemsList.appendChild(listItem);
+                // フィルタリングされたアイテムを取得
+                const itemFilterUrl = "{% url 'item_filter' %}";
+                fetch(`${itemFilterUrl}?genre=${genre}&color=${color}&size=${size}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        const container = document.getElementById('filtered-items-container');
+                        container.innerHTML = html;
+                        const modal = new bootstrap.Modal(document.getElementById('filteredItemModal'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('アイテムの読み込み中にエラーが発生しました:', error);
+                        alert('アイテムを取得できませんでした。後でもう一度お試しください。');
+                    });
             });
-            // モーダルを閉じる
-            const modal = bootstrap.Modal.getInstance(document.getElementById('filteredItemModal'));
-            modal.hide();
+
+            // 確定ボタンで選択内容を反映
+            document.getElementById('confirmSelection').addEventListener('click', function () {
+                const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+                const selectedItemsList = document.getElementById('selected-items-list');
+
+                if (selectedCheckboxes.length === 0) {
+                    alert('少なくとも1つのアイテムを選択してください。');
+                    return;
+                }
+
+                selectedCheckboxes.forEach((checkbox) => {
+                    const itemName = checkbox.dataset.itemName; // data-item-name属性からアイテム名を取得
+                    if (!itemName) {
+                        console.error('アイテム名が見つかりませんでした');
+                        return;
+                    }
+
+                    const listItem = document.createElement('li');
+                    listItem.textContent = itemName;
+                    listItem.className = 'd-flex align-items-center mb-2';
+                    selectedItemsList.appendChild(listItem);
+                });
+
+                const modal = bootstrap.Modal.getInstance(document.getElementById('filteredItemModal'));
+                modal.hide();
+            });
         });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+</html>

@@ -63,14 +63,18 @@
     <p>この服の情報が見つかりませんでした。</p>
 {% endif %}
 
-    {% comment %} <h2>この服を使用しているコーディネート一覧</h2>
+    <h2>この服を使用しているコーディネート一覧</h2>
     {% if related_posts %}
         <div class="post-list">
             {% for post in related_posts %}
                 <div class="post-item">
                     <div class="image-wrapper">
                         <a href="{% url 'post_detail' post.pk %}">
-                            <img src="{{ post.image.url if post.image else '/static/default_image.jpg' }}" alt="{{ post.title }}">
+                            {% if post.image %}
+                                <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                            {% else %}
+                                <img src="{% static 'default_image.jpg' %}" alt="{{ post.title }}">
+                            {% endif %}
                         </a>
                     </div>
                     <p><strong>{{ post.title }}</strong></p>
@@ -79,7 +83,7 @@
         </div>
     {% else %}
         <p>この服を使用しているコーディネート投稿はありません。</p>
-    {% endif %} {% endcomment %}
+    {% endif %}
 </body>
 </html>
 {% endblock %}
