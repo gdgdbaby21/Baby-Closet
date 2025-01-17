@@ -17,14 +17,13 @@ class User(AbstractUser):
     user_permissions = None
     
 
-    username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=50, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
-    USERNAME_FIELD = "username"
+    USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
-    REQUIRED_FIELDS = ["email"]
+    REQUIRED_FIELDS = []
     
     class Meta:
         db_table = "users"
@@ -34,7 +33,7 @@ class User(AbstractUser):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=50)
     account = models.CharField(max_length=50)
     gender = models.CharField(max_length=10, choices=[('male', '男性'), ('female', '女性')])
     birth_of_date = models.DateField(null=True, blank=True)
@@ -48,9 +47,9 @@ class UserProfile(models.Model):
 
 #欲しいものリストのモデル
 class WishlistItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='wishlist_images/', blank=True, null=True, default='wishlist_images/default.png')
     price = models.DecimalField(max_digits=10, decimal_places=0)
-    created_at = models.DateTimeField(auto_now_add=True)
     brand = models.CharField(max_length=50, blank=True)
     product_url = models.URLField(max_length=255, blank=True)
     notes = models.TextField(max_length=120, blank=True)
@@ -108,7 +107,8 @@ class Clothes(models.Model):
         ('orange', 'オレンジ'),
         ('other', 'その他'),
     ]
-
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     size = models.CharField(max_length=10, choices=SIZE_CHOICES)
     genre = models.CharField(max_length=20, choices=GENRE_CHOICES)
@@ -139,8 +139,46 @@ class Hashtag(models.Model):
         return self.word
 
 
+
+#コーディネート投稿のモデル
+class Post(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='posts/images/')
+    title = models.CharField(max_length=50, default='')  
+    # items = models.ManyToManyField(Item, related_name='posts', blank=True)
+    caption = models.TextField(blank=True, null=True)
+    clothes = models.ManyToManyField(Clothes, related_name='posts', blank=True)
+    hashtags = models.ManyToManyField(Hashtag, related_name='posts') 
+    is_public = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.caption:
+            hashtags = set(re.findall(r"#(\w+)", self.caption))
+            for tag_name in hashtags:
+                hashtag, created = Hashtag.objects.get_or_create(name=tag_name)
+                self.hashtags.add(hashtag)
+
+# プロパティでいいね数を取得
+    @property
+    def likes_count(self):
+        return self.likes.count()
+
+    # プロパティでコメント数を取得
+    @property
+    def comments_count(self):
+        return self.comments.count()
+    
+    
 #コーディネート投稿で使用したアイテムのモデル
 class Item(models.Model):
+    ENDER_CHOICES = [
+        ('Male', '男性'),
+        ('Female', '女性'),
+        ('Other', 'その他'),
+    ]
+    
     SIZE_CHOICES = [
         ('50~60', '50~60'),
         ('70', '70'),
@@ -180,47 +218,11 @@ class Item(models.Model):
         ('orange', 'オレンジ'),
         ('other', 'その他'),
     ]
-
-    name = models.CharField(max_length=50)
-    image = models.ImageField(upload_to='items/images/')
-    description = models.TextField(blank=True, null=True)
-    genre = models.CharField(max_length=20, choices=GENRE_CHOICES, default='tops')
-    color = models.CharField(max_length=20, choices=COLOR_CHOICES, default='white')
-    size = models.CharField(max_length=10, choices=SIZE_CHOICES, default='M')
+    
+    
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="items")
     clothes = models.ForeignKey(Clothes, on_delete=models.CASCADE, related_name='items', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-
-
-#コーディネート投稿のモデル
-class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='posts/images/')
-    title = models.CharField(max_length=50, default='')  
-    caption = models.TextField(blank=True, null=True)
-    items = models.ManyToManyField(Item, related_name='posts', blank=True)
-    clothes = models.ManyToManyField(Clothes, related_name='posts', blank=True)
-    hashtags = models.ManyToManyField(Hashtag, related_name='posts') 
-    is_public = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.caption:
-            hashtags = set(re.findall(r"#(\w+)", self.caption))
-            for tag_name in hashtags:
-                hashtag, created = Hashtag.objects.get_or_create(name=tag_name)
-                self.hashtags.add(hashtag)
-
-# プロパティでいいね数を取得
-    @property
-    def likes_count(self):
-        return self.likes.count()
-
-    # プロパティでコメント数を取得
-    @property
-    def comments_count(self):
-        return self.comments.count()
 
 
 #いいね機能のモデル
