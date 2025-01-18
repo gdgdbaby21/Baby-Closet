@@ -130,60 +130,57 @@
     <div class="container">
         
         <form method="get" action="{% url 'search-results' %}">
-                <label for="gender">性別:</label>
-                <select id="gender" name="gender">
-                    <option value="">選択</option>
-                    <option value="Male">男性</option>
-                    <option value="Female">女性</option>
-                    <option value="Other">その他</option>
-                </select>
+            <label for="gender">性別:</label>
+            <select id="gender" name="gender">
+                <option value="">選択</option>
+                <option value="Male">男性</option>
+                <option value="Female">女性</option>
+                <option value="Other">その他</option>
+            </select>
 
+            <label for="size">サイズ:</label>
+            <select id="size" name="size">
+                <option value="">選択</option>
+                <option value="50">50</option>
+                <option value="60">60</option>
+                <option value="70">70</option>
+                <option value="80">80</option>
+                <option value="90">90</option>
+                <option value="100">100</option>
+                <option value="110">110</option>
+                <option value="120">120</option>
+                <option value="130">130</option>
+                <option value="140">140</option>
+            </select>
 
-                <label for="size">サイズ:</label>
-                <select id="size" name="size">
-                    <option value="">選択</option>
-                    <option value="50">50</option>
-                    <option value="60">60</option>
-                    <option value="70">70</option>
-                    <option value="80">80</option>
-                    <option value="90">90</option>
-                    <option value="100">100</option>
-                    <option value="110">110</option>
-                    <option value="120">120</option>
-                    <option value="130">130</option>
-                    <option value="140">140</option>
-                </select>
+            <label for="color">カラー:</label>
+            <select id="color" name="color">
+                <option value="">選択</option>
+                <option value="white">白</option>
+                <option value="black">黒</option>
+                <option value="red">赤</option>
+                <option value="blue">青</option>
+                <option value="yellow">黄</option>
+                <option value="green">緑</option>
+                <option value="pink">ピンク</option>
+                <option value="orange">オレンジ</option>
+                <option value="gray">グレー</option>
+                <option value="beige">ベージュ</option>
+                <option value="other">その他</option>
+            </select>
 
-
-                <label for="color">カラー:</label>
-                <select id="color" name="color">
-                    <option value="">選択</option>
-                    <option value="white">白</option>
-                    <option value="black">黒</option>
-                    <option value="red">赤</option>
-                    <option value="blue">青</option>
-                    <option value="yellow">黄</option>
-                    <option value="green">緑</option>
-                    <option value="pink">ピンク</option>
-                    <option value="orange">オレンジ</option>
-                    <option value="gray">グレー</option>
-                    <option value="beige">ベージュ</option>
-                    <option value="other">その他</option>
-                </select>
-            
-
-                <label for="genre">ジャンル:</label>
-                <select id="genre" name="genre">
-                    <option value="">選択</option>
-                    <option value="tops">トップス</option>
-                    <option value="skirts">スカート</option>
-                    <option value="pants">パンツ</option>
-                    <option value="outerwear">アウター</option>
-                    <option value="dress">ワンピース</option>
-                    <option value="maternity">マタニティ</option>
-                    <option value="baby">ベビー</option>
-                    <option value="other">その他</option>
-                </select>
+            <label for="genre">ジャンル:</label>
+            <select id="genre" name="genre">
+                <option value="">選択</option>
+                <option value="tops">トップス</option>
+                <option value="skirts">スカート</option>
+                <option value="pants">パンツ</option>
+                <option value="outerwear">アウター</option>
+                <option value="dress">ワンピース</option>
+                <option value="maternity">マタニティ</option>
+                <option value="baby">ベビー</option>
+                <option value="other">その他</option>
+            </select>
 
             <div style="margin-top: 20px;">
                 <button type="submit">検索</button>

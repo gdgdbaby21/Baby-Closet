@@ -96,15 +96,28 @@ class ProfileView(View):
         })
         
 
-class WishlistView(View):
+# class WishlistView(View):
+#     def get(self, request):
+#         items = WishlistItem.objects.all()
+#         print(items)
+#         return render(request, "wishlist.html", {"items": items})
+    
+
+class WishlistView(LoginRequiredMixin, View):
     def get(self, request):
-        items = WishlistItem.objects.all()
-        print(items)
+        items = WishlistItem.objects.filter(user=request.user)  
         return render(request, "wishlist.html", {"items": items})
 
-class ClothesView(View):
+
+# class ClothesView(View):
+#     def get(self, request):
+#         return render(request, "clothes.html")
+
+class ClothesView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, "clothes.html")
+        clothes = Clothes.objects.filter(user=request.user)
+        return render(request, "clothes.html", {"clothes": clothes})
+
 
 class LogoutView(View):
     def get(self, request):
@@ -142,7 +155,18 @@ class Wishlist_detailView(View):
      return render(request, 'wishlist_detail.html', {'item': item})
 
 
-class Wishlist_createView(View):
+# class Wishlist_createView(View):
+#     def get(self, request):
+#         form = WishlistItemForm()
+#         return render(request, 'wishlist_create.html', {'form': form})
+
+#     def post(self, request):
+#         form = WishlistItemForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('wishlist')
+
+class Wishlist_createView(LoginRequiredMixin, View):
     def get(self, request):
         form = WishlistItemForm()
         return render(request, 'wishlist_create.html', {'form': form})
@@ -150,8 +174,11 @@ class Wishlist_createView(View):
     def post(self, request):
         form = WishlistItemForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            wishlist_item = form.save(commit=False)
+            wishlist_item.user = request.user
+            wishlist_item.save()
             return redirect('wishlist')
+        return render(request, 'wishlist_create.html', {'form': form})
         
 class WishlistDeleteView(DeleteView):
     model = WishlistItem
@@ -159,28 +186,42 @@ class WishlistDeleteView(DeleteView):
     
     
 
-class ClothesCreateView(CreateView):
+# class ClothesCreateView(CreateView):
+#     model = Clothes
+#     form_class = ClothingForm
+#     template_name = 'clothes_create.html'
+#     success_url = reverse_lazy('clothes') 
+    
+#     def form_invalid(self, form):
+#         print("フォームエラー:", form.errors)
+#         return super().form_invalid(form)
+    
+#     def post(self, request, *args, **kwargs):
+#         print("POSTデータ:", request.POST)
+#         print("FILESデータ:", request.FILES)
+#         return super().post(request, *args, **kwargs)
+    
+class ClothesCreateView(LoginRequiredMixin, CreateView):
     model = Clothes
     form_class = ClothingForm
     template_name = 'clothes_create.html'
-    success_url = reverse_lazy('clothes') 
-    
+    success_url = reverse_lazy('clothes')
+
+    def form_valid(self, form):
+        
+        clothes = form.save(commit=False)
+        clothes.user = self.request.user
+        clothes.save()
+        return super().form_valid(form)
+
     def form_invalid(self, form):
         print("フォームエラー:", form.errors)
         return super().form_invalid(form)
-    
+
     def post(self, request, *args, **kwargs):
-        print("POSTデータ:", request.POST)
+        print("POSTデータ:", request.POST) 
         print("FILESデータ:", request.FILES)
         return super().post(request, *args, **kwargs)
-    
-
-class ClothesView(View):
-    def get(self, request):
-        clothes = Clothes.objects.all()
-
-        return render(request, "clothes.html", {"clothes": clothes})
-
 
 
 class ClothesDetailView(DetailView):

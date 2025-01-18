@@ -15,6 +15,7 @@ class User(AbstractUser):
     date_joined = None
     groups = None
     user_permissions = None
+    username = None
     
 
     email = models.EmailField(max_length=50, unique=True)
