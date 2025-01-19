@@ -5,8 +5,8 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
-from .models import UserProfile, WishlistItem, Clothes, Post, Hashtag, Like, Comment, Item
-from .forms import UserProfileForm, WishlistItemForm, ClothingForm, PostForm
+from .models import WishlistItem, Clothes, Post, Hashtag, Like, Comment, Item
+from .forms import  UserProfileForm, WishlistItemForm, ClothingForm, PostForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import DetailView, ListView, TemplateView
@@ -88,10 +88,9 @@ class HomeView(LoginRequiredMixin, ListView):
 
 class ProfileView(View):
     def get(self, request):
-        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
         user_posts = Post.objects.filter(user=request.user).order_by('-created_at')
         return render(request, "profile.html", {
-            "user_profile": user_profile,
+            "user_profile": request.user,
             "user_posts": user_posts,
         })
         
@@ -125,16 +124,19 @@ class LogoutView(View):
 
 class EditProfileView(LoginRequiredMixin, View):
     def get(self, request):
-        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+        user_profile = request.user
         form = UserProfileForm(instance=user_profile)
         return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
     
     
     def post(self, request):
-        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        user_profile =request.user
+        print(request.FILES)
+        form = UserProfileForm(request.POST, request.FILES,
+                               instance=user_profile)
         if form.is_valid():
             form.save()
+            print('プロフィール文更新')
             messages.success(request, 'プロフィールが更新されました！')
             return redirect("profile")
         else:
@@ -146,7 +148,7 @@ class EditProfileView(LoginRequiredMixin, View):
 
 @login_required
 def profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    user_profile = request.user
     return render(request, 'profile.html', {'profile': user_profile})
 
 class Wishlist_detailView(View):
@@ -330,7 +332,7 @@ class CreatePostView(LoginRequiredMixin, CreateView):
         post = form.save(commit=False)
         post.user = self.request.user
         post.save()
-        form.save_m2m()  # ManyToManyFieldを保存
+        form.save_m2m() 
         
         items = form.cleaned_data.get('items')
         print("関連付けるアイテム:", items)
@@ -380,7 +382,7 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = self.get_object()
-        context['user_profile'] = get_object_or_404(UserProfile, user=post.user)
+        context['user_profile'] = post.user
         return context
     
 

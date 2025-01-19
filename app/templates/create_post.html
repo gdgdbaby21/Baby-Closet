@@ -139,10 +139,10 @@
                 const color = document.getElementById('color-select').value;
                 const size = document.getElementById('size-select').value;
 
-                if (!genre || !color || !size) {
+                {% comment %} if (!genre || !color || !size) {
                     alert('すべての項目を選択してください。');
                     return;
-                }
+                } {% endcomment %}
 
                 // フィルタリングされたアイテムを取得
                 const itemFilterUrl = "{% url 'item_filter' %}";

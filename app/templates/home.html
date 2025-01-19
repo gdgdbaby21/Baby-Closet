@@ -106,8 +106,8 @@
         <div class="post-item">
             <p class="text-muted">
                 @
-                {% if post.user.userprofile.account %}
-                    {{ post.user.userprofile.account }}
+                {% if post.user.account_name %}
+                    {{ post.user.account_name }}
                 {% else %}
                     Unknown User
                 {% endif %}
