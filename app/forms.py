@@ -109,7 +109,6 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        # fields = ['image', 'title', 'caption', 'items', 'is_public']
         fields = ['title', 'caption', 'image', 'is_public', 'items', 'clothes']
         widgets = {
             'caption': forms.Textarea(attrs={

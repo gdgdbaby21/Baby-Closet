@@ -75,6 +75,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
                 </div>
                 <div class="modal-body">
+                    
+                        
                     <!-- プルダウンメニュー -->
                     <div class="form-group">
                         <label for="genre-select">ジャンル:</label>
@@ -130,7 +132,6 @@
             </div>
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // 検索ボタンがクリックされたとき
@@ -138,11 +139,6 @@
                 const genre = document.getElementById('genre-select').value;
                 const color = document.getElementById('color-select').value;
                 const size = document.getElementById('size-select').value;
-
-                {% comment %} if (!genre || !color || !size) {
-                    alert('すべての項目を選択してください。');
-                    return;
-                } {% endcomment %}
 
                 // フィルタリングされたアイテムを取得
                 const itemFilterUrl = "{% url 'item_filter' %}";

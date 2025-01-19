@@ -94,12 +94,6 @@ class ProfileView(View):
             "user_posts": user_posts,
         })
         
-
-# class WishlistView(View):
-#     def get(self, request):
-#         items = WishlistItem.objects.all()
-#         print(items)
-#         return render(request, "wishlist.html", {"items": items})
     
 
 class WishlistView(LoginRequiredMixin, View):
@@ -108,9 +102,6 @@ class WishlistView(LoginRequiredMixin, View):
         return render(request, "wishlist.html", {"items": items})
 
 
-# class ClothesView(View):
-#     def get(self, request):
-#         return render(request, "clothes.html")
 
 class ClothesView(LoginRequiredMixin, View):
     def get(self, request):
@@ -157,16 +148,6 @@ class Wishlist_detailView(View):
      return render(request, 'wishlist_detail.html', {'item': item})
 
 
-# class Wishlist_createView(View):
-#     def get(self, request):
-#         form = WishlistItemForm()
-#         return render(request, 'wishlist_create.html', {'form': form})
-
-#     def post(self, request):
-#         form = WishlistItemForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('wishlist')
 
 class Wishlist_createView(LoginRequiredMixin, View):
     def get(self, request):
@@ -187,21 +168,6 @@ class WishlistDeleteView(DeleteView):
     success_url = reverse_lazy('wishlist')
     
     
-
-# class ClothesCreateView(CreateView):
-#     model = Clothes
-#     form_class = ClothingForm
-#     template_name = 'clothes_create.html'
-#     success_url = reverse_lazy('clothes') 
-    
-#     def form_invalid(self, form):
-#         print("フォームエラー:", form.errors)
-#         return super().form_invalid(form)
-    
-#     def post(self, request, *args, **kwargs):
-#         print("POSTデータ:", request.POST)
-#         print("FILESデータ:", request.FILES)
-#         return super().post(request, *args, **kwargs)
     
 class ClothesCreateView(LoginRequiredMixin, CreateView):
     model = Clothes
@@ -238,7 +204,6 @@ class ClothesDetailView(DetailView):
 
 
 
-    
     
 class ClothesDeleteView(DeleteView):
     model = Clothes  
@@ -357,11 +322,13 @@ class FilterItemsView(ListView):
     context_object_name = 'items'
 
     def get_queryset(self):
+        user = self.request.user
+        
         genre = self.request.GET.get('genre')
         color = self.request.GET.get('color')
         size = self.request.GET.get('size')
 
-        queryset = Clothes.objects.all()
+        queryset = Clothes.objects.filter(user=user)
 
         if genre:
             queryset = queryset.filter(genre=genre)
