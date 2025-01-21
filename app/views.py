@@ -5,7 +5,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
-from .models import WishlistItem, Clothes, Post, Hashtag, Like, Comment, Item
+from .models import WishlistItem, Clothes, Post, Hashtag, Like, Comment
 from .forms import  UserProfileForm, WishlistItemForm, ClothingForm, PostForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
@@ -299,19 +299,19 @@ class CreatePostView(LoginRequiredMixin, CreateView):
         post.save()
         form.save_m2m() 
         
-        items = form.cleaned_data.get('items')
-        print("関連付けるアイテム:", items)
-        if items:
-             post.items.set(items)
+        # items = form.cleaned_data.get('items')
+        # print("関連付けるアイテム:", items)
+        # if items:
+        #      post.items.set(items)
         
         # 成功時のレスポンスを返す
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['genres'] = Item.GENRE_CHOICES
-        context['colors'] = Item.COLOR_CHOICES
-        context['sizes'] = Item.SIZE_CHOICES
+        context['genres'] = Clothes.GENRE_CHOICES
+        context['colors'] = Clothes.COLOR_CHOICES
+        context['sizes'] = Clothes.SIZE_CHOICES
         return context
 
 
@@ -401,7 +401,8 @@ class CommentView(LoginRequiredMixin, View):
         if content:
             comment = Comment.objects.create(user=request.user, post=post, content=content)
             return JsonResponse({
-                "user_account": comment.user.userprofile.account,
+                "comment_id": comment.id,
+                "user_account": comment.user.account_name,
                 "content": comment.content,
                 "created_at": comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
             })
@@ -414,12 +415,6 @@ class DeleteCommentView(LoginRequiredMixin, View):
         comment.delete()
         return JsonResponse({"message": "コメントが削除されました。"})
     
-
-class RegisterItemView(CreateView):
-    model = Item
-    fields = ['name', 'image', 'description']
-    template_name = 'register_item.html'
-    success_url = reverse_lazy('create_post')
 
 
 class ClothesOptionsView(TemplateView):

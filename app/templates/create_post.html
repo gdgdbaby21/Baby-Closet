@@ -167,17 +167,26 @@
                 }
 
                 selectedCheckboxes.forEach((checkbox) => {
-                    const itemName = checkbox.dataset.itemName; // data-item-name属性からアイテム名を取得
+                    const itemName = checkbox.dataset.itemName;// data-item-name属性からアイテム名を取得
+                    const itemId = checkbox.dataset.itemId;
                     if (!itemName) {
                         console.error('アイテム名が見つかりませんでした');
                         return;
                     }
 
-                    const listItem = document.createElement('li');
-                    listItem.textContent = itemName;
-                    listItem.className = 'd-flex align-items-center mb-2';
-                    selectedItemsList.appendChild(listItem);
+                    const liTag = document.createElement('li');
+                    liTag.textContent = itemName;
+                    liTag.className = 'd-flex align-items-center mb-2';
+                    selectedItemsList.appendChild(liTag);
+                    const inputTag = document.createElement('input');
+                    inputTag.type="hidden";
+                    inputTag.name="clothes";
+                    inputTag.value=itemId;
+                    liTag.appendChild(inputTag);
                 });
+
+                {% comment %} <input type="hidden" name="clothes" value="選択した服のID1">
+                <input type="hidden" name="clothes" value="選択した服のID2"> {% endcomment %}
 
                 const modal = bootstrap.Modal.getInstance(document.getElementById('filteredItemModal'));
                 modal.hide();

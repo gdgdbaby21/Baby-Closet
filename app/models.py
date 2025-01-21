@@ -34,19 +34,6 @@ class User(AbstractUser):
     class Meta:
         db_table = "users"
     
-    
-#ユーザープロフィールのモデル
-# class UserProfile(models.Model):
-#     account_name = models.CharField(max_length=50)
-#     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
-#     gender = models.CharField(max_length=10, choices=[('male', '男性'), ('female', '女性')])
-#     birth_of_date = models.DateField(null=True, blank=True)
-#     bio = models.TextField(max_length=500, blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-    
-#     def __str__(self):
-#         return f"{self.user.username}'s profile"
 
 
 #欲しい服リストのモデル
@@ -141,62 +128,9 @@ class Clothes(models.Model):
         return f"{self.get_gender_display()} {self.size} {self.color} {self.genre}"
     
     def get_related_posts(self):
-        return self.items.all()
+        return self.posts.all()
 
 
-    
-#コーディネート投稿で使用したアイテムのモデル
-class Item(models.Model):
-    ENDER_CHOICES = [
-        ('Male', '男性'),
-        ('Female', '女性'),
-        ('Other', 'その他'),
-    ]
-    
-    SIZE_CHOICES = [
-        ('50~60', '50~60'),
-        ('70', '70'),
-        ('80', '80'),
-        ('90', '90'),
-        ('100', '100'),
-        ('110', '110'),
-        ('120', '120'),
-        ('130', '130'),
-        ('140', '140'),
-    ]
-
-    GENRE_CHOICES = [
-        ('tops', 'トップス'),
-        ('skirts', 'スカート'),
-        ('outer', 'アウター'),
-        ('onepiece', 'ワンピース'),
-        ('pants', 'パンツ'),
-        ('hat', '帽子'),
-        ('maternity', 'マタニティ'),
-        ('baby', 'ベビー'),
-        ('other', 'その他'),
-    ]
-
-    COLOR_CHOICES = [
-        ('white', '白'),
-        ('black', '黒'),
-        ('gray', 'グレー'),
-        ('brown', '茶'),
-        ('beige', 'ベージュ'),
-        ('green', '緑'),
-        ('blue', '青'),
-        ('purple', '紫'),
-        ('yellow', '黄'),
-        ('pink', 'ピンク'),
-        ('red', '赤'),
-        ('orange', 'オレンジ'),
-        ('other', 'その他'),
-    ]
-    
-    
-    # post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="items")
-    clothes = models.ForeignKey(Clothes, on_delete=models.CASCADE, related_name='items', null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
     
 
 #コーディネート投稿のモデル
@@ -204,7 +138,6 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     clothes = models.ManyToManyField(Clothes, related_name='posts', blank=True)
     hashtags = models.ManyToManyField(Hashtag, related_name='posts') 
-    items = models.ManyToManyField(Item, related_name='posts', blank=True)
     image = models.ImageField(upload_to='posts/images/')
     title = models.CharField(max_length=50, default='')
     is_public = models.BooleanField(default=True)

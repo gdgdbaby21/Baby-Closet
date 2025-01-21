@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from app.models import User
 from django.contrib.auth import authenticate
-from .models import  WishlistItem, Clothes, Post, Item
+from .models import  WishlistItem, Clothes, Post, Comment
 
 
 class SignupForm(UserCreationForm):
@@ -94,12 +94,6 @@ class ClothingForm(forms.ModelForm):
 
 #コーディネート投稿のフォーム
 class PostForm(forms.ModelForm):
-    items = forms.ModelMultipleChoiceField(
-        queryset=Item.objects.all(),
-        required=False,
-        widget=forms.CheckboxSelectMultiple,
-        label="使用したアイテム"
-    )
     clothes = forms.ModelMultipleChoiceField(
         queryset=Clothes.objects.all(),
         required=False,
@@ -109,7 +103,7 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'caption', 'image', 'is_public', 'items', 'clothes']
+        fields = ['title', 'caption', 'image', 'is_public', 'clothes']
         widgets = {
             'caption': forms.Textarea(attrs={
                 'placeholder': 'メモを入力してください',
@@ -118,4 +112,21 @@ class PostForm(forms.ModelForm):
             'title': forms.TextInput(attrs={
                 'placeholder': 'タイトルを入力してください'
             }),
+        }
+        
+#コメントのフォーム
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['user', 'content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'コメントを入力してください...',
+                'rows': 3,
+                'style': 'resize:none;'
+            }),
+        }
+        labels = {
+            'content': '',
         }
