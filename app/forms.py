@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from app.models import User
+# from app.models import User
 from django.contrib.auth import authenticate
-from .models import  WishlistItem, Clothes, Post, Comment
+from .models import  User, WishlistItem, Clothes, Post, Comment
 
 
 class SignupForm(UserCreationForm):

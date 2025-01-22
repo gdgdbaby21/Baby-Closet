@@ -113,26 +113,30 @@ class LogoutView(View):
     def get(self, request):
         return render(request, "login.html")
 
+# class EditProfileView(LoginRequiredMixin, View):
+#     def get(self, request):
+#         user_profile = request.user
+#         form = UserProfileForm(instance=user_profile)
+#         return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
+
+
+
 class EditProfileView(LoginRequiredMixin, View):
     def get(self, request):
+        # 現在ログイン中のユーザーのプロフィールを取得
         user_profile = request.user
-        form = UserProfileForm(instance=user_profile)
+        form = UserProfileForm(instance=user_profile)  # プロフィールフォームに既存のデータを表示
         return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
-    
-    
+
     def post(self, request):
-        user_profile =request.user
-        print(request.FILES)
-        form = UserProfileForm(request.POST, request.FILES,
-                               instance=user_profile)
+        user_profile = request.user
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)  # プロフィール更新用のフォーム
         if form.is_valid():
-            form.save()
-            print('プロフィール文更新')
+            form.save()  # フォームが有効であればデータを保存
             messages.success(request, 'プロフィールが更新されました！')
-            return redirect("profile")
+            return redirect("profile")  # プロフィール画面にリダイレクト
         else:
             messages.error(request, 'プロフィールの更新に失敗しました。入力内容を確認してください。')
-            print(form.errors)
         return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
 
 
@@ -299,12 +303,6 @@ class CreatePostView(LoginRequiredMixin, CreateView):
         post.save()
         form.save_m2m() 
         
-        # items = form.cleaned_data.get('items')
-        # print("関連付けるアイテム:", items)
-        # if items:
-        #      post.items.set(items)
-        
-        # 成功時のレスポンスを返す
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):

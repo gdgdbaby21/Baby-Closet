@@ -53,6 +53,18 @@
         margin-bottom: 10px;
     }
 
+    .upload-link {
+        color: gray; 
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    
+    .upload-link:hover {
+        text-decoration: none;
+        color: darkgray;
+    }
+
     .form-group {
         display: flex;
         justify-content: space-between;
@@ -79,7 +91,7 @@
     .btn-submit {
         display: block;
         width: 100%;
-        background-color: #007bff;
+        background-color: gray;
         color: #fff;
         border: none;
         padding: 10px 20px;
@@ -94,7 +106,7 @@
     }
 
     input[type="file"] {
-        display: none; /* ファイル選択ボタンを隠す */
+        display: none; 
     }
 </style>
 
@@ -104,24 +116,17 @@
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% comment %} <div class="profile-image">
-             <label for="profile_image"> 
-                {% if user and user.profile_image %}
-                    <img src="{{ user.profile_image.url }}" alt="プロフィール画像" class="profile-thumbnail">
-                {% else %}
-                    <img src="{% static 'default-profile.png' %}" alt="デフォルト画像" class="profile-thumbnail">
-                {% endif %}
-                 <input type="file" id="profile_image" name="profile_image"> 
-            </label>
-            <p>※画像をクリックしてアップロード</p>  {% endcomment %}
-
-            <div class="profile-upload">
-                <label for="profile_image" class="upload-label">
-                    <img id="preview" src="{% static 'default-profile.png' %}" alt="プロフィール画像" class="profile-thumbnail">
-                    <input type="file" id="profile_image" name="profile_image" accept="image/*" onchange="previewImage(event)">
-                    {% comment %} <span>ファイルを選択</span> {% endcomment %}
-                </label>
+        <div class="profile-upload">
+            {% if user_profile.profile_image %}
+                <img id="preview" src="{{ user_profile.profile_image.url }}" alt="プロフィール画像" class="profile-thumbnail">
+            {% else %}
+                <img id="preview" src="/media/profile_images/default-profile.png" alt="デフォルト画像" class="profile-thumbnail">
+            {% endif %}
+            <a id="uploadLink" href="#" class="upload-link">画像を登録</a>
+            <input type="file" id="profile_image" name="profile_image" accept="image/*" style="display: none;">
         </div>
+
+
         <div class="form-group">
             <label for="account_name">アカウント名:</label>
             {{ form.account_name }}
@@ -143,4 +148,32 @@
         <button type="submit" class="btn-submit">決定</button>
     </form>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const uploadLink = document.getElementById("uploadLink");
+        const fileInput = document.getElementById("profile_image");
+        const preview = document.getElementById("preview");
+
+        // 「画像を登録」リンクをクリックしたときにファイル選択を開く
+        uploadLink.addEventListener("click", function (event) {
+            event.preventDefault(); // リンクのデフォルト動作を防ぐ
+            fileInput.click(); // ファイル入力をクリック（ダイアログを表示）
+        });
+
+        // ファイルが選択されたときにプレビュー画像を更新
+        fileInput.addEventListener("change", function (event) {
+            const file = event.target.files[0]; // ユーザーが選択したファイルを取得
+
+            if (file) {
+                const reader = new FileReader(); // FileReader オブジェクトを作成
+                reader.onload = function (e) {
+                    preview.src = e.target.result; // プレビュー画像を更新
+                };
+                reader.readAsDataURL(file); // ファイルをDataURL形式で読み込む
+            } else {
+                preview.src = "{% static 'images/default-profile.png' %}"; // ファイルが選択されていない場合はデフォルト画像に戻す
+            }
+        });
+    });
+</script>
 {% endblock %}

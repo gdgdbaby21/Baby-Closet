@@ -20,7 +20,7 @@ class User(AbstractUser):
 
     email = models.EmailField(max_length=50, unique=True)
     account_name = models.CharField(max_length=50, unique=True, default="")
-    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    profile_image = models.ImageField(upload_to='profile_images/', default='profile_images/default-profile.png', blank=True, null=True)
     gender = models.CharField(max_length=10, choices=[('male', '男性'), ('female', '女性'), ('other', 'その他')], default="other")
     birth_of_date = models.DateField(null=True, blank=True)
     bio = models.TextField(max_length=500, blank=True)
