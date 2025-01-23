@@ -12,30 +12,39 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-
         }
 
         form {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
+            width: 300px;
         }
 
         div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
             margin-bottom: 10px;
         }
 
-        h1 {
-            color: gray;
+        label {
+            width: 40%;
+            text-align: left;
         }
 
-        input[type="email"], input[type="password"] {
+        input[type="email"], input[type="password"], input[type="text"], input[type="date"], textarea, select {
             padding: 8px;
             border: 2px solid #c0c0c0; 
             border-radius: 5px; 
             background-color: #f9f9f9; 
-            width: 100%; 
+            width: 58%; 
             box-sizing: border-box;
+        }
+
+        textarea {
+            resize: none;
         }
 
         button {
@@ -47,6 +56,7 @@
             font-size: 16px;
             cursor: pointer;
             margin-top: 10px;
+            align-self: center;
         }
 
         button:hover {
@@ -57,41 +67,53 @@
             color: #4cafa0;
             text-decoration: none;
             margin-top: 15px;
+            align-self: center;
         }
 
         a:hover {
             text-decoration: underline;
         }
     </style>
-
 </head>
- <body>
+<body>
     <h1>Baby Closet</h1>
     <form method="post">
         {% csrf_token %}
-        <div>メールアドレス<input type="email" name="email" value="{{ form.name.value|default:''}}"></div>
-        <div class="form-group">
+        <div>
+            <label for="email">メールアドレス:</label>
+            <input type="email" id="email" name="email" value="{{ form.email.value|default:'' }}">
+        </div>
+        <div>
             <label for="account_name">アカウント名:</label>
-            {{ form.account_name }}
+            <input type="text" id="account_name" name="account_name" value="{{ form.account_name.value|default:'' }}">
         </div>
-        <div class="form-group">
+        <div>
             <label for="gender">性別:</label>
-            {{ form.gender }}
+            <select id="gender" name="gender">
+                <option value="male" {% if form.gender.value == "male" %}selected{% endif %}>男性</option>
+                <option value="female" {% if form.gender.value == "female" %}selected{% endif %}>女性</option>
+                <option value="other" {% if form.gender.value == "other" %}selected{% endif %}>その他</option>
+            </select>
         </div>
-        <div class="form-group">
+        <div>
             <label for="birth_of_date">生年月日:</label>
-            {{ form.birth_of_date }}
+            <input type="date" id="birth_of_date" name="birth_of_date" value="{{ form.birth_of_date.value|default:'' }}">
         </div>
-        <div class="form-group">
+        <div>
             <label for="bio">自己紹介:</label>
-            {{ form.bio }}
+            <textarea id="bio" name="bio" rows="4">{{ form.bio.value|default:'' }}</textarea>
         </div>
-        <div>パスワード<input type="password" name="password1" value="{{ form.name.value|default:''}}"></div>
-        <div>パスワード再入力<input type="password" name="password2" value="{{ form.name.value|default:''}}"></div> 
-        
-        <button type="submit">新規登録</button> 
+        <div>
+            <label for="password1">パスワード:</label>
+            <input type="password" id="password1" name="password1" value="{{ form.password1.value|default:'' }}">
+        </div>
+        <div>
+            <label for="password2">パスワード再入力:</label>
+            <input type="password" id="password2" name="password2" value="{{ form.password2.value|default:'' }}">
+        </div>
+        <button type="submit">新規登録</button>
     </form>
     {{ form.errors }}
-   <a href="{% url 'login' %}">Loginへ戻る</a>
+    <a href="{% url 'login' %}">Loginへ戻る</a>
 </body>
 </html>

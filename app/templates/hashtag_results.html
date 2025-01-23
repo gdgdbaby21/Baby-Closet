@@ -13,8 +13,11 @@
         <div class="post-list">
             {% for post in posts %}
                 <div class="post-item">
-                    <p>@{{ post.user.userprofile.account}}</p>
-                    <img src="{{ post.image.url }}" alt="{{ post.caption }}" style="max-width: 200px;">
+                    <p>@{{ post.user.account_name}}</p>
+                    <!-- 画像をリンクで囲む -->
+                    <a href="{% url 'post_detail' post.pk %}">
+                        <img src="{{ post.image.url }}" alt="投稿画像" style="max-width: 200px;">
+                    </a>
                     <p>{{ post.caption }}</p>
                 </div>
             {% endfor %}

@@ -46,6 +46,7 @@
     <h1>Baby Closet</h1>
     <form method="post">
         {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
         <div>メールアドレス<input type="email" name="email"></div>
         <div>パスワード<input type="password" name="password"></div> 
         <button type="submit">Login</button> 

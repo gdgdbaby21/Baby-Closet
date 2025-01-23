@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-# from app.models import User
 from django.contrib.auth import authenticate
 from .models import  User, WishlistItem, Clothes, Post, Comment
 

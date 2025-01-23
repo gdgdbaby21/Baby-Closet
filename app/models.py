@@ -20,7 +20,7 @@ class User(AbstractUser):
 
     email = models.EmailField(max_length=50, unique=True)
     account_name = models.CharField(max_length=50, unique=True, default="")
-    profile_image = models.ImageField(upload_to='profile_images/', default='profile_images/default-profile.png', blank=True, null=True)
+    profile_image = models.ImageField(upload_to='profile_images/', default='profile_images/default-profile.png')
     gender = models.CharField(max_length=10, choices=[('male', '男性'), ('female', '女性'), ('other', 'その他')], default="other")
     birth_of_date = models.DateField(null=True, blank=True)
     bio = models.TextField(max_length=500, blank=True)
@@ -54,7 +54,7 @@ class WishlistItem(models.Model):
 
 #ハッシュタグ検索のモデル  
 class Hashtag(models.Model):  
-   user = models.ForeignKey(User, on_delete=models.CASCADE)
+   user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
    name = models.CharField(max_length=50, unique=True)
    popularity = models.IntegerField(default=0)
    created_at = models.DateTimeField(auto_now_add=True)

@@ -167,7 +167,7 @@
                 }
 
                 selectedCheckboxes.forEach((checkbox) => {
-                    const itemName = checkbox.dataset.itemName;// data-item-name属性からアイテム名を取得
+                    const itemName = checkbox.dataset.itemName;
                     const itemId = checkbox.dataset.itemId;
                     if (!itemName) {
                         console.error('アイテム名が見つかりませんでした');
@@ -185,8 +185,6 @@
                     liTag.appendChild(inputTag);
                 });
 
-                {% comment %} <input type="hidden" name="clothes" value="選択した服のID1">
-                <input type="hidden" name="clothes" value="選択した服のID2"> {% endcomment %}
 
                 const modal = bootstrap.Modal.getInstance(document.getElementById('filteredItemModal'));
                 modal.hide();
@@ -194,5 +192,3 @@
         });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

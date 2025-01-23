@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from app.forms import SignupForm, LoginForm
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
@@ -13,9 +13,11 @@ from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.list import ListView
 from django.db.models import Q, Count
 from urllib.parse import unquote
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.views.generic.list import ListView
-import json
+import json, logging, re
+from .utils import extract_hashtags, save_hashtags_to_post
+
 
 
 class PortfolioView(View):
@@ -45,6 +47,8 @@ class LoginView(View):
         return render(request, "login.html", context={
             "form": form
         })
+        
+
 
     def post(self, request):
         form = LoginForm(request.POST)
@@ -54,10 +58,12 @@ class LoginView(View):
         return render(request, "login.html", context={
             "form": form
         })
+
+
 class LogoutView(View):
     def get(self, request):
         logout(request)
-        return redirect('login')
+        return redirect("login")  
 
 
     
@@ -70,14 +76,13 @@ class HomeView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # 人気ハッシュタグを投稿数で並び替え（上位3件を取得）
         popular_hashtags = Hashtag.objects.annotate(
             post_count=Count('posts')
         ).order_by('-popularity', '-post_count')[:3]
 
-        # 人気ハッシュタグごとの投稿データを取得
+       
         hashtag_posts = {
-            hashtag: hashtag.posts.all()[:5]  # 各ハッシュタグに関連する上位5件の投稿
+            hashtag: hashtag.posts.all()[:5]  
             for hashtag in popular_hashtags
         }
 
@@ -93,8 +98,8 @@ class ProfileView(View):
             "user_profile": request.user,
             "user_posts": user_posts,
         })
-        
-    
+
+
 
 class WishlistView(LoginRequiredMixin, View):
     def get(self, request):
@@ -113,38 +118,29 @@ class LogoutView(View):
     def get(self, request):
         return render(request, "login.html")
 
-# class EditProfileView(LoginRequiredMixin, View):
-#     def get(self, request):
-#         user_profile = request.user
-#         form = UserProfileForm(instance=user_profile)
-#         return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
-
-
 
 class EditProfileView(LoginRequiredMixin, View):
     def get(self, request):
-        # 現在ログイン中のユーザーのプロフィールを取得
         user_profile = request.user
-        form = UserProfileForm(instance=user_profile)  # プロフィールフォームに既存のデータを表示
+        form = UserProfileForm(instance=request.user)
         return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
 
     def post(self, request):
         user_profile = request.user
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)  # プロフィール更新用のフォーム
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
         if form.is_valid():
-            form.save()  # フォームが有効であればデータを保存
+            form.save() 
             messages.success(request, 'プロフィールが更新されました！')
-            return redirect("profile")  # プロフィール画面にリダイレクト
+            return redirect("profile")
         else:
             messages.error(request, 'プロフィールの更新に失敗しました。入力内容を確認してください。')
         return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
-
-
 
 @login_required
 def profile(request):
     user_profile = request.user
     return render(request, 'profile.html', {'profile': user_profile})
+
 
 class Wishlist_detailView(View):
     def get(self, request, item_id):
@@ -267,24 +263,27 @@ class SearchResultsView(ListView):
         print(f"フィルタリング結果: {queryset}")
 
         return queryset
+    
+    
+logger = logging.getLogger(__name__)
 
-  
 class HashtagSearchView(ListView):
     model = Post
     template_name = 'hashtag_results.html'
     context_object_name = 'posts'
    
     def get_queryset(self):
-        query_param = self.request.GET.get('q', None)
-        if query_param:
-            hashtag_name = unquote(query_param).lstrip('#')
-        else:
-            hashtag_name = self.kwargs.get('hashtag_name')
+        hashtag_name = self.request.GET.get('q') or self.kwargs.get('hashtag_name')
+        if not hashtag_name:
+            raise Http404("Hashtag not provided.")
+        
+        hashtag_name = hashtag_name.lstrip('#')
 
-        print(f"Searching for hashtag: {hashtag_name}")
+        logger.info(f"Searching for hashtag: {hashtag_name}")
 
         hashtag = get_object_or_404(Hashtag, name=hashtag_name)
-        return Post.objects.filter(hashtags=hashtag).order_by("-created_at")
+        return Post.objects.filter(hashtags=hashtag).select_related('user').prefetch_related('comments').order_by("-created_at")
+    
     
 
 
@@ -302,6 +301,11 @@ class CreatePostView(LoginRequiredMixin, CreateView):
         post.user = self.request.user
         post.save()
         form.save_m2m() 
+        
+         # キャプションからハッシュタグを抽出し、保存
+        hashtags = extract_hashtags(post.caption)
+        save_hashtags_to_post(post, hashtags)
+
         
         return super().form_valid(form)
 
