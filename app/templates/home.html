@@ -79,6 +79,61 @@
             font-size: 14px;
             color: #555;
         }
+
+        * 全体のスタイル */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+/* コンテナ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 投稿ヘッダー */
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.post-header h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* フローティング投稿ボタンのスタイル */
+.floating-button {
+    position: fixed; /* 画面に固定 */
+    bottom: 20px; /* 下からの距離 */
+    right: 20px; /* 右からの距離 */
+    background-color: #5a6268; /* ボタンの背景色 */
+    color: white; /* テキストカラー */
+    font-size: 24px; /* テキストサイズ */
+    text-align: center; /* 中央揃え */
+    width: 60px; /* ボタンの幅 */
+    height: 60px; /* ボタンの高さ */
+    border-radius: 50%; /* 丸いボタンにする */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* ボタンの影 */
+    text-decoration: none; /* 下線を消す */
+    line-height: 60px; /* ボタン内テキストの縦揃え */
+    transition: all 0.3s ease; /* ホバー時のアニメーション */
+}
+
+.floating-button:hover {
+    background-color: #6c757d;  /* ホバー時の背景色 */
+    transform: translateY(-3px); /* ホバー時に少し浮き上がる */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* ホバー時の影を強調 */
+}
+
     </style>
 
     <!-- ハッシュタグ検索バー -->
@@ -98,7 +153,10 @@
     <!-- 投稿一覧ヘッダー -->
     <div class="post-header">
         <h2>New Post</h2>
-        <a href="{% url 'create_post' %}" class="new-post-button">投稿する</a>
+        <!-- フローティング投稿ボタン -->
+        <a href="{% url 'create_post' %}" class="floating-button">
+            ＋
+        </a>
     </div>
 
     <!-- 投稿一覧 -->
