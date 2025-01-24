@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
+    <!-- ヘッダー部分 -->
     <header>
         <nav>
             <ul class="header-menu">
@@ -19,10 +20,13 @@
             </ul>
         </nav>
     </header>
+
+    <!-- メインコンテンツ -->
     <main>
         {% block content %}
-        <!-- 子テンプレートの内容がここに入る -->
+        <!-- 子テンプレートの内容がここに入ります -->
         {% endblock %}
     </main>
 </body>
 </html>
+

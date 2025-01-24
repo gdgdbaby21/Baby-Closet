@@ -160,6 +160,8 @@
             document.getElementById('confirmSelection').addEventListener('click', function () {
                 const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
                 const selectedItemsList = document.getElementById('selected-items-list');
+                
+
 
                 if (selectedCheckboxes.length === 0) {
                     alert('少なくとも1つのアイテムを選択してください。');
@@ -169,20 +171,34 @@
                 selectedCheckboxes.forEach((checkbox) => {
                     const itemName = checkbox.dataset.itemName;
                     const itemId = checkbox.dataset.itemId;
-                    if (!itemName) {
+                    const itemImage = checkbox.dataset.itemImage;
+
+                    if (!itemName || !itemImage) {
                         console.error('アイテム名が見つかりませんでした');
                         return;
                     }
 
                     const liTag = document.createElement('li');
+
+                    const imgTag = document.createElement('img');
+                    imgTag.src = itemImage;
+                    imgTag.alt = itemName;
+                    imgTag.style.width = '50px'; // 画像のサイズを調整
+                    imgTag.style.height = '50px';
+                    imgTag.style.marginRight = '10px';
+
+
                     liTag.textContent = itemName;
                     liTag.className = 'd-flex align-items-center mb-2';
+
                     selectedItemsList.appendChild(liTag);
                     const inputTag = document.createElement('input');
                     inputTag.type="hidden";
                     inputTag.name="clothes";
                     inputTag.value=itemId;
+
                     liTag.appendChild(inputTag);
+                    liTag.appendChild(imgTag);
                 });
 
 

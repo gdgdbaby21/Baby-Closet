@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from app.forms import SignupForm, LoginForm
-from django.contrib.auth import login, logout, get_user_model
+from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
@@ -15,7 +15,7 @@ from django.db.models import Q, Count
 from urllib.parse import unquote
 from django.http import JsonResponse, Http404
 from django.views.generic.list import ListView
-import json, logging, re
+import json, logging
 from .utils import extract_hashtags, save_hashtags_to_post
 
 
