@@ -5,7 +5,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
-from .models import WishlistItem, Clothes, Post, Hashtag, Like, Comment
+from .models import User, WishlistItem, Clothes, Post, Hashtag, Like, Comment
 from .forms import  UserProfileForm, WishlistItemForm, ClothingForm, PostForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
@@ -92,10 +92,12 @@ class HomeView(LoginRequiredMixin, ListView):
 
 
 class ProfileView(View):
-    def get(self, request):
-        user_posts = Post.objects.filter(user=request.user).order_by('-created_at')
+    def get(self, request, account_name):
+        profile_user  = get_object_or_404(User, account_name=account_name)
+        user_posts = Post.objects.filter(user=profile_user).order_by('-created_at')
+        
         return render(request, "profile.html", {
-            "user_profile": request.user,
+            "user_profile": profile_user,
             "user_posts": user_posts,
         })
 
