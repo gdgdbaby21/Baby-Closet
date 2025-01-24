@@ -135,7 +135,7 @@ class Clothes(models.Model):
 
 #コーディネート投稿のモデル
 class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     clothes = models.ManyToManyField(Clothes, related_name='posts', blank=True)
     hashtags = models.ManyToManyField(Hashtag, related_name='posts') 
     image = models.ImageField(upload_to='posts/images/')
