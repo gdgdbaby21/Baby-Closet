@@ -70,9 +70,10 @@
         {% if user_profile.profile_image %}
             <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像">
         {% else %}
-            <img src="{% static 'default-profile.png' %}" alt="デフォルト画像">
+            <img src="{% static 'images/default-profile.png' %}" alt="デフォルト画像">
         {% endif %}
     </div>
+    
 
     <div class="profile-details">
         <p>アカウント: {{ user_profile.account_name }}</p>

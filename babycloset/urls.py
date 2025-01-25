@@ -20,7 +20,6 @@ from django.contrib import admin
 from django.urls import path
 from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, ClothesView, ClothesCreateView, ClothesDetailView, ClothesDeleteView, SearchResultsView, HashtagSearchView, CreatePostView, PostDetailView, PostDeleteView, LikeView, CommentView, DeleteCommentView, ClothesOptionsView,ClothesListView, FilterItemsView
 from django.conf import settings
-from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 
 urlpatterns = [
@@ -29,6 +28,7 @@ urlpatterns = [
     path('signup/', SignupView.as_view(), name="signup"),
     path('login/', LoginView.as_view(), name="login"),
     path('home/', HomeView.as_view(), name="home"),
+    path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/<str:account_name>/', ProfileView.as_view(), name="profile"),
     path('wishlist/', WishlistView.as_view(), name="wishlist"),
     path('logout/', LogoutView.as_view(), name="logout"),

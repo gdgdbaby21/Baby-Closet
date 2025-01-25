@@ -11,6 +11,7 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.list import ListView
+from django.utils.decorators import method_decorator
 from django.db.models import Q, Count
 from urllib.parse import unquote
 from django.http import JsonResponse, Http404
@@ -41,29 +42,57 @@ class SignupView(View):
             "form": form
         })
 
+# 
+
+from django.contrib.auth import authenticate, login
+from django.shortcuts import redirect, render
+from django.views import View
+
+
+# class LoginView(View):
+#     def get(self, request):
+#         form = LoginForm()
+#         return render(request, "login.html", context={
+#             "form": form
+#         })
+        
+#     def post(self, request):
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             login(request, form.user)
+#             return redirect("home")
+#         return render(request, "login.html", context={
+#             "form": form
+#         })
+
 class LoginView(View):
     def get(self, request):
-        form = LoginForm()
-        return render(request, "login.html", context={
-            "form": form
-        })
-        
-
+        return render(request, "login.html", {"form": LoginForm()})
 
     def post(self, request):
         form = LoginForm(request.POST)
         if form.is_valid():
-            login(request, form.user)
-            return redirect("home")
-        return render(request, "login.html", context={
-            "form": form
-        })
+            user = authenticate(
+                request, 
+                email=form.cleaned_data["email"], 
+                password=form.cleaned_data["password"]
+            )
+            if user:
+                login(request, user)
+                return redirect(request.GET.get("next", "home"))  # 次のURLがなければホームへ
+        return render(request, "login.html", {"form": form})
 
+
+
+# class LogoutView(View):
+#     def get(self, request):
+#         logout(request)
+#         return redirect("login")  
 
 class LogoutView(View):
-    def get(self, request):
+    def post(self, request):
         logout(request)
-        return redirect("login")  
+        return redirect("login")
 
 
     
@@ -91,15 +120,32 @@ class HomeView(LoginRequiredMixin, ListView):
         return context
 
 
-class ProfileView(View):
-    def get(self, request, account_name):
-        profile_user  = get_object_or_404(User, account_name=account_name)
-        user_posts = Post.objects.filter(user=profile_user).order_by('-created_at')
+# class ProfileView(View):
+#     def get(self, request, account_name):
+#         profile_user  = get_object_or_404(User, account_name=account_name)
+#         user_posts = Post.objects.filter(user=profile_user).order_by('-created_at')
         
+#         return render(request, "profile.html", {
+#             "user_profile": profile_user,
+#             "user_posts": user_posts,
+#         })
+
+@method_decorator(login_required, name='dispatch')
+class ProfileView(View):
+    def get(self, request, account_name=None):
+        if account_name is None:
+            # ログイン中のユーザーのプロフィールへリダイレクト
+            return redirect('profile', account_name=request.user.account_name)
+        
+        # 指定されたaccount_nameのユーザーを取得
+        profile_user = get_object_or_404(User, account_name=account_name)
+        user_posts = Post.objects.filter(user=profile_user).order_by('-created_at')
+
         return render(request, "profile.html", {
             "user_profile": profile_user,
             "user_posts": user_posts,
         })
+        
 
 
 
