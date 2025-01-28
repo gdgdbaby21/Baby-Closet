@@ -179,19 +179,40 @@
                     }
 
                     const liTag = document.createElement('li');
+                    liTag.className = 'border rounded p-2 text-center position-relative d-flex flex-column align-items-center';
+                    liTag.style.width = '120px';
+                    liTag.style.padding = '10px';
+                    liTag.style.margin = '5px';
+                    liTag.style.display = 'inline-block';
 
                     const imgTag = document.createElement('img');
                     imgTag.src = itemImage;
                     imgTag.alt = itemName;
-                    imgTag.style.width = '50px'; // 画像のサイズを調整
+                    imgTag.style.width = '50px';
                     imgTag.style.height = '50px';
                     imgTag.style.marginRight = '10px';
 
+                
 
-                    liTag.textContent = itemName;
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.innerHTML = '🗑️';
+                    deleteBtn.className = 'border-0 bg-transparent text-danger';
+                    deleteBtn.style.cursor = 'pointer';
+                    deleteBtn.style.position = 'absolute';
+                    deleteBtn.style.right = '5px';
+                    deleteBtn.style.top = '5px';
+                    deleteBtn.addEventListener('click', function () {
+                    liTag.remove();
+                });
+
+
+
+                    liTag.textContent = itemName; 
                     liTag.className = 'd-flex align-items-center mb-2';
 
                     selectedItemsList.appendChild(liTag);
+
+
                     const inputTag = document.createElement('input');
                     inputTag.type="hidden";
                     inputTag.name="clothes";
@@ -199,6 +220,8 @@
 
                     liTag.appendChild(inputTag);
                     liTag.appendChild(imgTag);
+                    liTag.appendChild(deleteBtn);
+                    selectedItemsList.appendChild(liTag);
                 });
 
 

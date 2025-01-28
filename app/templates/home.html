@@ -189,7 +189,7 @@ body {
                 <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
             </div>
 
-            <p>{{ post.caption }}</p>
+            {% comment %} <p>{{ post.caption }}</p> {% endcomment %}
         </div>
         {% endfor %}
     </div>

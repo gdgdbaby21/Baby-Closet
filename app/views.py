@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from app.forms import SignupForm, LoginForm
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
@@ -42,28 +42,6 @@ class SignupView(View):
             "form": form
         })
 
-# 
-
-from django.contrib.auth import authenticate, login
-from django.shortcuts import redirect, render
-from django.views import View
-
-
-# class LoginView(View):
-#     def get(self, request):
-#         form = LoginForm()
-#         return render(request, "login.html", context={
-#             "form": form
-#         })
-        
-#     def post(self, request):
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             login(request, form.user)
-#             return redirect("home")
-#         return render(request, "login.html", context={
-#             "form": form
-#         })
 
 class LoginView(View):
     def get(self, request):
@@ -83,11 +61,6 @@ class LoginView(View):
         return render(request, "login.html", {"form": form})
 
 
-
-# class LogoutView(View):
-#     def get(self, request):
-#         logout(request)
-#         return redirect("login")  
 
 class LogoutView(View):
     def post(self, request):
@@ -120,24 +93,12 @@ class HomeView(LoginRequiredMixin, ListView):
         return context
 
 
-# class ProfileView(View):
-#     def get(self, request, account_name):
-#         profile_user  = get_object_or_404(User, account_name=account_name)
-#         user_posts = Post.objects.filter(user=profile_user).order_by('-created_at')
-        
-#         return render(request, "profile.html", {
-#             "user_profile": profile_user,
-#             "user_posts": user_posts,
-#         })
-
 @method_decorator(login_required, name='dispatch')
 class ProfileView(View):
     def get(self, request, account_name=None):
         if account_name is None:
-            # ログイン中のユーザーのプロフィールへリダイレクト
             return redirect('profile', account_name=request.user.account_name)
         
-        # 指定されたaccount_nameのユーザーを取得
         profile_user = get_object_or_404(User, account_name=account_name)
         user_posts = Post.objects.filter(user=profile_user).order_by('-created_at')
 
@@ -161,10 +122,6 @@ class ClothesView(LoginRequiredMixin, View):
         clothes = Clothes.objects.filter(user=request.user)
         return render(request, "clothes.html", {"clothes": clothes})
 
-
-class LogoutView(View):
-    def get(self, request):
-        return render(request, "login.html")
 
 
 class EditProfileView(LoginRequiredMixin, View):
@@ -350,7 +307,6 @@ class CreatePostView(LoginRequiredMixin, CreateView):
         post.save()
         form.save_m2m() 
         
-         # キャプションからハッシュタグを抽出し、保存
         hashtags = extract_hashtags(post.caption)
         save_hashtags_to_post(post, hashtags)
 
@@ -435,17 +391,16 @@ class LikeView(LoginRequiredMixin, View):
         else:
             liked = True
         
-        # JSONレスポンスを構造化
         return JsonResponse({
             "liked": liked,
-            "like_count": post.likes.count()  # いいね数
+            "like_count": post.likes.count() 
         })
 
 
 class CommentView(LoginRequiredMixin, View):
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
-        data = json.loads(request.body)  # リクエストボディをJSONとして解析
+        data = json.loads(request.body) 
         content = data.get("content")
 
         if content:
