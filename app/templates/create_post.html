@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>コーディネート投稿</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+
+    <style>
+        /* ボタンをグレーにする */
+        .btn-gray {
+            background-color: #6c757d !important; /* Bootstrapのsecondary色 (グレー) */
+            border-color: #6c757d !important;
+            color: white !important;
+        }
+    </style>
+
 </head>
 <body>
     <div class="container mt-5">
@@ -48,7 +58,7 @@
                 <ul id="selected-items-list" class="list-unstyled">
                     <!-- 選択されたアイテムがここに表示されます -->
                 </ul>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemModal">
+                <button type="button" class="btn btn-gray" data-bs-toggle="modal" data-bs-target="#itemModal">
                     アイテムを追加
                 </button>
             </div>
@@ -62,7 +72,7 @@
             </div>
 
             <!-- 投稿ボタン -->
-            <button type="submit" class="btn btn-success">投稿</button>
+            <button type="submit" class="btn btn-gray">投稿</button>
         </form>
     </div>
 

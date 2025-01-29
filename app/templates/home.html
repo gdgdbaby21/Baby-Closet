@@ -158,50 +158,53 @@ body {
             ＋
         </a>
     </div>
-
-    <!-- 投稿一覧 -->
+  <!-- New Post セクション -->
+<div style="margin-bottom: 40px;">
     <div class="post-list">
         {% for post in posts %}
-        <div class="post-item">
-            <p class="text-muted">
-                @
-                {% if post.user.account_name %}
-                    {{ post.user.account_name }}
-                {% else %}
-                    Unknown User
-                {% endif %}
-            </p>
+            {% if post.is_public or post.user == request.user %}
+                <div class="post-item">
+                    <p class="text-muted">
+                        @
+                        {% if post.user.account_name %}
+                            {{ post.user.account_name }}
+                        {% else %}
+                            Unknown User
+                        {% endif %}
+                    </p>
 
-            <div class="image-wrapper">
-               {% if post.image %}
-                   <a href="{% url 'post_detail' post.pk %}">
-                       <img src="{{ post.image.url }}" alt="投稿画像">
-                   </a>
-               {% else %}
-                   <p>No image available</p>
-               {% endif %}
-            </div>
+                    <div class="image-wrapper">
+                        <a href="{% url 'post_detail' post.pk %}">
+                            <img src="{{ post.image.url }}" alt="投稿画像">
+                        </a>
+                    </div>
 
-            <p class="mt-2"><strong>{{ post.title }}</strong></p>
+                    {% comment %} <p class="mt-2"><strong>{{ post.title }}</strong></p> {% endcomment %}
 
-            <div class="post-meta">
-                <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
-                <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
-            </div>
+                    <!-- キャプションを追加 -->
+                    {% if post.caption %}
+                        <p class="post-caption">{{ post.caption }}</p>
+                    {% endif %}
 
-            {% comment %} <p>{{ post.caption }}</p> {% endcomment %}
-        </div>
+                    <div class="post-meta">
+                        <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
+                        <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
+                    </div>
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
+</div>
 
-    <div class="popular-hashtags mt-4">
-        <h3>人気のハッシュタグ</h3>
-        {% for hashtag, posts in hashtag_posts.items %}
-            {% if posts|length > 0 %}
-            <div class="hashtag-section mb-5">
-                <h4>#{{ hashtag.name }}</h4>
-                <div class="post-list">
-                    {% for post in posts %}
+<!-- 人気のハッシュタグ セクション -->
+<div style="margin-top: 40px;">
+    <h3>人気のハッシュタグ</h3>
+    {% for hashtag, posts in hashtag_posts.items %}
+        {% if posts|length > 0 %}
+        <div class="hashtag-section mb-5">
+            <h4>#{{ hashtag.name }}</h4>
+            <div class="post-list">
+                {% for post in posts %}
                     <div class="post-item">
                         <p class="text-muted">
                             @
@@ -218,18 +221,22 @@ body {
                             </a>
                         </div>
 
-                        <p class="mt-2"><strong>{{ post.title }}</strong></p>
+                        {% comment %} <p class="mt-2"><strong>{{ post.title }}</strong></p> {% endcomment %}
+
+                        <!-- キャプションを追加 -->
+                        {% if post.caption %}
+                            <p class="post-caption">{{ post.caption }}</p>
+                        {% endif %}
 
                         <div class="post-meta">
                             <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
                             <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
+                {% endfor %}
             </div>
-            {% endif %}
-        {% endfor %}
-    </div>
+        </div>
+        {% endif %}
+    {% endfor %}
 </div>
-{% endblock %}
+{% endblock %} 

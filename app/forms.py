@@ -93,14 +93,14 @@ class ClothingForm(forms.ModelForm):
 
 #コーディネート投稿のフォーム
 class PostForm(forms.ModelForm):
-    clothes = forms.ModelMultipleChoiceField(
+      is_public = forms.BooleanField(required=False)  # これを追加
+      clothes = forms.ModelMultipleChoiceField(
         queryset=Clothes.objects.all(),
         required=False,
         widget=forms.CheckboxSelectMultiple,
         label="関連する服"
     )
-
-    class Meta:
+      class Meta:
         model = Post
         fields = ['title', 'caption', 'image', 'is_public', 'clothes']
         widgets = {

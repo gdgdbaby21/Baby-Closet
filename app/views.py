@@ -57,7 +57,7 @@ class LoginView(View):
             )
             if user:
                 login(request, user)
-                return redirect(request.GET.get("next", "home"))  # 次のURLがなければホームへ
+                return redirect(request.GET.get("next", "home"))
         return render(request, "login.html", {"form": form})
 
 
@@ -68,45 +68,56 @@ class LogoutView(View):
         return redirect("login")
 
 
-    
 class HomeView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'home.html'
     context_object_name = 'posts'
     login_url = "/login/"
 
+    def get_queryset(self):
+        """非公開投稿のフィルタリング"""
+        user = self.request.user
+        if user.is_authenticated:
+            
+            return Post.objects.filter(Q(is_public=True) | Q(user=user)).distinct()
+        else:
+            return Post.objects.filter(is_public=True).distinct() 
+
     def get_context_data(self, **kwargs):
+        """人気のハッシュタグとその投稿を取得"""
         context = super().get_context_data(**kwargs)
-        
+
         popular_hashtags = Hashtag.objects.annotate(
             post_count=Count('posts')
         ).order_by('-popularity', '-post_count')[:3]
 
-       
         hashtag_posts = {
-            hashtag: hashtag.posts.all()[:5]  
+            hashtag: hashtag.posts.filter(Q(is_public=True) | Q(user=self.request.user))[:5]
             for hashtag in popular_hashtags
         }
 
         context['popular_hashtags'] = popular_hashtags
         context['hashtag_posts'] = hashtag_posts
         return context
-
+    
 
 @method_decorator(login_required, name='dispatch')
 class ProfileView(View):
     def get(self, request, account_name=None):
         if account_name is None:
             return redirect('profile', account_name=request.user.account_name)
-        
+
         profile_user = get_object_or_404(User, account_name=account_name)
-        user_posts = Post.objects.filter(user=profile_user).order_by('-created_at')
+
+        if request.user == profile_user:
+            user_posts = Post.objects.filter(user=profile_user).order_by('-created_at')
+        else:
+            user_posts = Post.objects.filter(user=profile_user, is_public=True).order_by('-created_at')
 
         return render(request, "profile.html", {
             "user_profile": profile_user,
             "user_posts": user_posts,
         })
-        
 
 
 
@@ -304,6 +315,10 @@ class CreatePostView(LoginRequiredMixin, CreateView):
         
         post = form.save(commit=False)
         post.user = self.request.user
+        
+        post.is_public = self.request.POST.get('is_public') == "1"
+
+        print("保存前の is_public 値:", post.is_public)
         post.save()
         form.save_m2m() 
         
@@ -345,17 +360,23 @@ class FilterItemsView(ListView):
 
         return queryset
 
-    
-    
+
+
 class PostDetailView(DetailView):
     model = Post
     template_name = 'post_detail.html'
     context_object_name = 'post'
-    
+
+    def get_object(self, queryset=None):
+        post = super().get_object(queryset)
+        # 投稿者でない場合、非公開の投稿は表示させない
+        if not post.is_public and post.user != self.request.user:
+            raise Http404("この投稿は非公開です。")
+        return post
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        post = self.get_object()
-        context['user_profile'] = post.user
+        context['user_profile'] = self.object.user  # self.get_object() ではなく self.object を使う
         return context
     
 
@@ -446,3 +467,4 @@ class ClothesListView(View):
             for item in clothes
         ]
         return JsonResponse({'clothes': data})
+    

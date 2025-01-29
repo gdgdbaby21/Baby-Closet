@@ -140,7 +140,7 @@ class Post(models.Model):
     hashtags = models.ManyToManyField(Hashtag, related_name='posts') 
     image = models.ImageField(upload_to='posts/images/')
     title = models.CharField(max_length=50, default='')
-    is_public = models.BooleanField(default=True)
+    is_public = models.BooleanField(default=False)
     caption = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
