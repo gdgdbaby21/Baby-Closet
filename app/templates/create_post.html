@@ -161,56 +161,76 @@
                 const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
                 const selectedItemsList = document.getElementById('selected-items-list');
                 
-
-
                 if (selectedCheckboxes.length === 0) {
                     alert('少なくとも1つのアイテムを選択してください。');
                     return;
                 }
 
-                selectedCheckboxes.forEach((checkbox) => {
-                    const itemName = checkbox.dataset.itemName;
-                    const itemId = checkbox.dataset.itemId;
-                    const itemImage = checkbox.dataset.itemImage;
+             // 既存のリストをクリア
+             selectedItemsList.innerHTML = '';
+             
+             // アイテムリストを枠で囲むためのdiv
+             const listContainer = document.createElement('div');
+             listContainer.className = 'border p-3';
+             listContainer.style.border = '1px solid #ccc';
+             listContainer.style.padding = '10px';
+             listContainer.style.marginTop = '10px';
+             listContainer.style.display = 'flex';
+             listContainer.style.flexWrap = 'wrap';
+             listContainer.style.gap = '10px';
+    
 
-                    if (!itemName || !itemImage) {
-                        console.error('アイテム名が見つかりませんでした');
-                        return;
-                    }
 
-                    const liTag = document.createElement('li');
-                    liTag.className = 'border rounded p-2 text-center position-relative d-flex flex-column align-items-center';
-                    liTag.style.width = '120px';
-                    liTag.style.padding = '10px';
-                    liTag.style.margin = '5px';
-                    liTag.style.display = 'inline-block';
+            selectedCheckboxes.forEach((checkbox) => {
+                const itemName = checkbox.dataset.itemName;
+                const itemId = checkbox.dataset.itemId;
+                const itemImage = checkbox.dataset.itemImage;
 
-                    const imgTag = document.createElement('img');
-                    imgTag.src = itemImage;
-                    imgTag.alt = itemName;
-                    imgTag.style.width = '50px';
-                    imgTag.style.height = '50px';
-                    imgTag.style.marginRight = '10px';
+                if (!itemName || !itemImage) {
+                    console.error('アイテム名が見つかりませんでした');
+                    return;
+                }
+
+            // 各アイテムを格納するコンテナ
+        const itemContainer = document.createElement('div');
+        itemContainer.className = 'border rounded p-2 d-flex align-items-center';
+        itemContainer.style.width = '150px';
+        itemContainer.style.padding = '10px';
+        itemContainer.style.display = 'flex';
+        itemContainer.style.alignItems = 'center';
+        itemContainer.style.position = 'relative';
+        itemContainer.style.border = '1px solid #ddd';
+
+                const liTag = document.createElement('li');
+                liTag.className = 'border rounded p-2 text-center position-relative d-flex flex-column align-items-center';
+                liTag.style.width = '120px';
+                liTag.style.padding = '10px';
+                liTag.style.margin = '5px';
+                liTag.style.display = 'inline-block';
+
+                const imgTag = document.createElement('img');
+                imgTag.src = itemImage;
+                imgTag.alt = itemName;
+                imgTag.style.width = '50px';
+                imgTag.style.height = '50px';
+                imgTag.style.marginRight = '10px';
+
+                const textTag = document.createElement('span');
+                textTag.textContent = itemName;
+                textTag.style.flexGrow = '1';
+                textTag.style.marginRight = '10px';
 
                 
-
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.innerHTML = '🗑️';
+                 const deleteBtn = document.createElement('button');
+                deleteBtn.innerHTML = '🗑️';
                     deleteBtn.className = 'border-0 bg-transparent text-danger';
                     deleteBtn.style.cursor = 'pointer';
                     deleteBtn.style.position = 'absolute';
                     deleteBtn.style.right = '5px';
                     deleteBtn.style.top = '5px';
                     deleteBtn.addEventListener('click', function () {
-                    liTag.remove();
+                        itemContainer.remove();
                 });
-
-
-
-                    liTag.textContent = itemName; 
-                    liTag.className = 'd-flex align-items-center mb-2';
-
-                    selectedItemsList.appendChild(liTag);
 
 
                     const inputTag = document.createElement('input');
@@ -221,13 +241,23 @@
                     liTag.appendChild(inputTag);
                     liTag.appendChild(imgTag);
                     liTag.appendChild(deleteBtn);
-                    selectedItemsList.appendChild(liTag);
+
+                    selectedItemsList.appendChild(listContainer);
+
+                    // 各要素を itemContainer に追加
+                    itemContainer.appendChild(imgTag);
+                    itemContainer.appendChild(textTag); // タイトルを追加
+                    itemContainer.appendChild(deleteBtn);
+                    itemContainer.appendChild(inputTag);
+
+                    // リストに追加
+                    listContainer.appendChild(itemContainer);
                 });
 
 
                 const modal = bootstrap.Modal.getInstance(document.getElementById('filteredItemModal'));
                 modal.hide();
             });
-        });
+        });  
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
