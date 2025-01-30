@@ -9,23 +9,25 @@
          style="max-width: 450px; width: 100%; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
 
         <!-- 投稿情報 -->
-        <div class="post-info d-flex align-items-center justify-content-center mb-3">
+        <div class="post-info d-flex align-items-center mb-3" style="display: flex; align-items: center;">
+    
             <div class="profile-image">
-                {% if user_profile.profile_image %}
-                    <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像" 
-                         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-                {% else %}
-                    <img src="{% static 'default-profile.png' %}" alt="デフォルト画像" 
-                         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-                {% endif %}
-            </div>
-            <div class="post-user-info">
-                <a href="{% url 'profile' account_name=user_profile.account_name  %}" 
-                   style="text-decoration: none; color: #333; font-size: 16px; margin-left: 10px;">
-                    <strong>@{{ user_profile.account_name }}</strong>
-                </a>
-            </div>
-        </div>
+        {% if user_profile.profile_image %}
+            <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像" 
+                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        {% else %}
+            <img src="{% static 'default-profile.png' %}" alt="デフォルト画像" 
+                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        {% endif %}
+    </div>
+    
+    <div class="post-user-info" style="margin-left: 10px;">
+        <a href="{% url 'profile' account_name=user_profile.account_name  %}" 
+           style="text-decoration: none; color: #333; font-size: 16px;">
+            <strong>@{{ user_profile.account_name }}</strong>
+        </a>
+    </div>
+</div>
 
         <!-- 投稿画像 -->
         <div class="image-wrapper mb-3">
@@ -34,27 +36,29 @@
         </div>
 
         <!-- いいね・削除ボタン -->
-        <div class="action-buttons d-flex align-items-center justify-content-center mb-3" style="gap: 20px;">
-            <div class="like-container d-flex align-items-center">
-                <button id="like-button" data-post-id="{{ post.id }}" 
-                        style="border: none; background: none; font-size: 24px; cursor: pointer; color: {% if user in post.likes.all %}black{% else %}gray{% endif %};">
-                    {% if user in post.likes.all %}
-                    ♥
-                    {% else %}
-                    ♡
-                    {% endif %}
-                </button>
-                <p id="like-count" class="mb-0" style="font-size: 16px;">{{ post.likes.count }}</p>
-            </div>
-
-            {% if user == post.user %}
-            <form action="{% url 'post_delete' post.pk %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger btn-sm">🗑️ 削除</button>
-            </form>
+<div class="action-buttons d-flex align-items-center justify-content-center mb-3" style="gap: 20px;">
+    <!-- いいねボタンとカウント -->
+    <div class="like-container d-flex align-items-center" style="display: flex; align-items: center; gap: 5px;">
+        <button id="like-button" data-post-id="{{ post.id }}" 
+                style="border: none; background: none; font-size: 24px; cursor: pointer; 
+                       color: {% if user in post.likes.all %}black{% else %}gray{% endif %};">
+            {% if user in post.likes.all %}
+            ♥
+            {% else %}
+            ♡
             {% endif %}
-        </div>
+        </button>
+        <p id="like-count" class="mb-0" style="font-size: 16px; margin: 0;">{{ post.likes.count }}</p>
+    </div>
 
+    <!-- 削除ボタン (投稿者のみ表示) -->
+    {% if user == post.user %}
+    <form action="{% url 'post_delete' post.pk %}" method="post" style="margin: 0;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-sm"> 削除</button>
+    </form>
+    {% endif %}
+</div>
         <!-- コメント投稿 -->
         {% if user.is_authenticated %}
         <div id="comment-section" class="mt-3">
