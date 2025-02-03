@@ -12,9 +12,9 @@ from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Prefetch
 from urllib.parse import unquote
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponseForbidden
 from django.views.generic.list import ListView
 import json, logging
 from .utils import extract_hashtags, save_hashtags_to_post
@@ -244,7 +244,6 @@ class ClothesOptionsView(View):
             'sizes': list(sizes),
         })
 
-
 class SearchResultsView(ListView):
     model = Clothes
     template_name = 'search_results.html'
@@ -283,6 +282,9 @@ class SearchResultsView(ListView):
     
 logger = logging.getLogger(__name__)
 
+
+logger = logging.getLogger(__name__)
+
 class HashtagSearchView(ListView):
     model = Post
     template_name = 'hashtag_results.html'
@@ -293,12 +295,18 @@ class HashtagSearchView(ListView):
         if not hashtag_name:
             raise Http404("Hashtag not provided.")
         
-        hashtag_name = hashtag_name.lstrip('#')
+        hashtag_name = hashtag_name.lstrip('#')  # "#"がついていた場合に削除
 
         logger.info(f"Searching for hashtag: {hashtag_name}")
 
         hashtag = get_object_or_404(Hashtag, name=hashtag_name)
         return Post.objects.filter(hashtags=hashtag).select_related('user').prefetch_related('comments').order_by("-created_at")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["query"] = self.request.GET.get("q") or self.kwargs.get("hashtag_name")
+        return context
+
     
     
 
@@ -405,24 +413,31 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
 class LikeView(LoginRequiredMixin, View):
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
+
+        # いいねの追加または削除
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             like.delete()
             liked = False
         else:
             liked = True
-        
+
         return JsonResponse({
             "liked": liked,
-            "like_count": post.likes.count() 
+            "like_count": post.likes.count()
         })
 
 
 class CommentView(LoginRequiredMixin, View):
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
-        data = json.loads(request.body) 
-        content = data.get("content")
+
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "無効なリクエスト"}, status=400)
+
+        content = data.get("content", "").strip()
 
         if content:
             comment = Comment.objects.create(user=request.user, post=post, content=content)
@@ -432,15 +447,15 @@ class CommentView(LoginRequiredMixin, View):
                 "content": comment.content,
                 "created_at": comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
             })
+
         return JsonResponse({"error": "コメント内容が空です。"}, status=400)
     
-    
+
 class DeleteCommentView(LoginRequiredMixin, View):
     def delete(self, request, comment_id):
         comment = get_object_or_404(Comment, id=comment_id, user=request.user)
         comment.delete()
         return JsonResponse({"message": "コメントが削除されました。"})
-    
 
 
 class ClothesOptionsView(TemplateView):

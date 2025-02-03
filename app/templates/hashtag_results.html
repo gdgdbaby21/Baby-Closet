@@ -3,22 +3,97 @@
 {% block title %}ハッシュタグ検索結果 - サイト名{% endblock %}
 
 {% block content %}
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa; /* 背景色 */
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 60px); 
+        margin-top: 60px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .search-header {
+        font-size: 20px;
+        font-weight: bold;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .post-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        justify-content: center;
+        width: 90%;
+        max-width: 900px;
+    }
+
+    .post-item {
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: relative;
+    }
+
+    .post-item img {
+        width: 100%;
+        max-width: 250px;
+        border-radius: 10px;
+    }
+
+    .post-meta {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        font-size: 14px;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    .post-meta span {
+        display: flex;
+        align-items: center; 
+        gap: 7px;
+        font-weight: 500;
+    }
+</style>
+
 <div class="container">
     <h1>ハッシュタグ検索結果</h1>
+
     {% if query %}
-        <h2>#{{ query }}</h2>
+        <p class="search-header"><strong>#{{ query }}</strong></p>
     {% endif %}
 
     {% if posts %}
         <div class="post-list">
             {% for post in posts %}
                 <div class="post-item">
-                    <p>@{{ post.user.account_name}}</p>
+                    <p class="post-user">@{{ post.user.account_name }}</p>
+                    
                     <!-- 画像をリンクで囲む -->
                     <a href="{% url 'post_detail' post.pk %}">
-                        <img src="{{ post.image.url }}" alt="投稿画像" style="max-width: 200px;">
+                        <img src="{{ post.image.url }}" alt="投稿画像">
                     </a>
+                    
                     <p>{{ post.caption }}</p>
+
+                    <!-- ✅ いいね・コメント数 -->
+                    <div class="post-meta">
+                        <span>♥ {{ post.likes.count|default:"0" }}</span>
+                        <span>💬 {{ post.comments.count|default:"0" }}</span>
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -27,4 +102,3 @@
     {% endif %}
 </div>
 {% endblock %}
-

@@ -179,8 +179,6 @@ body {
                         </a>
                     </div>
 
-                    {% comment %} <p class="mt-2"><strong>{{ post.title }}</strong></p> {% endcomment %}
-
                     <!-- キャプションを追加 -->
                     {% if post.caption %}
                         <p class="post-caption">{{ post.caption }}</p>
@@ -188,7 +186,7 @@ body {
 
                     <div class="post-meta">
                         <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
-                        <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
+                        <span>💬 {{ post.comments.count|default:"0" }} コメント</span>
                     </div>
                 </div>
             {% endif %}
@@ -221,8 +219,7 @@ body {
                             </a>
                         </div>
 
-                        {% comment %} <p class="mt-2"><strong>{{ post.title }}</strong></p> {% endcomment %}
-
+                        
                         <!-- キャプションを追加 -->
                         {% if post.caption %}
                             <p class="post-caption">{{ post.caption }}</p>
@@ -230,7 +227,7 @@ body {
 
                         <div class="post-meta">
                             <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
-                            <span>💬 {{ post.comment_set.count|default:"0" }} コメント</span>
+                            <span>💬 {{ post.comments.count|default:"0" }} コメント</span>
                         </div>
                     </div>
                 {% endfor %}

@@ -2,32 +2,104 @@
 {% load static %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" 
-     style="height: 100vh; display: flex; flex-direction: column; align-items: center; text-align: center;">
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa; /* 背景色 */
+    }
+    
+    .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 60px); /* メニューバーの高さ分を引く */
+        margin-top: 60px; /* メニューバーの高さを確保 */
+        text-align: center;
+    }
+    
+    .post-container {
+        position: relative;
+        max-width: 450px;
+        width: 100%;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .post-info {
+        display: flex;
+        align-items: center;
+    }
 
-    <div class="post-container" 
-         style="max-width: 450px; width: 100%; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+    .profile-image img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .post-user-info {
+        margin-left: 10px;
+        font-size: 16px;
+    }
+
+    .post-user-info a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .like-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .like-button {
+        border: none;
+        background: none;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+    }
+    
+    .like-count {
+        font-size: 16px;
+        margin: 0;
+    }    
+</style>
+
+<div class="container d-flex justify-content-center align-items-center" 
+     style="height: 100vh; flex-direction: column; text-align: center;">
+
+    <!-- 投稿コンテナ（1つに統一） -->
+    <div class="post-container" style="position: relative; max-width: 450px; width: 100%; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+
+        <!-- 削除ボタン (投稿者のみ表示) -->
+        {% if user == post.user %}
+        <form action="{% url 'post_delete' post.pk %}" method="post" style="position: absolute; top: 10px; right: 10px;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">投稿削除</button>
+        </form>
+        {% endif %}
 
         <!-- 投稿情報 -->
-        <div class="post-info d-flex align-items-center mb-3" style="display: flex; align-items: center;">
-    
+        <div class="post-info d-flex align-items-center mb-3">
             <div class="profile-image">
-        {% if user_profile.profile_image %}
-            <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像" 
-                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-        {% else %}
-            <img src="{% static 'default-profile.png' %}" alt="デフォルト画像" 
-                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-        {% endif %}
-    </div>
-    
-    <div class="post-user-info" style="margin-left: 10px;">
-        <a href="{% url 'profile' account_name=user_profile.account_name  %}" 
-           style="text-decoration: none; color: #333; font-size: 16px;">
-            <strong>@{{ user_profile.account_name }}</strong>
-        </a>
-    </div>
-</div>
+                {% if user_profile.profile_image %}
+                    <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像">
+                {% else %}
+                    <img src="{% static 'default-profile.png' %}" alt="デフォルト画像">
+                {% endif %}
+            </div>
+            <div class="post-user-info">
+                <a href="{% url 'profile' account_name=user_profile.account_name %}">
+                    <strong>@{{ user_profile.account_name }}</strong>
+                </a>
+            </div>
+        </div>
 
         <!-- 投稿画像 -->
         <div class="image-wrapper mb-3">
@@ -36,29 +108,21 @@
         </div>
 
         <!-- いいね・削除ボタン -->
-<div class="action-buttons d-flex align-items-center justify-content-center mb-3" style="gap: 20px;">
-    <!-- いいねボタンとカウント -->
-    <div class="like-container d-flex align-items-center" style="display: flex; align-items: center; gap: 5px;">
-        <button id="like-button" data-post-id="{{ post.id }}" 
-                style="border: none; background: none; font-size: 24px; cursor: pointer; 
-                       color: {% if user in post.likes.all %}black{% else %}gray{% endif %};">
-            {% if user in post.likes.all %}
-            ♥
-            {% else %}
-            ♡
-            {% endif %}
-        </button>
-        <p id="like-count" class="mb-0" style="font-size: 16px; margin: 0;">{{ post.likes.count }}</p>
-    </div>
+        <div class="action-buttons d-flex align-items-center justify-content-center mb-3" style="gap: 20px;">
+            <!-- いいねボタンとカウント -->
+            <div class="like-container d-flex align-items-center">
+                <button class="like-button" data-url="{% url 'like_post' post.id %}" 
+                        style="color: {% if user in post.likes.all %}black{% else %}gray{% endif %};">
+                    {% if user in post.likes.all %}
+                    ♥
+                    {% else %}
+                    ♡
+                    {% endif %}
+                </button>
+                <p class="like-count mb-0">{{ post.likes.count }}</p>
+            </div> 
+        </div>
 
-    <!-- 削除ボタン (投稿者のみ表示) -->
-    {% if user == post.user %}
-    <form action="{% url 'post_delete' post.pk %}" method="post" style="margin: 0;">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger btn-sm"> 削除</button>
-    </form>
-    {% endif %}
-</div>
         <!-- コメント投稿 -->
         {% if user.is_authenticated %}
         <div id="comment-section" class="mt-3">
@@ -66,7 +130,7 @@
                 {% csrf_token %}
                 <input type="text" name="content" id="comment-content" class="form-control" 
                        placeholder="コメントを入力..." style="flex: 1; max-width: 300px; margin-right: 5px;">
-                <button type="button" id="comment-submit" class="btn btn-primary">送信</button>
+                <button type="submit" class="btn btn-primary">送信</button>
             </form>
         </div>
         {% else %}
@@ -79,9 +143,9 @@
                 {% for comment in post.comments.all %}
                 <li id="comment-{{ comment.id }}" class="d-flex align-items-center justify-content-between" style="margin-bottom: 10px;">
                     <span>
-                        <strong>@{{ comment.user.userprofile.account }}</strong>: {{ comment.content }}
+                        <strong>@{{ comment.user.account_name }}</strong>: {{ comment.content }}
                     </span>
-                    {% if user == comment.user %}
+                    {% if user.id == comment.user.id %}
                     <button class="delete-comment btn btn-sm btn-outline-danger" data-comment-id="{{ comment.id }}">🗑️</button>
                     {% endif %}
                 </li>
@@ -89,6 +153,155 @@
             </ul>
         </div>
 
-    </div>
-</div>
+    </div> 
+</div> 
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".like-button").forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault(); // ページ遷移を防ぐ
+                const url = this.getAttribute("data-url");
+                const likeCountElement = this.nextElementSibling;
+    
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.liked) {
+                        this.textContent = "♥"; // いいね状態に変更
+                        this.style.color = "black";
+                    } else {
+                        this.textContent = "♡"; // いいねを外した状態に変更
+                        this.style.color = "gray";
+                    }
+                    likeCountElement.textContent = data.like_count;
+                })
+                .catch(error => console.error("エラー:", error));
+            });
+        });
+    
+        // CSRFトークンを取得する関数
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });    
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const commentForm = document.getElementById("comment-form");
+        const commentInput = document.getElementById("comment-content");
+        const commentList = document.getElementById("comment-list");
+    
+        if (commentForm) {
+            commentForm.addEventListener("submit", function (event) {
+                event.preventDefault(); // デフォルトのフォーム送信を防ぐ
+    
+                const postId = commentForm.getAttribute("data-post-id");
+                const content = commentInput.value.trim();
+    
+                if (content === "") {
+                    alert("コメントを入力してください");
+                    return;
+                }
+    
+                fetch(`/comment/${postId}/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ content: content }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+    
+                    // 新しいコメントをリストに追加
+                    const newComment = document.createElement("li");
+                    newComment.id = `comment-${data.comment_id}`;
+                    newComment.classList.add("d-flex", "align-items-center", "justify-content-between");
+                    newComment.style.marginBottom = "10px";
+                    newComment.innerHTML = `
+                        <span>
+                            <strong>@${data.user_account}</strong>: ${data.content}
+                        </span>
+                        <button class="delete-comment btn btn-sm btn-outline-danger" data-comment-id="${data.comment_id}">🗑️</button>
+                    `;
+    
+                    commentList.appendChild(newComment);
+                    commentInput.value = ""; // 入力欄をクリア
+    
+                    attachDeleteEvent(); // 新しいコメントにも削除機能を適用
+                })
+                .catch(error => console.error("エラー:", error));
+            });
+        }
+    
+        // CSRFトークンを取得する関数
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    
+        // 削除ボタンのイベントを適用
+        function attachDeleteEvent() {
+            document.querySelectorAll(".delete-comment").forEach(button => {
+                button.addEventListener("click", function () {
+                    const commentId = this.getAttribute("data-comment-id");
+    
+                    fetch(`/delete-comment/${commentId}/`, {
+                        method: "DELETE",
+                        headers: {
+                            "X-CSRFToken": getCookie("csrftoken"),
+                            "Content-Type": "application/json",
+                        },
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("削除エラー");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById(`comment-${commentId}`).remove();
+                    })
+                    .catch(error => console.error("エラー:", error));
+                });
+            });
+        }
+    
+        attachDeleteEvent(); // 既存のコメントにも適用
+    });    
+</script>
+
 {% endblock %}
