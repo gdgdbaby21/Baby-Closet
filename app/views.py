@@ -245,42 +245,44 @@ class ClothesOptionsView(View):
         })
 
 class SearchResultsView(ListView):
+    logger = logging.getLogger(__name__)
+    
+
+class SearchResultsView(LoginRequiredMixin, ListView):
     model = Clothes
     template_name = 'search_results.html'
     context_object_name = 'clothes'
 
     def get_queryset(self):
-        queryset = Clothes.objects.all()
-
+        """現在のユーザーのデータのみをフィルタリング"""
+        user = self.request.user  
+        queryset = Clothes.objects.filter(user=user) 
 
         gender = self.request.GET.get('gender')
         size = self.request.GET.get('size')
         color = self.request.GET.get('color')
         genre = self.request.GET.get('genre')
 
-        
-        print(f"検索条件: gender={gender}, size={size}, color={color}, genre={genre}")
-
+        logger.info(f"検索条件: user={user}, gender={gender}, size={size}, color={color}, genre={genre}")
 
         query = Q()
         if gender:
-            query |= Q(gender=gender)
+            query &= Q(gender=gender)
         if size:
-            query |= Q(size=size)
+            query &= Q(size=size)
         if color:
-            query |= Q(color=color)
+            query &= Q(color=color)
         if genre:
-            query |= Q(genre=genre)
+            query &= Q(genre=genre)
 
         if query:
             queryset = queryset.filter(query)
 
-        print(f"フィルタリング結果: {queryset}")
+        logger.info(f"フィルタリング結果: {queryset}")
 
         return queryset
     
-    
-logger = logging.getLogger(__name__)
+
 
 
 logger = logging.getLogger(__name__)
@@ -377,14 +379,14 @@ class PostDetailView(DetailView):
 
     def get_object(self, queryset=None):
         post = super().get_object(queryset)
-        # 投稿者でない場合、非公開の投稿は表示させない
+
         if not post.is_public and post.user != self.request.user:
             raise Http404("この投稿は非公開です。")
         return post
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_profile'] = self.object.user  # self.get_object() ではなく self.object を使う
+        context['user_profile'] = self.object.user 
         return context
     
 
@@ -414,7 +416,6 @@ class LikeView(LoginRequiredMixin, View):
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
 
-        # いいねの追加または削除
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             like.delete()

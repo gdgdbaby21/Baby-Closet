@@ -1,10 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block extra_css %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>服管理画面</title>
+{% block content %}
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,6 +10,7 @@
             box-sizing: border-box;
             background-color: #f9f9f9;
         }
+
         .container {
             max-width: 800px;
             margin: 20px auto;
@@ -120,7 +118,11 @@
             color: inherit;
         }
     </style>
+
     <div class="container">
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服管理画面</title>
         
         <form method="get" action="{% url 'search-results' %}">
             <label for="gender">性別:</label>
@@ -197,6 +199,5 @@
     </div>
 
     <div class="add-button" onclick="window.location.href='{% url 'clothes_create' %}'">+</div>
-</body>
 </html>
 {% endblock %}
