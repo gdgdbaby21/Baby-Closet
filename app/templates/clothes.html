@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<head>
+{% block extra_css %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>服管理画面</title>
@@ -14,7 +13,6 @@
             box-sizing: border-box;
             background-color: #f9f9f9;
         }
-
         .container {
             max-width: 800px;
             margin: 20px auto;
@@ -122,11 +120,6 @@
             color: inherit;
         }
     </style>
-</head>
-<body>
-    <header>
-    </header>
-
     <div class="container">
         
         <form method="get" action="{% url 'search-results' %}">
