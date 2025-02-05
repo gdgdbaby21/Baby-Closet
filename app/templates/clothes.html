@@ -17,7 +17,7 @@
             padding: 0 15px;
         }
 
-        form {
+        .custom-form {
             max-width: 600px;
             margin: 0 auto;
             background-color: #fff;
@@ -27,7 +27,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        form div {
+        .custom-form div {
             margin-bottom: 15px;
         }
 
@@ -124,7 +124,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>服管理画面</title>
         
-        <form method="get" action="{% url 'search-results' %}">
+    <form class="custom-form" method="get" action="{% url 'search-results' %}">
             <label for="gender">性別:</label>
             <select id="gender" name="gender">
                 <option value="">選択</option>
