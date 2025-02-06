@@ -5,6 +5,7 @@ import re
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
+from django.templatetags.static import static
 
 
 
@@ -129,6 +130,12 @@ class Clothes(models.Model):
     
     def get_related_posts(self):
         return self.posts.all()
+    
+    def get_image_url(self):
+        """画像が未登録の場合、デフォルト画像（static）を返す"""
+        if self.image:
+            return self.image.url
+        return static('images/default-clothes.png')
 
 
     

@@ -90,6 +90,11 @@ class ClothingForm(forms.ModelForm):
         model = Clothes
         fields = ['title', 'size', 'gender', 'color', 'genre', 'price', 'memo', 'image']
         
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            if not self.instance.image:
+                self.fields['image'].initial = 'default.jpg'
+
 
 #コーディネート投稿のフォーム
 class PostForm(forms.ModelForm):

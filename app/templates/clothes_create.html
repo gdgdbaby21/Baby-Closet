@@ -98,10 +98,16 @@
             {% csrf_token %}
             
             <div class="image-upload">
-                <img src="#" alt="image" id="preview">
-                <label for="image-upload">画像を選択</label>
+                <!-- デフォルト画像またはアップロードされた画像を表示 -->
+                {% load static %}
+                <img id="preview" 
+     src="{% if clothes.image %}{{ clothes.image.url }}{% else %}{% static 'images/default-clothes.png' %}{% endif %}" 
+     alt="image">
+     <label for="image-upload">画像を選択</label>
                 <input type="file" id="image-upload" name="image" accept="image/*" onchange="previewImage(event)">
+                
             </div>
+            
 
             <div class="form-group">
                 <label for="title">タイトル(必須):</label>
