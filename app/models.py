@@ -32,8 +32,8 @@ class User(AbstractUser):
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = []
     
-    class Meta:
-        db_table = "users"
+    # class Meta:
+    #     db_table = "users"
     
 
 
