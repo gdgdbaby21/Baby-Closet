@@ -64,16 +64,7 @@
         }
     </style>
 
-    <!-- プロフィール情報 -->
-    {% comment %} {% load static %}
-    <div class="profile-image">
-        {% if user_profile.profile_image %}
-            <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像">
-        {% else %}
-            <img src="{% static 'images/default-profile.png' %}" alt="デフォルト画像">
-        {% endif %}
-    </div> {% endcomment %}
-
+    
     {% load static %}
     <p>デフォルト画像テスト: {{ user_profile.profile_image }}</p> <!-- デバッグ用 -->
     <div class="profile-image">
