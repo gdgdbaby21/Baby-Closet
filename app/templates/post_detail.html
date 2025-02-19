@@ -111,21 +111,12 @@
         <div class="action-buttons d-flex align-items-center justify-content-center mb-3" style="gap: 20px;">
             <!-- いいねボタンとカウント -->
              <div class="like-container d-flex align-items-center"> 
-                {% comment %} <button class="like-button" data-url="{% url 'like_post' post.id %}" 
-                        style="color: {% if user in post.likes.all %}black{% else %}gray{% endif %};">
-                    {% if user in post.likes.all %}
-                    ♥
-                    {% else %}
-                    ♡
-                    {% endif %}
-                </button>
-                <p class="like-count mb-0">{{ post.likes.count }}</p> {% endcomment %}
                 <button class="like-button" data-post-id="{{ post.id }}" style="border: none; background: none; font-size: 24px;">
                     <span class="like-icon" style="color: {% if user_has_liked %}black{% else %}gray{% endif %};">
                         {% if user_has_liked %}♥{% else %}♡{% endif %}
                     </span>
                 </button>
-                <span class="like-count">{{ post.likes.count }}</span>
+                <span class="like-count" data-post-id="{{ post.id }}">{{ post.likes.count }}</span>  
                 
             </div> 
         </div>
@@ -167,14 +158,19 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll(".like-button").forEach(button => {
+            let isProcessing = false;
+    
             button.addEventListener("click", function(event) {
-                event.preventDefault();  // ✅ ページ遷移を防ぐ
+                event.preventDefault();
+                if (isProcessing) return;
+                isProcessing = true;
+    
                 console.log("いいねボタンがクリックされました");
     
                 const postId = this.getAttribute("data-post-id");
-                const url = `/like/${postId}/`;  // ✅ 正しいエンドポイントを設定
+                const url = `/like/${postId}/`; 
                 const likeIcon = this.querySelector(".like-icon");
-                const likeCount = this.nextElementSibling;
+                const likeCount = document.querySelector(`.like-count[data-post-id="${postId}"]`);
     
                 console.log(`POSTリクエストを送信: ${url}`);
     
@@ -186,10 +182,7 @@
                     },
                     body: JSON.stringify({})
                 })
-                .then(response => {
-                    console.log("サーバーからのレスポンスを受信");
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     console.log("サーバーレスポンス:", data);
                     if (data.liked) {
@@ -199,28 +192,29 @@
                         likeIcon.innerHTML = "♡";  
                         likeIcon.style.color = "gray";
                     }
-                    likeCount.textContent = data.like_count;
+                    if (likeCount) {
+                        likeCount.textContent = data.like_count;
+                    }
                 })
-                .catch(error => console.error("エラー:", error));
+                .catch(error => console.error("エラー:", error))
+                .finally(() => {
+                    isProcessing = false;
+                });
             });
-        });
-    });
     
-        // ✅ ページリロード時に最新のいいね状態を取得して更新
-        document.querySelectorAll(".like-button").forEach(button => {
+            // ✅ ページロード時のいいね状態取得
             const postId = button.getAttribute("data-post-id");
             const likeIcon = button.querySelector(".like-icon");
     
             fetch(`/like/${postId}/status/`, {  
                 method: "GET",
                 headers: {
-                    "X-CSRFToken": getCookie("csrftoken"),
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json"  
                 }
             })
             .then(response => response.json())
             .then(data => {
-                console.log("いいね状態取得:", data);  // ✅ いいね状態をログに出力
+                console.log("いいね状態取得:", data);
                 if (data.liked) {
                     likeIcon.innerHTML = "♥";  
                     likeIcon.style.color = "black";
@@ -232,8 +226,117 @@
             .catch(error => console.error("エラー:", error));
         });
     });
+
+
+    // CSRFトークンを取得する関数
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
     
-        // CSRFトークンを取得する関数
+    document.addEventListener("DOMContentLoaded", function() {
+        function attachDeleteEvent() {
+            document.querySelectorAll(".delete-comment").forEach(button => {
+                button.removeEventListener("click", handleDeleteComment);
+                button.addEventListener("click", handleDeleteComment);
+            });
+        }
+    
+        function handleDeleteComment() {
+            const commentId = this.getAttribute("data-comment-id");
+    
+            fetch(`/delete-comment/${commentId}/`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "Content-Type": "application/json",
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("削除エラー");
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById(`comment-${commentId}`).remove();
+            })
+            .catch(error => console.error("エラー:", error));
+        }
+    
+        attachDeleteEvent(); // ✅ 既存のコメントに削除ボタン適用
+    
+        document.getElementById("comment-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+    
+            const postId = this.getAttribute("data-post-id");
+            const commentInput = document.getElementById("comment-content");
+            const content = commentInput.value.trim();
+            const csrfToken = getCookie("csrftoken");
+    
+            if (!content) {
+                alert("コメントを入力してください。");
+                return;
+            }
+    
+            fetch(`/post/${postId}/comment/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ content: content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    removeUndefinedComments(); // ✅ `undefined:` のコメントを削除
+                    addCommentToDOM(data.comment_id, data.account_name, data.content);
+    
+                    commentInput.value = ""; // ✅ 入力欄をリセット
+                } else {
+                    console.error("コメントの投稿に失敗しました:", data.error);
+                }
+            })
+            .catch(error => console.error("エラー:", error));
+        });
+    
+        function addCommentToDOM(commentId, accountName, content) {  // ✅ username → accountName に変更
+            const commentSection = document.getElementById("comment-section");
+            const newComment = document.createElement("div");
+            newComment.classList.add("comment", "mt-2", "p-2", "border", "rounded");
+            newComment.setAttribute("id", `comment-${commentId}`);  // ✅ 修正
+        
+            newComment.innerHTML = `
+                <p><strong>${accountName}:</strong> ${content} 
+                <button class="delete-comment btn btn-danger btn-sm" data-comment-id="${commentId}" style="margin-left: 10px;">🗑️</button></p>
+            `;  // ✅ 修正
+        
+            commentSection.appendChild(newComment);
+        
+            attachDeleteEvent(); // ✅ 新規コメントにも削除ボタンを適用
+        }
+        
+    
+        // ✅ `undefined:` のコメントを削除する関数
+        function removeUndefinedComments() {
+            document.querySelectorAll(".comment").forEach(comment => {
+                if (comment.innerText.includes("undefined:") || comment.innerText.includes("null:")) {
+                    comment.remove();
+                }
+            });
+        }
+    
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -246,107 +349,8 @@
                     }
                 }
             }
-            return cookieValue;
+            return cookieValue || document.querySelector("meta[name='csrf-token']").getAttribute("content");
         }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const commentForm = document.getElementById("comment-form");
-        const commentInput = document.getElementById("comment-content");
-        const commentList = document.getElementById("comment-list");
-    
-        if (commentForm) {
-            commentForm.addEventListener("submit", function (event) {
-                event.preventDefault(); // デフォルトのフォーム送信を防ぐ
-    
-                const postId = commentForm.getAttribute("data-post-id");
-                const content = commentInput.value.trim();
-    
-                if (content === "") {
-                    alert("コメントを入力してください");
-                    return;
-                }
-    
-                fetch(`/comment/${postId}/`, {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": getCookie("csrftoken"),
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ content: content }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    }
-    
-                    // 新しいコメントをリストに追加
-                    const newComment = document.createElement("li");
-                    newComment.id = `comment-${data.comment_id}`;
-                    newComment.classList.add("d-flex", "align-items-center", "justify-content-between");
-                    newComment.style.marginBottom = "10px";
-                    newComment.innerHTML = `
-                        <span>
-                            <strong>@${data.user_account}</strong>: ${data.content}
-                        </span>
-                        <button class="delete-comment btn btn-sm btn-outline-danger" data-comment-id="${data.comment_id}">🗑️</button>
-                    `;
-    
-                    commentList.appendChild(newComment);
-                    commentInput.value = ""; // 入力欄をクリア
-    
-                    attachDeleteEvent(); // 新しいコメントにも削除機能を適用
-                })
-                .catch(error => console.error("エラー:", error));
-            });
-        }
-    
-        // CSRFトークンを取得する関数
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== "") {
-                const cookies = document.cookie.split(";");
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-    
-        // 削除ボタンのイベントを適用
-        function attachDeleteEvent() {
-            document.querySelectorAll(".delete-comment").forEach(button => {
-                button.addEventListener("click", function () {
-                    const commentId = this.getAttribute("data-comment-id");
-    
-                    fetch(`/delete-comment/${commentId}/`, {
-                        method: "DELETE",
-                        headers: {
-                            "X-CSRFToken": getCookie("csrftoken"),
-                            "Content-Type": "application/json",
-                        },
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("削除エラー");
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        document.getElementById(`comment-${commentId}`).remove();
-                    })
-                    .catch(error => console.error("エラー:", error));
-                });
-            });
-        }
-    
-        attachDeleteEvent(); // 既存のコメントにも適用
     });    
 </script>
-
 {% endblock %}

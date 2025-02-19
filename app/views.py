@@ -284,7 +284,6 @@ class SearchResultsView(LoginRequiredMixin, ListView):
     
 
 
-
 logger = logging.getLogger(__name__)
 
 class HashtagSearchView(ListView):
@@ -294,10 +293,11 @@ class HashtagSearchView(ListView):
    
     def get_queryset(self):
         hashtag_name = self.request.GET.get('q') or self.kwargs.get('hashtag_name')
-        if not hashtag_name:
-            raise Http404("Hashtag not provided.")
         
-        hashtag_name = hashtag_name.lstrip('#')  # "#"がついていた場合に削除
+        if not hashtag_name or not hashtag_name.startswith("#"):
+            raise Http404("Hashtag must start with '#'.")
+
+        hashtag_name = hashtag_name.lstrip('#')  # "#" を削除して検索用に調整
 
         logger.info(f"Searching for hashtag: {hashtag_name}")
 
@@ -308,7 +308,6 @@ class HashtagSearchView(ListView):
         context = super().get_context_data(**kwargs)
         context["query"] = self.request.GET.get("q") or self.kwargs.get("hashtag_name")
         return context
-
     
     
 
@@ -412,41 +411,9 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
         return render(request, "your_template.html", {"posts": posts})
     
 
-# class LikeView(LoginRequiredMixin, View):
-#     def post(self, request, post_id):
-#         post = get_object_or_404(Post, id=post_id)
 
-#         like, created = Like.objects.get_or_create(user=request.user, post=post)
-#         if not created:
-#             like.delete()
-#             liked = False
-#         else:
-#             liked = True
-
-#         return JsonResponse({
-#             "liked": liked,
-#             "like_count": post.likes.count()
-#         })
-        
-#     # ✅ いいね状態を取得するAPIを追加
-
-
-# def like_status(request, post_id):
-#     post = get_object_or_404(Post, id=post_id)
-#     user_has_liked = Like.objects.filter(user=request.user, post=post).exists()
-#     return JsonResponse({"liked": user_has_liked})
-
-# def post_detail(request, post_id):
-#     post = get_object_or_404(Post, id=post_id)
-#     user_has_liked = Like.objects.filter(user=request.user, post=post).exists()
-
-#     return render(request, 'post_detail.html', {
-#         'post': post,
-#         'user_has_liked': user_has_liked,
-#     })
-
-class LikeView(LoginRequiredMixin, View):  # ✅ DjangoのViewクラスを継承
-    def post(self, request, post_id):  # ✅ POST メソッドを実装
+class LikeView(LoginRequiredMixin, View):
+    def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
 
         like, created = Like.objects.get_or_create(user=request.user, post=post)
@@ -456,41 +423,48 @@ class LikeView(LoginRequiredMixin, View):  # ✅ DjangoのViewクラスを継承
         else:
             liked = True
 
+        # ✅ 最新のlike数を取得
+        like_count = Like.objects.filter(post=post).count()
+
         return JsonResponse({
             "liked": liked,
-            "like_count": post.likes.count()
+            "like_count": like_count
         })
 
-# ✅ いいね状態を取得するAPI
 def like_status(request, post_id):
     if request.method == "GET":
         post = get_object_or_404(Post, id=post_id)
+        if not request.user.is_authenticated:
+            return JsonResponse({"liked": False})  # ✅ 未ログインならFalse
+
         user_has_liked = Like.objects.filter(user=request.user, post=post).exists()
         return JsonResponse({"liked": user_has_liked})
     return JsonResponse({"error": "Invalid request"}, status=400)
 
-        
+
+
 class CommentView(LoginRequiredMixin, View):
     def post(self, request, post_id):
-        post = get_object_or_404(Post, id=post_id)
-
         try:
             data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "無効なリクエスト"}, status=400)
+            content = data.get("content", "").strip()
 
-        content = data.get("content", "").strip()
+            if not content:
+                return JsonResponse({"success": False, "error": "コメントが空です"}, status=400)
 
-        if content:
+            post = get_object_or_404(Post, id=post_id)
             comment = Comment.objects.create(user=request.user, post=post, content=content)
-            return JsonResponse({
-                "comment_id": comment.id,
-                "user_account": comment.user.account_name,
-                "content": comment.content,
-                "created_at": comment.created_at.strftime('%Y-%m-%d %H:%M:%S')
-            })
+            
+            account_name = getattr(request.user, "account_name", request.user.username)
 
-        return JsonResponse({"error": "コメント内容が空です。"}, status=400)
+            return JsonResponse({
+                "success": True,
+                "comment_id": comment.id,
+                "account_name": f"@{account_name}",
+                "content": comment.content
+            })
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=500)
     
 
 class DeleteCommentView(LoginRequiredMixin, View):
