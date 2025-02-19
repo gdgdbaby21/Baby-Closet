@@ -18,7 +18,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, ClothesView, ClothesCreateView, ClothesDetailView, ClothesDeleteView, SearchResultsView, HashtagSearchView, CreatePostView, PostDetailView, PostDeleteView, LikeView, CommentView, DeleteCommentView, ClothesOptionsView,ClothesListView, FilterItemsView
+from app.views import PortfolioView, SignupView, LoginView, HomeView, ProfileView, WishlistView, ClothesView, LogoutView, EditProfileView, Wishlist_detailView , Wishlist_createView, WishlistDeleteView, ClothesView, ClothesCreateView, ClothesDetailView, ClothesDeleteView, SearchResultsView, HashtagSearchView, CreatePostView, PostDetailView, PostDeleteView, LikeView,like_status, CommentView, DeleteCommentView, ClothesOptionsView,ClothesListView, FilterItemsView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -44,6 +44,7 @@ urlpatterns = [
     path('hashtags/search/', HashtagSearchView.as_view(), name='hashtag_search'),
     path('post/new/', CreatePostView.as_view(), name='create_post'),
     path('post/<int:post_id>/like/', LikeView.as_view(), name='like_post'),
+    path('like/<int:post_id>/status/', like_status, name='like_status'), 
     path('post/<int:pk>/', PostDetailView.as_view(), name='post_detail'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
     path('comment/<int:post_id>/', CommentView.as_view(), name='comment_post'),

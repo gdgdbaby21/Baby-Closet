@@ -2,11 +2,18 @@
 {% load static %}
 
 {% block content %}
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
     <title>{{ item.title }}</title>
     <style>
+        .clothes-container {
+            display: flex;
+            flex-direction: column; /* 縦方向に並べる */
+            align-items: center; /* 水平方向の中央揃え */
+            justify-content: center; /* 垂直方向の中央揃え */
+            width: 80%; /* 幅を80%にして中央寄せ */
+            max-width: 800px; /* 最大幅を指定 */
+            margin: 80px auto 0; /* 上に余白を入れて中央配置 */
+        }
+        
         .post-list {
             display: flex;
             flex-wrap: wrap;
@@ -40,8 +47,8 @@
             margin-top: 8px;
         }
     </style>
-</head>
-<body>
+
+    <div class="clothes-container">
     {% if clothes %}
     <h1>{{ clothes.title }}</h1>
     <img src="{{ clothes.image.url }}" alt="{{ clothes.title }}" style="max-width: 300px;">
@@ -84,6 +91,4 @@
     {% else %}
         <p>この服を使用しているコーディネート投稿はありません。</p>
     {% endif %}
-</body>
-</html>
 {% endblock %}

@@ -59,6 +59,16 @@ class WishlistItemForm(forms.ModelForm):
     class Meta:
         model = WishlistItem
         fields = ['image', 'price','brand', 'product_url', 'notes']
+        widgets = {
+            'price': forms.NumberInput(attrs={
+                'inputmode': 'numeric',  
+                'pattern': '[0-9]*',  
+                'onwheel': 'this.blur()',  
+                'style': 'appearance: textfield; -moz-appearance: textfield;', 
+                'class': 'custom-price-input',
+            })
+        }
+        
         
 
 #服管理検索ページのフォーム
@@ -89,6 +99,15 @@ class ClothingForm(forms.ModelForm):
     class Meta:
         model = Clothes
         fields = ['title', 'size', 'gender', 'color', 'genre', 'price', 'memo', 'image']
+        widgets = {
+            'price': forms.NumberInput(attrs={
+                'inputmode': 'numeric',  
+                'pattern': '[0-9]*', 
+                'onwheel': 'this.blur()',  
+                'style': 'appearance: textfield; -moz-appearance: textfield;', 
+                'class': 'custom-price-input',  
+            })
+        }
         
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -98,7 +117,7 @@ class ClothingForm(forms.ModelForm):
 
 #コーディネート投稿のフォーム
 class PostForm(forms.ModelForm):
-      is_public = forms.BooleanField(required=False)  # これを追加
+      is_public = forms.BooleanField(required=False) 
       clothes = forms.ModelMultipleChoiceField(
         queryset=Clothes.objects.all(),
         required=False,

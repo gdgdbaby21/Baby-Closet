@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>投稿詳細</title>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
             min-height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
         }
-
+        
         
         .item-image {
             max-width: 300px;
@@ -50,10 +45,18 @@
             background-color: #6c757d; 
             color: white;
         }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
     </style>
-</head>
-<body>
-    <h1>{{ item.name }}</h1>
+
+    <div class="content-wrapper">
+    <h1>{{ item.name }}</h1> 
     <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-image">
     
     <p>値段: ¥{{ item.price }}</p>
@@ -74,5 +77,4 @@
             <button type="submit">削除</button>
         </form>
     </div>
-</body>
-</html>
+{% endblock %}

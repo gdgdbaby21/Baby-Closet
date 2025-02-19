@@ -3,6 +3,16 @@
 {% block content %}
 <div class="profile-container" style="margin-top: 80px;"> 
     <style>
+        .profile-container {
+            display: flex;
+            flex-direction: column; /* 縦方向に並べる */
+            align-items: center; /* 水平方向の中央揃え */
+            justify-content: center; /* 垂直方向の中央揃え */
+            width: 80%; /* 幅を80%にして中央寄せ */
+            max-width: 800px; /* 最大幅を指定 */
+            margin: 80px auto 0; /* 上に余白を入れて中央配置 */
+        }
+        
         /* プロフィール画像のスタイリング */
         .profile-image img {
             width: 100px; /* 幅を小さく設定 */
@@ -66,7 +76,6 @@
 
     
     {% load static %}
-    <p>デフォルト画像テスト: {{ user_profile.profile_image }}</p> <!-- デバッグ用 -->
     <div class="profile-image">
         {% if user_profile.profile_image %}
         <img src="{{ user_profile.profile_image.url }}" alt="プロフィール画像">

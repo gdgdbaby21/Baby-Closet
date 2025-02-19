@@ -412,8 +412,41 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
         return render(request, "your_template.html", {"posts": posts})
     
 
-class LikeView(LoginRequiredMixin, View):
-    def post(self, request, post_id):
+# class LikeView(LoginRequiredMixin, View):
+#     def post(self, request, post_id):
+#         post = get_object_or_404(Post, id=post_id)
+
+#         like, created = Like.objects.get_or_create(user=request.user, post=post)
+#         if not created:
+#             like.delete()
+#             liked = False
+#         else:
+#             liked = True
+
+#         return JsonResponse({
+#             "liked": liked,
+#             "like_count": post.likes.count()
+#         })
+        
+#     # ✅ いいね状態を取得するAPIを追加
+
+
+# def like_status(request, post_id):
+#     post = get_object_or_404(Post, id=post_id)
+#     user_has_liked = Like.objects.filter(user=request.user, post=post).exists()
+#     return JsonResponse({"liked": user_has_liked})
+
+# def post_detail(request, post_id):
+#     post = get_object_or_404(Post, id=post_id)
+#     user_has_liked = Like.objects.filter(user=request.user, post=post).exists()
+
+#     return render(request, 'post_detail.html', {
+#         'post': post,
+#         'user_has_liked': user_has_liked,
+#     })
+
+class LikeView(LoginRequiredMixin, View):  # ✅ DjangoのViewクラスを継承
+    def post(self, request, post_id):  # ✅ POST メソッドを実装
         post = get_object_or_404(Post, id=post_id)
 
         like, created = Like.objects.get_or_create(user=request.user, post=post)
@@ -428,7 +461,15 @@ class LikeView(LoginRequiredMixin, View):
             "like_count": post.likes.count()
         })
 
+# ✅ いいね状態を取得するAPI
+def like_status(request, post_id):
+    if request.method == "GET":
+        post = get_object_or_404(Post, id=post_id)
+        user_has_liked = Like.objects.filter(user=request.user, post=post).exists()
+        return JsonResponse({"liked": user_has_liked})
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
+        
 class CommentView(LoginRequiredMixin, View):
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)

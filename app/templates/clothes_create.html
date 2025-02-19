@@ -1,7 +1,7 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
     <title>商品登録</title>
     <style>
         body {
@@ -16,8 +16,8 @@
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            {% comment %} border: 1px solid #ddd; {% endcomment %}
+            
         }
 
         .form-group {
@@ -90,9 +90,18 @@
         .button-container button:hover {
             background-color: #0056b3;
         }
+
+        .custom-price-input::-webkit-outer-spin-button,
+        .custom-price-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .custom-price-input {
+            -moz-appearance: textfield; 
+        }
     </style>
-</head>
-<body>
+
     <main>
         <form method="POST" enctype="multipart/form-data" action="{% url 'clothes_create' %}">
             {% csrf_token %}
@@ -172,14 +181,14 @@
             </div>
 
             <div class="form-group">
-                <label for="price">購入価格:</label>
-                <input type="number" id="price" name="price" placeholder="入力してください">
+                <label for="id_price">価格:</label>
+                {{ form.price }}
             </div>
 
             <div class="form-group">
                 <label for="memo">メモ:</label>
-                <textarea id="memo" name="memo" placeholder="入力してください"></textarea>
-            </div>
+                <textarea id="memo" name="memo"></textarea>
+            
 
             <div class="button-container">
                 <button type="submit">登録</button>
@@ -193,5 +202,4 @@
             preview.src = URL.createObjectURL(event.target.files[0]);
         }
     </script>
-</body>
-</html>
+{% endblock %}

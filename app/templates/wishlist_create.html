@@ -88,6 +88,16 @@
             color: #495057;
             text-decoration: underline;
         }
+
+        .custom-price-input::-webkit-outer-spin-button,
+        .custom-price-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .custom-price-input {
+            -moz-appearance: textfield; 
+        }
     </style>
 </head>
 <body>
@@ -99,7 +109,7 @@
                 {{ form.image }}
             </div>
             <div class="form-group">
-                <label for="id_price">価格:</label>
+                <label for="id_price">価格(※必須):</label>
                 {{ form.price }}
             </div>
             <div class="form-group">
