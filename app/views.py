@@ -248,13 +248,49 @@ class SearchResultsView(ListView):
     logger = logging.getLogger(__name__)
     
 
+# class SearchResultsView(LoginRequiredMixin, ListView):
+#     model = Clothes
+#     template_name = 'search_results.html'
+#     context_object_name = 'clothes'
+
+#     def get_queryset(self):
+#         """現在のユーザーのデータのみをフィルタリング"""
+#         user = self.request.user  
+#         queryset = Clothes.objects.filter(user=user) 
+
+#         gender = self.request.GET.get('gender')
+#         size = self.request.GET.get('size')
+#         color = self.request.GET.get('color')
+#         genre = self.request.GET.get('genre')
+
+#         logger.info(f"検索条件: user={user}, gender={gender}, size={size}, color={color}, genre={genre}")
+
+#         query = Q()
+#         if gender:
+#             query &= Q(gender=gender)
+#         if size:
+#             query &= Q(size=size)
+#         if color:
+#             query &= Q(color=color)
+#         if genre:
+#             query &= Q(genre=genre)
+
+#         if query:
+#             queryset = queryset.filter(query)
+
+#         logger.info(f"フィルタリング結果: {queryset}")
+
+#         return queryset
+
+logger = logging.getLogger(__name__)
+
 class SearchResultsView(LoginRequiredMixin, ListView):
     model = Clothes
     template_name = 'search_results.html'
     context_object_name = 'clothes'
 
     def get_queryset(self):
-        """現在のユーザーのデータのみをフィルタリング"""
+        """現在のユーザーのデータのみをフィルタリングし、何も選択しない場合は空にする"""
         user = self.request.user  
         queryset = Clothes.objects.filter(user=user) 
 
@@ -262,6 +298,11 @@ class SearchResultsView(LoginRequiredMixin, ListView):
         size = self.request.GET.get('size')
         color = self.request.GET.get('color')
         genre = self.request.GET.get('genre')
+
+        # 何も選択されていない場合は、空のQuerySetを返す
+        if not any([gender, size, color, genre]):
+            logger.info(f"検索条件なし - ユーザー {user} の結果なしを返す")
+            return Clothes.objects.none()  # 空のQuerySetを返す
 
         logger.info(f"検索条件: user={user}, gender={gender}, size={size}, color={color}, genre={genre}")
 
@@ -275,12 +316,12 @@ class SearchResultsView(LoginRequiredMixin, ListView):
         if genre:
             query &= Q(genre=genre)
 
-        if query:
-            queryset = queryset.filter(query)
+        queryset = queryset.filter(query)
 
         logger.info(f"フィルタリング結果: {queryset}")
 
         return queryset
+
     
 
 
@@ -297,7 +338,7 @@ class HashtagSearchView(ListView):
         if not hashtag_name or not hashtag_name.startswith("#"):
             raise Http404("Hashtag must start with '#'.")
 
-        hashtag_name = hashtag_name.lstrip('#')  # "#" を削除して検索用に調整
+        hashtag_name = hashtag_name.lstrip('#')
 
         logger.info(f"Searching for hashtag: {hashtag_name}")
 
