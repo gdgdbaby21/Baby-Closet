@@ -2,28 +2,26 @@
 {% load static %}
 
 {% block content %}
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>コーディネート投稿</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"> 
 
     <style>
-        /* ボタンをグレーにする */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            font-family: Arial, sans-serif;
+        }
+        
         .btn-gray {
-            background-color: #6c757d !important; /* Bootstrapのsecondary色 (グレー) */
+            background-color: #6c757d !important;
             border-color: #6c757d !important;
             color: white !important;
         }
     </style>
-
-</head>
-<body>
     <div class="container mt-5">
         <h1>コーディネート投稿</h1>
 
-        <!-- エラーメッセージの表示 -->
+       
         {% if form.errors %}
         <div class="alert alert-danger">
             <ul>
@@ -37,36 +35,36 @@
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             
-            <!-- 写真を選択 -->
+            
             <div class="mb-3">
                 <label for="image" class="form-label">写真を選択:</label>
                 <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
             </div>
 
-            <!-- タイトル -->
+            
             <div class="mb-3">
-                <label for="title" class="form-label">タイトル:</label>
+                <label for="title" class="form-label">タイトル(※必須):</label>
                 <input type="text" class="form-control" id="title" name="title" placeholder="タイトルを入力してください" required>
             </div>
 
-            <!-- メモ -->
+            
             <div class="mb-3">
                 <label for="caption" class="form-label">メモ:</label>
                 <textarea class="form-control" id="caption" name="caption" rows="3" placeholder="メモを入力してください"></textarea>
             </div>
 
-            <!-- 使用したアイテムの情報 -->
+            
             <div class="mb-3">
                 <label>使用したアイテムの情報:</label>
                 <ul id="selected-items-list" class="list-unstyled">
-                    <!-- 選択されたアイテムがここに表示されます -->
+                    
                 </ul>
                 <button type="button" class="btn btn-gray" data-bs-toggle="modal" data-bs-target="#itemModal">
                     アイテムを追加
                 </button>
             </div>
 
-            <!-- ユーザーに公開する -->
+            
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="is_public" name="is_public" value="1">
                 <label class="form-check-label" for="is_public">
@@ -74,12 +72,12 @@
                 </label>
             </div>
 
-            <!-- 投稿ボタン -->
+            
             <button type="submit" class="btn btn-gray">投稿</button>
         </form>
     </div>
 
-    <!-- アイテム選択条件モーダル -->
+    
     <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -90,7 +88,7 @@
                 <div class="modal-body">
                     
                         
-                    <!-- プルダウンメニュー -->
+                    
                     <div class="form-group">
                         <label for="genre-select">ジャンル:</label>
                         <select id="genre-select" class="form-select">
@@ -127,7 +125,7 @@
         </div>
     </div>
 
-    <!-- アイテムリスト表示モーダル -->
+    
     <div class="modal fade" id="filteredItemModal" tabindex="-1" aria-labelledby="filteredItemModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -136,7 +134,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
                 </div>
                 <div class="modal-body" id="filtered-items-container">
-                    <!-- filtered_items.html の内容がここにロードされます -->
+                    <
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>

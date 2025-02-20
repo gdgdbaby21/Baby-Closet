@@ -92,7 +92,9 @@
         <p>自己紹介: {{ user_profile.bio }}</p>
     </div>
 
+    {% if request.user == user_profile %}
     <p><a href="{% url 'edit_profile' %}">編集</a></p>
+    {% endif %}
 
     <!-- マイコーディネート一覧 -->
     <h2>マイコーディネート一覧</h2>
