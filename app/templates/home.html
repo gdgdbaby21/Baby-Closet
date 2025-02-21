@@ -185,8 +185,8 @@ body {
                     {% endif %}
 
                     <div class="post-meta">
-                        <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
-                        <span>💬 {{ post.comments.count|default:"0" }} コメント</span>
+                        <span>♥ {{ post.likes.count|default:"0" }} </span>
+                        <span>💬 {{ post.comments.count|default:"0" }} </span>
                     </div>
                 </div>
             {% endif %}
@@ -196,7 +196,6 @@ body {
 
 <!-- 人気のハッシュタグ セクション -->
 <div style="margin-top: 40px;">
-    <h3>人気のハッシュタグ</h3>
     {% for hashtag, posts in hashtag_posts.items %}
         {% if posts|length > 0 %}
         <div class="hashtag-section mb-5">
@@ -225,8 +224,8 @@ body {
                         {% endif %}
 
                         <div class="post-meta">
-                            <span>♥ {{ post.likes.count|default:"0" }} いいね</span>
-                            <span>💬 {{ post.comments.count|default:"0" }} コメント</span>
+                            <span>♥ {{ post.likes.count|default:"0" }} </span>
+                            <span>💬 {{ post.comments.count|default:"0" }} </span>
                         </div>
                     </div>
                 {% endfor %}

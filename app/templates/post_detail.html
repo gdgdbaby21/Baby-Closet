@@ -138,18 +138,18 @@
 
         <!-- コメント一覧 -->
         <div class="comments mt-3">
-            <ul id="comment-list" class="list-unstyled">
+            <div id="comment-list" class="list-unstyled">
                 {% for comment in post.comments.all %}
-                <li id="comment-{{ comment.id }}" class="d-flex align-items-center justify-content-between" style="margin-bottom: 10px;">
+                <div id="comment-{{ comment.id }}" class="d-flex align-items-center justify-content-between" style="margin-bottom: 10px;">
                     <span>
                         <strong>@{{ comment.user.account_name }}</strong>: {{ comment.content }}
                     </span>
                     {% if user.id == comment.user.id %}
                     <button class="delete-comment btn btn-sm btn-outline-danger" data-comment-id="{{ comment.id }}">🗑️</button>
                     {% endif %}
-                </li>
+                </div>
                 {% endfor %}
-            </ul>
+            </div>
         </div>
 
     </div> 
@@ -275,7 +275,7 @@
             .catch(error => console.error("エラー:", error));
         }
     
-        attachDeleteEvent(); // ✅ 既存のコメントに削除ボタン適用
+        attachDeleteEvent(); 
     
         document.getElementById("comment-form").addEventListener("submit", function(event) {
             event.preventDefault();
@@ -301,10 +301,10 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    removeUndefinedComments(); // ✅ `undefined:` のコメントを削除
+                    removeUndefinedComments(); 
                     addCommentToDOM(data.comment_id, data.account_name, data.content);
     
-                    commentInput.value = ""; // ✅ 入力欄をリセット
+                    commentInput.value = ""; 
                 } else {
                     console.error("コメントの投稿に失敗しました:", data.error);
                 }
@@ -312,24 +312,24 @@
             .catch(error => console.error("エラー:", error));
         });
     
-        function addCommentToDOM(commentId, accountName, content) {  // ✅ username → accountName に変更
+        function addCommentToDOM(commentId, accountName, content) { 
             const commentSection = document.getElementById("comment-section");
             const newComment = document.createElement("div");
             newComment.classList.add("comment", "mt-2", "p-2", "border", "rounded");
-            newComment.setAttribute("id", `comment-${commentId}`);  // ✅ 修正
+            newComment.setAttribute("id", `comment-${commentId}`); 
         
             newComment.innerHTML = `
                 <p><strong>${accountName}:</strong> ${content} 
                 <button class="delete-comment btn btn-danger btn-sm" data-comment-id="${commentId}" style="margin-left: 10px;">🗑️</button></p>
-            `;  // ✅ 修正
+            `; 
         
             commentSection.appendChild(newComment);
         
-            attachDeleteEvent(); // ✅ 新規コメントにも削除ボタンを適用
+            attachDeleteEvent(); // 
         }
         
     
-        // ✅ `undefined:` のコメントを削除する関数
+        
         function removeUndefinedComments() {
             document.querySelectorAll(".comment").forEach(comment => {
                 if (comment.innerText.includes("undefined:") || comment.innerText.includes("null:")) {
