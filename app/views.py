@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from app.forms import SignupForm, LoginForm
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
@@ -12,12 +12,13 @@ from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.list import ListView
 from django.utils.decorators import method_decorator
-from django.db.models import Q, Count, Prefetch
+from django.db.models import Q, Count
 from urllib.parse import unquote
-from django.http import JsonResponse, Http404, HttpResponseForbidden
+from django.http import JsonResponse, Http404
 from django.views.generic.list import ListView
 import json, logging
 from .utils import extract_hashtags, save_hashtags_to_post
+from django.contrib import messages 
 
 
 
@@ -121,6 +122,23 @@ class ProfileView(View):
 
 
 
+def profile_update(request):
+    if request.method == "POST":
+        form = UserProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.save()
+            update_session_auth_hash(request, user)  # ✅ これでログイン状態を維持
+            messages.success(request, "プロフィールが更新されました！")  # ✅ 成功メッセージを追加
+            return redirect("profile")  # ✅ `/profile/` にリダイレクト
+        else:
+            messages.error(request, "入力内容に誤りがあります。")
+    else:
+        form = UserProfileForm(instance=request.user)
+
+    return render(request, "profile.html", {"form": form})
+
+
 class WishlistView(LoginRequiredMixin, View):
     def get(self, request):
         items = WishlistItem.objects.filter(user=request.user)  
@@ -152,7 +170,7 @@ class EditProfileView(LoginRequiredMixin, View):
             messages.error(request, 'プロフィールの更新に失敗しました。入力内容を確認してください。')
         return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
 
-@login_required
+# @login_required
 def profile(request):
     user_profile = request.user
     return render(request, 'profile.html', {'profile': user_profile})
@@ -248,39 +266,7 @@ class SearchResultsView(ListView):
     logger = logging.getLogger(__name__)
     
 
-# class SearchResultsView(LoginRequiredMixin, ListView):
-#     model = Clothes
-#     template_name = 'search_results.html'
-#     context_object_name = 'clothes'
 
-#     def get_queryset(self):
-#         """現在のユーザーのデータのみをフィルタリング"""
-#         user = self.request.user  
-#         queryset = Clothes.objects.filter(user=user) 
-
-#         gender = self.request.GET.get('gender')
-#         size = self.request.GET.get('size')
-#         color = self.request.GET.get('color')
-#         genre = self.request.GET.get('genre')
-
-#         logger.info(f"検索条件: user={user}, gender={gender}, size={size}, color={color}, genre={genre}")
-
-#         query = Q()
-#         if gender:
-#             query &= Q(gender=gender)
-#         if size:
-#             query &= Q(size=size)
-#         if color:
-#             query &= Q(color=color)
-#         if genre:
-#             query &= Q(genre=genre)
-
-#         if query:
-#             queryset = queryset.filter(query)
-
-#         logger.info(f"フィルタリング結果: {queryset}")
-
-#         return queryset
 
 logger = logging.getLogger(__name__)
 

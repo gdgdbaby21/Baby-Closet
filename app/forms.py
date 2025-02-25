@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.hashers import make_password
 from .models import  User, WishlistItem, Clothes, Post, Comment
 
 
@@ -32,12 +33,25 @@ class LoginForm(forms.Form):
         return self.cleaned_data
     
 
+User = get_user_model()
 
 class UserProfileForm(forms.ModelForm):
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': '新しいパスワード'}),
+        required=False,
+        label="新しいパスワード"
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': '新しいパスワード（確認）'}),
+        required=False,
+        label="新しいパスワード（確認）"
+    )
+    
     class Meta:
         model = User
-        fields = ['profile_image','account_name', 'gender', 'birth_of_date', 'bio']
+        fields = ['email', 'profile_image','account_name', 'gender', 'birth_of_date', 'bio']
         labels = {
+            'email': 'メールアドレス',
             'profile_image': 'プロフィール画像',
             'account_name': 'アカウント名',
             'gender': '性別',
@@ -45,15 +59,40 @@ class UserProfileForm(forms.ModelForm):
             'bio': '自己紹介',
         }
         widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'profile_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'account_name': forms.TextInput(attrs={'placeholder': 'フリー入力'}),
             'gender': forms.Select(choices=[('M', '男性'), ('F', '女性'), ('O', 'その他')]),
-            'birth_of_date': forms.SelectDateWidget(years=range(1900, 2024)),
+            'birth_of_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'bio': forms.Textarea(attrs={'placeholder': 'フリー入力'}),
         }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
 
+        if password1 and password1 != password2:
+            raise forms.ValidationError("パスワードが一致しません")
 
+        return cleaned_data
 
+    def save(self, commit=True):
+        user = super().save(commit=False) 
+
+        email = self.cleaned_data.get("email")
+        if email and email != user.email:  
+            user.email = email
+
+        if self.cleaned_data["password1"]:
+            user.password = make_password(self.cleaned_data["password1"])
+
+        if commit:
+            user.save()
+
+        return user
+    
+    
 #欲しいものリスト投稿のフォーム        
 class WishlistItemForm(forms.ModelForm):
     class Meta:

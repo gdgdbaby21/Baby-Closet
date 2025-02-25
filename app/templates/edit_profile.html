@@ -142,6 +142,18 @@
             <label for="bio">自己紹介:</label>
             {{ form.bio }}
         </div>
+        <div class="form-group">
+            <label for="email">メールアドレス:</label>
+            {{ form.email }}
+        </div>
+        <div class="form-group">
+            <label for="password1">新しいパスワード:</label>
+            {{ form.password1 }}
+        </div>
+        <div class="form-group">
+            <label for="password2">新しいパスワード（確認）:</label>
+            {{ form.password2 }}
+        </div>
 
         
         <button type="submit" class="btn-submit">決定</button>
@@ -153,24 +165,24 @@
         const fileInput = document.getElementById("profile_image");
         const preview = document.getElementById("preview");
 
-        // 「画像を登録」リンクをクリックしたときにファイル選択を開く
+        
         uploadLink.addEventListener("click", function (event) {
-            event.preventDefault(); // リンクのデフォルト動作を防ぐ
-            fileInput.click(); // ファイル入力をクリック（ダイアログを表示）
+            event.preventDefault(); 
+            fileInput.click(); 
         });
 
-        // ファイルが選択されたときにプレビュー画像を更新
+        
         fileInput.addEventListener("change", function (event) {
-            const file = event.target.files[0]; // ユーザーが選択したファイルを取得
+            const file = event.target.files[0]; 
 
             if (file) {
-                const reader = new FileReader(); // FileReader オブジェクトを作成
+                const reader = new FileReader(); 
                 reader.onload = function (e) {
-                    preview.src = e.target.result; // プレビュー画像を更新
+                    preview.src = e.target.result; 
                 };
-                reader.readAsDataURL(file); // ファイルをDataURL形式で読み込む
+                reader.readAsDataURL(file); 
             } else {
-                preview.src = "{% static 'images/default-profile.png' %}"; // ファイルが選択されていない場合はデフォルト画像に戻す
+                preview.src = "{% static 'images/default-profile.png' %}"; 
             }
         });
     });
