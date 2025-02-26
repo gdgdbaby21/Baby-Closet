@@ -152,6 +152,13 @@ class ClothingForm(forms.ModelForm):
             super().__init__(*args, **kwargs)
             if not self.instance.image:
                 self.fields['image'].initial = 'default.jpg'
+        
+        # ✅ 画像がアップロードされているかチェック
+        def clean_image(self):
+            image = self.cleaned_data.get('image')
+            if not image:
+                raise forms.ValidationError("画像登録してください")  # 🔥 画像がない場合にエラーメッセージを返す
+            return image
 
 
 #コーディネート投稿のフォーム

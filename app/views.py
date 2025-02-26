@@ -120,23 +120,30 @@ class ProfileView(View):
             "user_posts": user_posts,
         })
 
-
-
 def profile_update(request):
     if request.method == "POST":
         form = UserProfileForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             user = form.save(commit=False)
-            user.save()
-            update_session_auth_hash(request, user)  # ✅ これでログイン状態を維持
-            messages.success(request, "プロフィールが更新されました！")  # ✅ 成功メッセージを追加
-            return redirect("profile")  # ✅ `/profile/` にリダイレクト
+
+            if form.cleaned_data.get("password1"):
+                user.set_password(form.cleaned_data["password1"])
+                user.save()
+                update_session_auth_hash(request, user)
+            else:
+                user.save()
+
+            # ✅ メッセージをセット（リダイレクト後も保持）
+            messages.success(request, "アカウント情報が更新されました。")
+
+            # ✅ `next=profile_update` を設定
+            return redirect("/login/?next=profile_update")  
         else:
             messages.error(request, "入力内容に誤りがあります。")
     else:
         form = UserProfileForm(instance=request.user)
 
-    return render(request, "profile.html", {"form": form})
+    return render(request, "profile_edit.html", {"form": form})
 
 
 class WishlistView(LoginRequiredMixin, View):
@@ -210,7 +217,6 @@ class ClothesCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('clothes')
 
     def form_valid(self, form):
-        
         clothes = form.save(commit=False)
         clothes.user = self.request.user
         clothes.save()

@@ -86,9 +86,15 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = "app.User"
+# AUTHENTICATION_BACKENDS = [
+#     "app.backends.UserAuthBackend"
+# ]
+
 AUTHENTICATION_BACKENDS = [
-    "app.backends.UserAuthBackend"
+    'django.contrib.auth.backends.ModelBackend',
 ]
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -144,4 +150,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL = "/login/"
 
+SESSION_COOKIE_AGE = 86400  # 1日 (24時間)
+SESSION_SAVE_EVERY_REQUEST = True
 

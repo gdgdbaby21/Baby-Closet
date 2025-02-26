@@ -40,7 +40,7 @@ class User(AbstractUser):
 #欲しい服リストのモデル
 class WishlistItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='wishlist_images/', blank=True, null=True, default='wishlist_images/default.png')
+    image = models.ImageField(upload_to='wishlist_images/', null=False, blank=False, default='wishlist_images/default.png')
     price = models.DecimalField(max_digits=10, decimal_places=0)
     brand = models.CharField(max_length=50, blank=True)
     product_url = models.URLField(max_length=255, blank=True)
@@ -50,6 +50,7 @@ class WishlistItem(models.Model):
 
     def __str__(self):
         return f"{self.id} - {self.price}円"
+    
     
 
 
@@ -121,7 +122,7 @@ class Clothes(models.Model):
     genre = models.CharField(max_length=20, choices=GENRE_CHOICES)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     memo = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='clothes_images/', null=True, blank=True)
+    image = models.ImageField(upload_to='clothes_images/', null=True, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

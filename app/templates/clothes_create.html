@@ -49,6 +49,15 @@
             margin-bottom: 20px;
         }
 
+        
+        .image-upload-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px; 
+            margin-top: 5px;
+        }
+
         .image-upload img {
             width: 150px;
             height: 150px;
@@ -70,6 +79,12 @@
 
         .image-upload input {
             display: none;
+        }
+
+        /* ✅ エラーメッセージのスタイル */
+        .error-message {
+            color: red;
+            font-size: 14px;
         }
 
         .button-container {
@@ -105,18 +120,40 @@
     <main>
         <form method="POST" enctype="multipart/form-data" action="{% url 'clothes_create' %}">
             {% csrf_token %}
-            
+
             <div class="image-upload">
+                {% load static %}
+                <img id="preview" 
+                     src="{% if clothes.image %}{{ clothes.image.url }}{% else %}{% static 'images/default-clothes.png' %}{% endif %}" 
+                     alt="image">
+            
+                <!-- ✅ ボタンとエラーメッセージを横並びにするための div -->
+                <div class="image-upload-container">
+                    <label for="image-upload" class="image-label">画像を選択</label>
+                    <input type="file" id="image-upload" name="image" accept="image/*" onchange="previewImage(event)">
+            
+                    <!-- ✅ 画像が未登録の場合のエラーメッセージを「画像を選択」の横に表示 -->
+                    {% if form.errors.image %}
+                        <span class="error-message">{{ form.errors.image.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            
+            {% comment %} <div class="image-upload">
                 <!-- デフォルト画像またはアップロードされた画像を表示 -->
                 {% load static %}
                 <img id="preview" 
      src="{% if clothes.image %}{{ clothes.image.url }}{% else %}{% static 'images/default-clothes.png' %}{% endif %}" 
      alt="image">
      <label for="image-upload">画像を選択</label>
-                <input type="file" id="image-upload" name="image" accept="image/*" onchange="previewImage(event)">
-                
+                <input type="file" id="image-upload" name="image" accept="image/*" onchange="previewImage(event)">    
             </div>
-            
+            <!-- ✅ 画像が未登録の場合のエラーメッセージを「画像を選択」の横に表示 -->
+        {% if form.errors.image %}
+        <span class="error-message">{{ form.errors.image.0 }}</span>
+    {% endif %}
+</div> {% endcomment %}
 
             <div class="form-group">
                 <label for="title">タイトル(必須):</label>
