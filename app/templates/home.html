@@ -5,21 +5,21 @@
 <div class="container">
     <style>
         .search-bar {
-            margin-top: 20px; /* ナビゲーションバーとの間隔 */
+            margin-top: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 10px;
-            border: none; /* 枠線を削除 */
+            border: none;
             border-radius: 8px;
-            background-color: transparent; /* 背景色を透明に設定 */
+            background-color: transparent;
         }
     
         .search-bar input {
             flex-grow: 1;
             padding: 10px;
             font-size: 16px;
-            border: 1px solid #ccc; /* 入力フィールドのみに枠線を適用 */
+            border: 1px solid #ccc;
             border-radius: 8px;
             margin-right: 10px;
         }
@@ -47,7 +47,7 @@
 
         .post-item {
             width: 300px;
-            height: 400px;
+            height: 480px; 
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -65,7 +65,7 @@
         .image-wrapper img {
             max-width: 100%;
             height: auto;
-            max-height: 150px;
+            max-height: 250px;
             object-fit: cover;
             border-radius: 8px;
         }
@@ -78,65 +78,60 @@
             margin-top: 10px;
             font-size: 14px;
             color: #555;
+            text-align: center;
         }
 
-        * 全体のスタイル */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-}
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
 
-/* コンテナ */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-/* 投稿ヘッダー */
-.post-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
 
-.post-header h2 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-}
+        .post-header h2 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
 
-/* フローティング投稿ボタンのスタイル */
-.floating-button {
-    position: fixed; /* 画面に固定 */
-    bottom: 20px; /* 下からの距離 */
-    right: 20px; /* 右からの距離 */
-    background-color: #5a6268; /* ボタンの背景色 */
-    color: white; /* テキストカラー */
-    font-size: 24px; /* テキストサイズ */
-    text-align: center; /* 中央揃え */
-    width: 60px; /* ボタンの幅 */
-    height: 60px; /* ボタンの高さ */
-    border-radius: 50%; /* 丸いボタンにする */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* ボタンの影 */
-    text-decoration: none; /* 下線を消す */
-    line-height: 60px; /* ボタン内テキストの縦揃え */
-    transition: all 0.3s ease; /* ホバー時のアニメーション */
-}
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #5a6268;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            line-height: 60px;
+            transition: all 0.3s ease;
+        }
 
-.floating-button:hover {
-    background-color: #6c757d;  /* ホバー時の背景色 */
-    transform: translateY(-3px); /* ホバー時に少し浮き上がる */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* ホバー時の影を強調 */
-}
-
+        .floating-button:hover {
+            background-color: #6c757d;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
     </style>
 
-    <!-- ハッシュタグ検索バー -->
     <div class="search-bar">
         <form action="{% url 'hashtag_search' %}" method="get">
             <input 
@@ -150,16 +145,14 @@ body {
         </form>
     </div>
 
-    <!-- 投稿一覧ヘッダー -->
     <div class="post-header">
         <h2>New Post</h2>
-        <!-- フローティング投稿ボタン -->
         <a href="{% url 'create_post' %}" class="floating-button">
             ＋
         </a>
     </div>
-  <!-- New Post セクション -->
-<div style="margin-bottom: 40px;">
+
+  <div style="margin-bottom: 40px;">
     <div class="post-list">
         {% for post in posts %}
             {% if post.is_public or post.user == request.user %}
@@ -179,9 +172,12 @@ body {
                         </a>
                     </div>
 
-                    <!-- タイトルを追加 -->
                     {% if post.title %}
                         <p class="post-title">{{ post.title }}</p>
+                    {% endif %}
+
+                    {% if post.caption %}
+                        <p class="post-caption">{{ post.caption }}</p>
                     {% endif %}
 
                     <div class="post-meta">
@@ -195,6 +191,7 @@ body {
 </div>
 
 <!-- 人気のハッシュタグ セクション -->
+<h2>人気のハッシュタグ</h2>
 <div style="margin-top: 40px;">
     {% for hashtag, posts in hashtag_posts.items %}
         {% if posts|length > 0 %}
@@ -203,26 +200,16 @@ body {
             <div class="post-list">
                 {% for post in posts %}
                     <div class="post-item">
-                        <p class="text-muted">
-                            @
-                            {% if post.user.account_name %}
-                                {{ post.user.account_name }}
-                            {% else %}
-                                Unknown User
-                            {% endif %}
-                        </p>
-
+                        <p class="text-muted">@ {{ post.user.account_name|default:"Unknown User" }}</p>
                         <div class="image-wrapper">
-                            <a href="{% url 'post_detail' post.pk %}">
-                                <img src="{{ post.image.url }}" alt="投稿画像">
-                            </a>
+                            <a href="{% url 'post_detail' post.pk %}"><img src="{{ post.image.url }}" alt="投稿画像"></a>
                         </div>
+                        <p class="post-title">{{ post.title }}</p>
 
-                        
-                        {% if post.title %}
-                            <p class="post-title">{{ post.title }}</p>
-                        {% endif %}
-
+                        {% if post.caption %}
+                        <p class="post-caption">{{ post.caption }}</p>
+                    {% endif %}
+                    
                         <div class="post-meta">
                             <span>♥ {{ post.likes.count|default:"0" }} </span>
                             <span>💬 {{ post.comments.count|default:"0" }} </span>
@@ -234,4 +221,4 @@ body {
         {% endif %}
     {% endfor %}
 </div>
-{% endblock %} 
+{% endblock %}

@@ -40,7 +40,7 @@ class User(AbstractUser):
 #欲しい服リストのモデル
 class WishlistItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='wishlist_images/', null=False, blank=False, default='wishlist_images/default.png')
+    image = models.ImageField(upload_to='wishlist_images/', null=False, blank=False)
     price = models.DecimalField(max_digits=10, decimal_places=0)
     brand = models.CharField(max_length=50, blank=True)
     product_url = models.URLField(max_length=255, blank=True)

@@ -285,28 +285,27 @@ class SearchResultsView(LoginRequiredMixin, ListView):
         """現在のユーザーのデータのみをフィルタリングし、何も選択しない場合は空にする"""
         user = self.request.user  
         queryset = Clothes.objects.filter(user=user) 
+        
+        gender = self.request.GET.getlist('gender')
+        size = self.request.GET.getlist('size')
+        color = self.request.GET.getlist('color')
+        genre = self.request.GET.getlist('genre')
 
-        gender = self.request.GET.get('gender')
-        size = self.request.GET.get('size')
-        color = self.request.GET.get('color')
-        genre = self.request.GET.get('genre')
-
-        # 何も選択されていない場合は、空のQuerySetを返す
         if not any([gender, size, color, genre]):
             logger.info(f"検索条件なし - ユーザー {user} の結果なしを返す")
-            return Clothes.objects.none()  # 空のQuerySetを返す
+            return Clothes.objects.none() 
 
         logger.info(f"検索条件: user={user}, gender={gender}, size={size}, color={color}, genre={genre}")
 
         query = Q()
         if gender:
-            query &= Q(gender=gender)
+            query |= Q(gender__in=gender)
         if size:
-            query &= Q(size=size)
+            query |= Q(size__in=size)
         if color:
-            query &= Q(color=color)
+            query |= Q(color__in=color)
         if genre:
-            query &= Q(genre=genre)
+            query |= Q(genre__in=genre)
 
         queryset = queryset.filter(query)
 
@@ -323,24 +322,36 @@ class HashtagSearchView(ListView):
     model = Post
     template_name = 'hashtag_results.html'
     context_object_name = 'posts'
-   
+
     def get_queryset(self):
         hashtag_name = self.request.GET.get('q') or self.kwargs.get('hashtag_name')
-        
-        if not hashtag_name or not hashtag_name.startswith("#"):
-            raise Http404("Hashtag must start with '#'.")
+
+        if not hashtag_name:
+            return Post.objects.none() 
+
+        if not hashtag_name.startswith("#"):
+            hashtag_name = f"#{hashtag_name}"  
 
         hashtag_name = hashtag_name.lstrip('#')
 
         logger.info(f"Searching for hashtag: {hashtag_name}")
 
-        hashtag = get_object_or_404(Hashtag, name=hashtag_name)
+        hashtag = Hashtag.objects.filter(name=hashtag_name).first()
+
+        if not hashtag:
+            return Post.objects.none() 
+
         return Post.objects.filter(hashtags=hashtag).select_related('user').prefetch_related('comments').order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["query"] = self.request.GET.get("q") or self.kwargs.get("hashtag_name")
+
+        if not context["posts"]:
+            context["message"] = "該当する投稿が見つかりませんでした。"
+
         return context
+
     
     
 

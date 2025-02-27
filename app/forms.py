@@ -95,6 +95,8 @@ class UserProfileForm(forms.ModelForm):
     
 #欲しいものリスト投稿のフォーム        
 class WishlistItemForm(forms.ModelForm):
+    image = forms.ImageField(required=True)
+    
     class Meta:
         model = WishlistItem
         fields = ['image', 'price','brand', 'product_url', 'notes']
@@ -108,7 +110,12 @@ class WishlistItemForm(forms.ModelForm):
             })
         }
         
-        
+    def clean_image(self):
+        image = self.cleaned_data.get('image')
+        if not image:
+            raise forms.ValidationError("画像をアップロードしてください。")
+        return image
+
 
 #服管理検索ページのフォーム
 class ClothingSearchForm(forms.Form):
