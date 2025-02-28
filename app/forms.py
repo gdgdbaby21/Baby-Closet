@@ -182,7 +182,7 @@ class PostForm(forms.ModelForm):
         fields = ['title', 'caption', 'image', 'is_public', 'clothes']
         widgets = {
             'caption': forms.Textarea(attrs={
-                'placeholder': 'メモを入力してください',
+                'placeholder': 'メモ・ハッシュタグを入力してください',
                 'rows': 3
             }),
             'title': forms.TextInput(attrs={

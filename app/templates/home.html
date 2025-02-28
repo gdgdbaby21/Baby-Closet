@@ -4,40 +4,231 @@
 {% block content %}
 <div class="container">
     <style>
+        .container {
+            max-width: 900px;
+            {% comment %} margin: 0 auto; {% endcomment %}
+            margin-left: 100px; 
+            padding: 20px;
+        }
+
+        
         .search-bar {
-            margin-top: 20px;
+            margin: 20px auto;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            background-color: transparent;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+            background-color: #f1f3f5;
+            border-radius: 50px;
+            padding: 5px 15px;
         }
-    
+
         .search-bar input {
             flex-grow: 1;
             padding: 10px;
             font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            margin-right: 10px;
+            border: none;
+            background: transparent;
+            outline: none;
         }
-    
+
         .search-bar button {
-            padding: 10px 20px;
-            background-color:  #6c757d; 
+            padding: 8px 16px;
+            background-color: #6c757d; 
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
             font-size: 16px;
             cursor: pointer;
         }
-    
+
         .search-bar button:hover {
-            background-color: #5a6268; 
+            background-color: #5a6268;
         }
 
+        
+        .post-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px;
+            justify-content: start; 
+        }
+        
+        
+        .post-item {
+            max-width: 300px;
+            height: auto;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        
+        @media screen and (max-width: 900px) {
+            .post-list {
+                grid-template-columns: repeat(2, 1fr); 
+            }
+        }
+        
+        @media screen and (max-width: 600px) {
+            .post-list {
+                grid-template-columns: repeat(1, 1fr); 
+            }
+        }
+
+        .post-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .image-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: auto;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #6c757d;
+            color: white;
+            font-size: 32px;
+            text-align: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            line-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .floating-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+
+    <div class="search-bar">
+        <form action="{% url 'hashtag_search' %}" method="get" style="display: flex; width: 100%;">
+            <input 
+                type="text" 
+                name="q" 
+                placeholder="#ハッシュタグ検索" 
+                aria-label="ハッシュタグ検索"
+                required
+            >
+            <button type="submit">検索</button>
+        </form>
+    </div>
+
+    <div class="post-header">
+        <h2>New Post</h2>
+    </div>
+
+    <div style="margin-bottom: 40px;">
+        <div class="post-list">
+            {% for post in posts %}
+                {% if post.is_public or post.user == request.user %}
+                    <a href="{% url 'post_detail' post.pk %}" class="post-item">
+                        <p class="text-muted">
+                            @
+                            {% if post.user.account_name %}
+                                {{ post.user.account_name }}
+                            {% else %}
+                                Unknown User
+                            {% endif %}
+                        </p>
+
+                        <div class="image-wrapper">
+                            <img src="{{ post.image.url }}" alt="投稿画像">
+                        </div>
+
+                        {% if post.title %}
+                            <p class="post-title">{{ post.title }}</p>
+                        {% endif %}
+
+                        {% if post.caption %}
+                            <p class="post-caption">{{ post.caption }}</p>
+                        {% endif %}
+
+                        <div class="post-meta">
+                            <span>♥ {{ post.likes.count|default:"0" }} </span>
+                            <span>💬 {{ post.comments.count|default:"0" }} </span>
+                        </div>
+                    </a> 
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 人気のハッシュタグ セクション -->
+    <h2>人気のハッシュタグ</h2>
+    <div style="margin-top: 40px;">
+        {% for hashtag, posts in hashtag_posts.items %}
+            {% if posts|length > 0 %}
+            <div class="hashtag-section mb-5">
+                <h4>#{{ hashtag.name }}</h4>
+                <div class="post-list">
+                    {% for post in posts %}
+                        <a href="{% url 'post_detail' post.pk %}" class="post-item">
+                            <p class="text-muted">@ {{ post.user.account_name|default:"Unknown User" }}</p>
+                            <div class="image-wrapper">
+                                <img src="{{ post.image.url }}" alt="投稿画像">
+                            </div>
+                            <p class="post-title">{{ post.title }}</p>
+
+                            {% if post.caption %}
+                                <p class="post-caption">{{ post.caption }}</p>
+                            {% endif %}
+
+                            <div class="post-meta">
+                                <span>♥ {{ post.likes.count|default:"0" }} </span>
+                                <span>💬 {{ post.comments.count|default:"0" }} </span>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'create_post' %}" class="floating-button">＋</a>
+
+</div>
+{% endblock %}
+
+
+
+
+{% comment %} {% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <style>
         .post-list {
             display: flex;
             flex-wrap: wrap;
@@ -56,10 +247,13 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
         }
 
-        .image-wrapper {
-            text-align: center;
+        .post-item:hover {
+            background-color: #f8f9fa;
         }
 
         .image-wrapper img {
@@ -79,56 +273,6 @@
             font-size: 14px;
             color: #555;
             text-align: center;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
-        .post-header h2 {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .floating-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #5a6268;
-            color: white;
-            font-size: 24px;
-            text-align: center;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            text-decoration: none;
-            line-height: 60px;
-            transition: all 0.3s ease;
-        }
-
-        .floating-button:hover {
-            background-color: #6c757d;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
         }
     </style>
 
@@ -152,73 +296,72 @@
         </a>
     </div>
 
-  <div style="margin-bottom: 40px;">
-    <div class="post-list">
-        {% for post in posts %}
-            {% if post.is_public or post.user == request.user %}
-                <div class="post-item">
-                    <p class="text-muted">
-                        @
-                        {% if post.user.account_name %}
-                            {{ post.user.account_name }}
-                        {% else %}
-                            Unknown User
-                        {% endif %}
-                    </p>
+    <div style="margin-bottom: 40px;">
+        <div class="post-list">
+            {% for post in posts %}
+                {% if post.is_public or post.user == request.user %}
+                    <a href="{% url 'post_detail' post.pk %}" class="post-item">
+                        <p class="text-muted">
+                            @
+                            {% if post.user.account_name %}
+                                {{ post.user.account_name }}
+                            {% else %}
+                                Unknown User
+                            {% endif %}
+                        </p>
 
-                    <div class="image-wrapper">
-                        <a href="{% url 'post_detail' post.pk %}">
-                            <img src="{{ post.image.url }}" alt="投稿画像">
-                        </a>
-                    </div>
-
-                    {% if post.title %}
-                        <p class="post-title">{{ post.title }}</p>
-                    {% endif %}
-
-                    {% if post.caption %}
-                        <p class="post-caption">{{ post.caption }}</p>
-                    {% endif %}
-
-                    <div class="post-meta">
-                        <span>♥ {{ post.likes.count|default:"0" }} </span>
-                        <span>💬 {{ post.comments.count|default:"0" }} </span>
-                    </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-</div>
-
-<!-- 人気のハッシュタグ セクション -->
-<h2>人気のハッシュタグ</h2>
-<div style="margin-top: 40px;">
-    {% for hashtag, posts in hashtag_posts.items %}
-        {% if posts|length > 0 %}
-        <div class="hashtag-section mb-5">
-            <h4>#{{ hashtag.name }}</h4>
-            <div class="post-list">
-                {% for post in posts %}
-                    <div class="post-item">
-                        <p class="text-muted">@ {{ post.user.account_name|default:"Unknown User" }}</p>
                         <div class="image-wrapper">
-                            <a href="{% url 'post_detail' post.pk %}"><img src="{{ post.image.url }}" alt="投稿画像"></a>
+                            <img src="{{ post.image.url }}" alt="投稿画像">
                         </div>
-                        <p class="post-title">{{ post.title }}</p>
+
+                        {% if post.title %}
+                            <p class="post-title">{{ post.title }}</p>
+                        {% endif %}
 
                         {% if post.caption %}
-                        <p class="post-caption">{{ post.caption }}</p>
-                    {% endif %}
-                    
+                            <p class="post-caption">{{ post.caption }}</p>
+                        {% endif %}
+
                         <div class="post-meta">
                             <span>♥ {{ post.likes.count|default:"0" }} </span>
                             <span>💬 {{ post.comments.count|default:"0" }} </span>
                         </div>
-                    </div>
-                {% endfor %}
-            </div>
+                    </a> 
+                {% endif %}
+            {% endfor %}
         </div>
-        {% endif %}
-    {% endfor %}
+    </div>
+
+    <!-- 人気のハッシュタグ セクション -->
+    <h2>人気のハッシュタグ</h2>
+    <div style="margin-top: 40px;">
+        {% for hashtag, posts in hashtag_posts.items %}
+            {% if posts|length > 0 %}
+            <div class="hashtag-section mb-5">
+                <h4>#{{ hashtag.name }}</h4>
+                <div class="post-list">
+                    {% for post in posts %}
+                        <a href="{% url 'post_detail' post.pk %}" class="post-item">
+                            <p class="text-muted">@ {{ post.user.account_name|default:"Unknown User" }}</p>
+                            <div class="image-wrapper">
+                                <img src="{{ post.image.url }}" alt="投稿画像">
+                            </div>
+                            <p class="post-title">{{ post.title }}</p>
+
+                            {% if post.caption %}
+                                <p class="post-caption">{{ post.caption }}</p>
+                            {% endif %}
+
+                            <div class="post-meta">
+                                <span>♥ {{ post.likes.count|default:"0" }} </span>
+                                <span>💬 {{ post.comments.count|default:"0" }} </span>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 </div>
-{% endblock %}
+{% endblock %} {% endcomment %}

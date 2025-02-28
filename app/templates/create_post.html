@@ -37,7 +37,7 @@
             
             
             <div class="mb-3">
-                <label for="image" class="form-label">写真を選択:</label>
+                <label for="image" class="form-label">写真を選択(※必須):</label>
                 <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
             </div>
 
@@ -50,7 +50,7 @@
             
             <div class="mb-3">
                 <label for="caption" class="form-label">メモ:</label>
-                <textarea class="form-control" id="caption" name="caption" rows="3" placeholder="メモを入力してください"></textarea>
+                <textarea class="form-control" id="caption" name="caption" rows="3" placeholder="メモ・ハッシュタグを入力してください"></textarea>
             </div>
 
             
@@ -152,8 +152,10 @@
                 const size = document.getElementById('size-select').value;
         
                 // フィルタリングされたアイテムを取得
-                const itemFilterUrl = "{% url 'item_filter' %}";
-                fetch(`${itemFilterUrl}?genre=${genre}&color=${color}&size=${size}`)
+                const itemFilterUrl = "/items/filter"; // すでに`/`があるので `/` は不要
+                const fullUrl = `${itemFilterUrl}?genre=${genre}&color=${color}&size=${size}`;
+                
+                fetch(fullUrl)
                     .then(response => response.text())
                     .then(html => {
                         const container = document.getElementById('filtered-items-container');
@@ -165,7 +167,22 @@
                         console.error('アイテムの読み込み中にエラーが発生しました:', error);
                         alert('アイテムを取得できませんでした。後でもう一度お試しください。');
                     });
-            });
+
+
+                {% comment %} const itemFilterUrl = "{% url 'item_filter' %}";
+                fetch(${itemFilterUrl}?genre=${genre}&color=${color}&size=${size})
+                    .then(response => response.text())
+                    .then(html => {
+                        const container = document.getElementById('filtered-items-container');
+                        container.innerHTML = html;
+                        const filteredItemModal = new bootstrap.Modal(document.getElementById('filteredItemModal'));
+                        filteredItemModal.show();
+                    })
+                    .catch(error => {
+                        console.error('アイテムの読み込み中にエラーが発生しました:', error);
+                        alert('アイテムを取得できませんでした。後でもう一度お試しください。');
+                    });
+            }); {% endcomment %}
         
             // "選択して反映"ボタンで選択内容を反映
             document.getElementById('confirmSelection').addEventListener('click', function () {
