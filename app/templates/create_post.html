@@ -118,7 +118,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button> {% endcomment %}
                     <button type="button" class="btn btn-primary" id="loadFilteredItems">検索</button>
                 </div>
             </div>
@@ -137,7 +136,6 @@
                     <
                 </div>
                 <div class="modal-footer">
-                    {% comment %} <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button> {% endcomment %}
                     <button type="button" class="btn btn-primary" id="confirmSelection">選択して反映</button>
                 </div>
             </div>
@@ -145,134 +143,114 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // 検索ボタンがクリックされたとき
             document.getElementById('loadFilteredItems').addEventListener('click', function () {
                 const genre = document.getElementById('genre-select').value;
                 const color = document.getElementById('color-select').value;
                 const size = document.getElementById('size-select').value;
         
-                // フィルタリングされたアイテムを取得
-                const itemFilterUrl = "/items/filter"; // すでに`/`があるので `/` は不要
-                const fullUrl = `${itemFilterUrl}?genre=${genre}&color=${color}&size=${size}`;
-                
+                const itemFilterUrl = "{% url 'item_filter' %}";  
+                const fullUrl = `${itemFilterUrl}?genre=${encodeURIComponent(genre)}&color=${encodeURIComponent(color)}&size=${encodeURIComponent(size)}`;
+        
+                console.log(`リクエストURL: ${fullUrl}`);
+        
                 fetch(fullUrl)
-                    .then(response => response.text())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTPエラー: ${response.status}`);
+                        }
+                        return response.text();
+                    })
                     .then(html => {
-                        const container = document.getElementById('filtered-items-container');
-                        container.innerHTML = html;
-                        const filteredItemModal = new bootstrap.Modal(document.getElementById('filteredItemModal'));
-                        filteredItemModal.show();
+                        document.getElementById('filtered-items-container').innerHTML = html;
+                        new bootstrap.Modal(document.getElementById('filteredItemModal')).show();
                     })
                     .catch(error => {
                         console.error('アイテムの読み込み中にエラーが発生しました:', error);
-                        alert('アイテムを取得できませんでした。後でもう一度お試しください。');
+                        alert('アイテムを取得できませんでした。');
                     });
-
-
-                {% comment %} const itemFilterUrl = "{% url 'item_filter' %}";
-                fetch(${itemFilterUrl}?genre=${genre}&color=${color}&size=${size})
-                    .then(response => response.text())
-                    .then(html => {
-                        const container = document.getElementById('filtered-items-container');
-                        container.innerHTML = html;
-                        const filteredItemModal = new bootstrap.Modal(document.getElementById('filteredItemModal'));
-                        filteredItemModal.show();
-                    })
-                    .catch(error => {
-                        console.error('アイテムの読み込み中にエラーが発生しました:', error);
-                        alert('アイテムを取得できませんでした。後でもう一度お試しください。');
-                    });
-            }); {% endcomment %}
+            });
         
-            // "選択して反映"ボタンで選択内容を反映
-            document.getElementById('confirmSelection').addEventListener('click', function () {
-                const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
-                const selectedItemsList = document.getElementById('selected-items-list');
-                
-                if (selectedCheckboxes.length === 0) {
-                    alert('少なくとも1つのアイテムを選択してください。');
-                    return;
-                }
+            // 「選択して反映」ボタンをクリック時の処理（すべてのモーダルを閉じる）
+            document.addEventListener('click', function (event) {
+                if (event.target && event.target.id === 'confirmSelection') {
+                    console.log("✅ '選択して反映' ボタンがクリックされました");
         
-                // 既存のリストをクリア
-                selectedItemsList.innerHTML = '';
-                
-                // アイテムリストを枠で囲むためのdiv
-                const listContainer = document.createElement('div');
-                listContainer.className = 'border p-3';
-                listContainer.style.border = '1px solid #ccc';
-                listContainer.style.padding = '10px';
-                listContainer.style.marginTop = '10px';
-                listContainer.style.display = 'flex';
-                listContainer.style.flexWrap = 'wrap';
-                listContainer.style.gap = '10px';
+                    const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+                    const selectedItemsList = document.getElementById('selected-items-list');
         
-                selectedCheckboxes.forEach((checkbox) => {
-                    const itemName = checkbox.dataset.itemName;
-                    const itemId = checkbox.dataset.itemId;
-                    const itemImage = checkbox.dataset.itemImage;
-        
-                    if (!itemName || !itemImage) {
-                        console.error('アイテム名が見つかりませんでした');
+                    if (selectedCheckboxes.length === 0) {
+                        alert('少なくとも1つのアイテムを選択してください。');
                         return;
                     }
         
-                    // 各アイテムを格納するコンテナ
-                    const itemContainer = document.createElement('div');
-                    itemContainer.className = 'border rounded p-2 d-flex align-items-center';
-                    itemContainer.style.width = '150px';
-                    itemContainer.style.padding = '10px';
-                    itemContainer.style.display = 'flex';
-                    itemContainer.style.alignItems = 'center';
-                    itemContainer.style.position = 'relative';
-                    itemContainer.style.border = '1px solid #ddd';
+                    // 既存のリストをクリア
+                    selectedItemsList.innerHTML = '';
         
-                    const imgTag = document.createElement('img');
-                    imgTag.src = itemImage;
-                    imgTag.alt = itemName;
-                    imgTag.style.width = '50px';
-                    imgTag.style.height = '50px';
-                    imgTag.style.marginRight = '10px';
+                    selectedCheckboxes.forEach((checkbox) => {
+                        const itemName = checkbox.dataset.itemName;
+                        const itemId = checkbox.dataset.itemId;
+                        const itemImage = checkbox.dataset.itemImage;
         
-                    const textTag = document.createElement('span');
-                    textTag.textContent = itemName;
-                    textTag.style.flexGrow = '1';
-                    textTag.style.marginRight = '10px';
+                        if (!itemName || !itemImage) {
+                            console.error('アイテム名が見つかりませんでした');
+                            return;
+                        }
         
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.innerHTML = '🗑️';
-                    deleteBtn.className = 'border-0 bg-transparent text-danger';
-                    deleteBtn.style.cursor = 'pointer';
-                    deleteBtn.style.position = 'absolute';
-                    deleteBtn.style.right = '5px';
-                    deleteBtn.style.top = '5px';
-                    deleteBtn.addEventListener('click', function () {
-                        itemContainer.remove();
+                        // アイテム表示用の要素作成
+                        const itemContainer = document.createElement('div');
+                        itemContainer.className = 'border rounded p-2 d-flex align-items-center';
+                        itemContainer.style.width = '150px';
+                        itemContainer.style.padding = '10px';
+                        itemContainer.style.display = 'flex';
+                        itemContainer.style.alignItems = 'center';
+                        itemContainer.style.position = 'relative';
+                        itemContainer.style.border = '1px solid #ddd';
+        
+                        const imgTag = document.createElement('img');
+                        imgTag.src = itemImage;
+                        imgTag.alt = itemName;
+                        imgTag.style.width = '50px';
+                        imgTag.style.height = '50px';
+                        imgTag.style.marginRight = '10px';
+        
+                        const textTag = document.createElement('span');
+                        textTag.textContent = itemName;
+                        textTag.style.flexGrow = '1';
+                        textTag.style.marginRight = '10px';
+        
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.innerHTML = '🗑️';
+                        deleteBtn.className = 'border-0 bg-transparent text-danger';
+                        deleteBtn.style.cursor = 'pointer';
+                        deleteBtn.style.position = 'absolute';
+                        deleteBtn.style.right = '5px';
+                        deleteBtn.style.top = '5px';
+                        deleteBtn.addEventListener('click', function () {
+                            itemContainer.remove();
+                        });
+        
+                        const inputTag = document.createElement('input');
+                        inputTag.type = "hidden";
+                        inputTag.name = "clothes";
+                        inputTag.value = itemId;
+        
+                        itemContainer.appendChild(imgTag);
+                        itemContainer.appendChild(textTag);
+                        itemContainer.appendChild(deleteBtn);
+                        itemContainer.appendChild(inputTag);
+        
+                        selectedItemsList.appendChild(itemContainer);
                     });
         
-                    const inputTag = document.createElement('input');
-                    inputTag.type = "hidden";
-                    inputTag.name = "clothes";
-                    inputTag.value = itemId;
+                    // すべてのモーダルを閉じる
+                    const filteredItemModal = bootstrap.Modal.getInstance(document.getElementById('filteredItemModal'));
+                    const itemModal = bootstrap.Modal.getInstance(document.getElementById('itemModal'));
         
-                    itemContainer.appendChild(imgTag);
-                    itemContainer.appendChild(textTag);
-                    itemContainer.appendChild(deleteBtn);
-                    itemContainer.appendChild(inputTag);
-        
-                    listContainer.appendChild(itemContainer);
-                });
-        
-                selectedItemsList.appendChild(listContainer);
-        
-                // モーダルを閉じる処理（両方閉じる）
-                const filteredItemModal = bootstrap.Modal.getInstance(document.getElementById('filteredItemModal'));
-                const itemModal = bootstrap.Modal.getInstance(document.getElementById('itemModal'));
-        
-                if (filteredItemModal) filteredItemModal.hide();
-                if (itemModal) itemModal.hide();
+                    if (filteredItemModal) filteredItemModal.hide();
+                    if (itemModal) itemModal.hide();
+                }
             });
-        });
+        });        
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     {% endblock %}

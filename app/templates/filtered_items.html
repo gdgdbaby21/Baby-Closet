@@ -18,7 +18,7 @@
 
         /* アイテムのカードデザイン */
         .item-card {
-            width: 120px; /* カードの幅 */
+            width: 120px; 
             background-color: #fff;
             border-radius: 8px;
             padding: 8px;
@@ -29,13 +29,6 @@
             cursor: pointer; 
         }
 
-        
-        {% comment %} .item-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        } {% endcomment %}
-
-        /* カード内のコンテンツ */
         .item-content {
             display: flex;
             flex-direction: column;
@@ -55,10 +48,6 @@
             color: #333;
         }
 
-        .item-title {
-            font-weight: bold;
-        }
-
         .item-size {
             font-size: 11px;
             color: #666;
@@ -73,26 +62,38 @@
             height: 18px;
             cursor: pointer;
         }
+
+        /* メッセージのスタイル */
+        .no-items-message {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <ul id="filtered-item-list">
-        {% for item in items %}
-        <li class="item-card">
-            <input type="checkbox" class="item-checkbox" value="{{ item.id }}" 
-                   data-item-name="{{ item.title }}" 
-                   data-item-id="{{ item.id }}"
-                   data-item-image="{{ item.image.url }}">
-            <div class="item-content">
-                <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
-                <div class="item-info">
-                    <span class="item-size">{{ item.get_genre_display }}, {{ item.size }}</span>
+    {% if items %}
+        <ul id="filtered-item-list">
+            {% for item in items %}
+            <li class="item-card">
+                <input type="checkbox" class="item-checkbox" value="{{ item.id }}" 
+                    data-item-name="{{ item.title }}" 
+                    data-item-id="{{ item.id }}"
+                    data-item-image="{{ item.image.url }}">
+                <div class="item-content">
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+                    <div class="item-info">
+                        <span class="item-size">{{ item.get_genre_display }}, {{ item.size }}</span>
+                    </div>
                 </div>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="no-items-message">該当するアイテムがございません。</p>
+    {% endif %}
 
 </body>
 </html>
