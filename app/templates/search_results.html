@@ -47,8 +47,19 @@
 </head>
 <body>
     <h1>検索結果</h1>
+    {% for item in clothes %}
+    {% if item.is_public %}  {# 非公開データを除外 #}
+        <div class="result-item">
+            <a href="{% url 'clothes_detail' item.id %}">
+                <img src="{{ item.image.url }}" alt="{{ item.title }}">
+            </a>
+            <div class="result-item-title">{{ item.title }}</div>
+        </div>
+    {% endif %}
+{% endfor %}
 
-    {% if clothes %}
+
+    {% comment %} {% if clothes %}
         <div class="results-container">
             {% for item in clothes %}
             <div class="result-item">
@@ -57,7 +68,8 @@
                 </a>
                 <div class="result-item-title">{{ item.title }}</div>
             </div>
-            {% endfor %}
+            {% endfor %} {% endcomment %}
+        
         </div>
     {% else %}
         <p>該当する結果はありません。</p>

@@ -138,22 +138,6 @@
                     {% endif %}
                 </div>
             </div>
-            
-            
-            {% comment %} <div class="image-upload">
-                <!-- デフォルト画像またはアップロードされた画像を表示 -->
-                {% load static %}
-                <img id="preview" 
-     src="{% if clothes.image %}{{ clothes.image.url }}{% else %}{% static 'images/default-clothes.png' %}{% endif %}" 
-     alt="image">
-     <label for="image-upload">画像を選択</label>
-                <input type="file" id="image-upload" name="image" accept="image/*" onchange="previewImage(event)">    
-            </div>
-            <!-- ✅ 画像が未登録の場合のエラーメッセージを「画像を選択」の横に表示 -->
-        {% if form.errors.image %}
-        <span class="error-message">{{ form.errors.image.0 }}</span>
-    {% endif %}
-</div> {% endcomment %}
 
             <div class="form-group">
                 <label for="title">タイトル(必須):</label>
