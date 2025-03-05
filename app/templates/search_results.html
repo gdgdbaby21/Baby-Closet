@@ -5,21 +5,27 @@
     <title>検索結果</title>
     <style>
         body {
-        margin: 0;
-        padding: 0;
-        background-color: #f8f9fa; 
-    }
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            text-align: center;  /* 全体のテキストを中央揃え */
+        }
 
-    .search-results-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: calc(100vh - 60px); 
-        margin-top: 60px;
-        text-align: center;
-        width: 100%;
-    }
+        h1 {
+            text-align: center;
+            margin-top: 20px;  /* 余白を調整 */
+        }
+
+        .search-results-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 60px);
+            margin-top: 60px;
+            width: 100%;
+        }
+
         .results-container {
             display: flex;
             flex-wrap: wrap;
@@ -27,6 +33,7 @@
             justify-content: center;
             margin-top: 20px;
         }
+
         .result-item {
             text-align: center;
             border: 1px solid #ddd;
@@ -35,41 +42,48 @@
             width: 200px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .result-item img {
             max-width: 100%;
             border-radius: 5px;
         }
+
         .result-item-title {
             margin-top: 10px;
             font-weight: bold;
         }
+
+        /* "戻る" ボタンの中央配置 */
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            background-color: #0056b3;
+        }
+
     </style>
 </head>
 <body>
     <h1>検索結果</h1>
-    {% for item in clothes %}
-    {% if item.is_public %}  {# 非公開データを除外 #}
-        <div class="result-item">
-            <a href="{% url 'clothes_detail' item.id %}">
-                <img src="{{ item.image.url }}" alt="{{ item.title }}">
-            </a>
-            <div class="result-item-title">{{ item.title }}</div>
-        </div>
-    {% endif %}
-{% endfor %}
 
-
-    {% comment %} {% if clothes %}
+    {% if clothes %}
         <div class="results-container">
             {% for item in clothes %}
-            <div class="result-item">
-                <a href="{% url 'clothes_detail' item.id %}">
-                    <img src="{{ item.image.url }}" alt="{{ item.title }}">
-                </a>
-                <div class="result-item-title">{{ item.title }}</div>
-            </div>
-            {% endfor %} {% endcomment %}
-        
+                <div class="result-item">
+                    <a href="{% url 'clothes_detail' item.id %}">
+                        <img src="{{ item.image.url }}" alt="{{ item.title }}">
+                    </a>
+                    <div class="result-item-title">{{ item.title }}</div>
+                </div>
+            {% endfor %}
         </div>
     {% else %}
         <p>該当する結果はありません。</p>

@@ -256,11 +256,6 @@ class ClothesOptionsView(View):
             'sizes': list(sizes),
         })
 
-class SearchResultsView(ListView):
-    logger = logging.getLogger(__name__)
-    
-
-
 
 logger = logging.getLogger(__name__)
 
@@ -300,6 +295,7 @@ class SearchResultsView(LoginRequiredMixin, ListView):
         logger.info(f"フィルタリング結果: {queryset}")
 
         return queryset
+    
 
     
 
@@ -329,7 +325,7 @@ class HashtagSearchView(ListView):
         if not hashtag:
             return Post.objects.none() 
 
-        return Post.objects.filter(hashtags=hashtag).select_related('user').prefetch_related('comments').order_by("-created_at")
+        return Post.objects.filter(hashtags=hashtag, is_public=True).select_related('user').prefetch_related('comments').order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
