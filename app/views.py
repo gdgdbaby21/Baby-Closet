@@ -256,6 +256,7 @@ class ClothesOptionsView(View):
             'sizes': list(sizes),
         })
 
+    
 
 logger = logging.getLogger(__name__)
 
@@ -265,7 +266,6 @@ class SearchResultsView(LoginRequiredMixin, ListView):
     context_object_name = 'clothes'
 
     def get_queryset(self):
-        """現在のユーザーのデータのみをフィルタリングし、何も選択しない場合は空にする"""
         user = self.request.user  
         queryset = Clothes.objects.filter(user=user) 
         
@@ -276,27 +276,27 @@ class SearchResultsView(LoginRequiredMixin, ListView):
 
         if not any([gender, size, color, genre]):
             logger.info(f"検索条件なし - ユーザー {user} の結果なしを返す")
-            return Clothes.objects.none() 
+            return Clothes.objects.none()
 
         logger.info(f"検索条件: user={user}, gender={gender}, size={size}, color={color}, genre={genre}")
 
+        # AND 条件で絞り込むためのフィルタ
         query = Q()
         if gender:
-            query |= Q(gender__in=gender)
+            query &= Q(gender__in=gender)
         if size:
-            query |= Q(size__in=size)
+            query &= Q(size__in=size)
         if color:
-            query |= Q(color__in=color)
+            query &= Q(color__in=color)
         if genre:
-            query |= Q(genre__in=genre)
+            query &= Q(genre__in=genre)
 
+        # # すべての条件を満たすもののみを取得 (AND 条件)
         queryset = queryset.filter(query)
 
         logger.info(f"フィルタリング結果: {queryset}")
 
         return queryset
-    
-
     
 
 
