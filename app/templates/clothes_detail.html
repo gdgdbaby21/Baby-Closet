@@ -56,7 +56,14 @@
     <p><strong>性別:</strong> {{ clothes.get_gender_display }}</p>
     <p><strong>色:</strong> {{ clothes.get_color_display }}</p>
     <p><strong>ジャンル:</strong> {{ clothes.get_genre_display }}</p>
-    <p><strong>価格:</strong> ¥{{ clothes.price|floatformat:0 }} </p>
+    <p>
+        価格: 
+        {% if clothes.price is not None %}
+          ¥{{ clothes.price|floatformat:0 }}
+        {% else %}
+          登録されていません
+        {% endif %}
+      </p>
     <p><strong>メモ:</strong> {{ clothes.memo }}</p>
     <a href="{% url 'clothes' %}">戻る</a>
 

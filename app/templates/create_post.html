@@ -17,6 +17,20 @@
             border-color: #6c757d !important;
             color: white !important;
         }
+
+        #selected-items-list {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 10px; 
+        }
+        .item-container span {
+            flex-grow: 1;
+            margin-right: 20px; 
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: 12px; 
+        }
     </style>
     <div class="container mt-5">
         <h1>コーディネート投稿</h1>
@@ -169,33 +183,51 @@
                         alert('アイテムを取得できませんでした。');
                     });
             });
-        
-            // 「選択して反映」ボタンをクリック時の処理（すべてのモーダルを閉じる）
+    
+            // 選択されたアイテムを記録する配列
+            let selectedItems = [];
+    
+            // 「選択して反映」ボタンをクリック時の処理
             document.addEventListener('click', function (event) {
                 if (event.target && event.target.id === 'confirmSelection') {
                     console.log("✅ '選択して反映' ボタンがクリックされました");
-        
+    
                     const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
                     const selectedItemsList = document.getElementById('selected-items-list');
-        
+                    
+    
                     if (selectedCheckboxes.length === 0) {
                         alert('少なくとも1つのアイテムを選択してください。');
                         return;
                     }
-        
-                    // 既存のリストをクリア
-                    selectedItemsList.innerHTML = '';
-        
+    
+                    // 既存のアイテムIDを取得
+                    let existingItemIds = selectedItems.map(item => item.id);
+    
                     selectedCheckboxes.forEach((checkbox) => {
                         const itemName = checkbox.dataset.itemName;
                         const itemId = checkbox.dataset.itemId;
                         const itemImage = checkbox.dataset.itemImage;
-        
+    
                         if (!itemName || !itemImage) {
-                            console.error('アイテム名が見つかりませんでした');
+                            console.error('アイテム情報が見つかりませんでした');
                             return;
                         }
-        
+    
+                        // 上限5つまで
+                        if (selectedItems.length >= 5) {
+                            alert('「使用したアイテムの情報」は最大5つまで選択できます。');
+                            return;
+                        }
+    
+                        // すでに選択されている場合はスキップ
+                        if (existingItemIds.includes(itemId)) {
+                            return;
+                        }
+    
+                        // アイテムデータを保存
+                        selectedItems.push({ id: itemId, name: itemName, image: itemImage });
+    
                         // アイテム表示用の要素作成
                         const itemContainer = document.createElement('div');
                         itemContainer.className = 'border rounded p-2 d-flex align-items-center';
@@ -205,19 +237,19 @@
                         itemContainer.style.alignItems = 'center';
                         itemContainer.style.position = 'relative';
                         itemContainer.style.border = '1px solid #ddd';
-        
+    
                         const imgTag = document.createElement('img');
                         imgTag.src = itemImage;
                         imgTag.alt = itemName;
                         imgTag.style.width = '50px';
                         imgTag.style.height = '50px';
                         imgTag.style.marginRight = '10px';
-        
+    
                         const textTag = document.createElement('span');
                         textTag.textContent = itemName;
                         textTag.style.flexGrow = '1';
                         textTag.style.marginRight = '10px';
-        
+    
                         const deleteBtn = document.createElement('button');
                         deleteBtn.innerHTML = '🗑️';
                         deleteBtn.className = 'border-0 bg-transparent text-danger';
@@ -226,31 +258,33 @@
                         deleteBtn.style.right = '5px';
                         deleteBtn.style.top = '5px';
                         deleteBtn.addEventListener('click', function () {
+                            // アイテムリストから削除
+                            selectedItems = selectedItems.filter(item => item.id !== itemId);
                             itemContainer.remove();
                         });
-        
+    
                         const inputTag = document.createElement('input');
                         inputTag.type = "hidden";
                         inputTag.name = "clothes";
                         inputTag.value = itemId;
-        
+    
                         itemContainer.appendChild(imgTag);
                         itemContainer.appendChild(textTag);
                         itemContainer.appendChild(deleteBtn);
                         itemContainer.appendChild(inputTag);
-        
+    
                         selectedItemsList.appendChild(itemContainer);
                     });
-        
+    
                     // すべてのモーダルを閉じる
                     const filteredItemModal = bootstrap.Modal.getInstance(document.getElementById('filteredItemModal'));
                     const itemModal = bootstrap.Modal.getInstance(document.getElementById('itemModal'));
-        
+    
                     if (filteredItemModal) filteredItemModal.hide();
                     if (itemModal) itemModal.hide();
                 }
             });
-        });        
+        });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     {% endblock %}
