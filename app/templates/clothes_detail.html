@@ -64,7 +64,7 @@
           登録されていません
         {% endif %}
       </p>
-    <p><strong>メモ:</strong> {{ clothes.memo }}</p>
+      <p>メモ: {{ clothes.memo|default:"登録されていません" }}</p>
     <a href="{% url 'clothes' %}">戻る</a>
 
     <form action="{% url 'delete_clothes' clothes.id %}" method="post" style="margin-top: 20px;">
