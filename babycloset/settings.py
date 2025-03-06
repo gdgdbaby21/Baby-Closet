@@ -148,7 +148,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-LOGIN_URL = "/login/"
+LOGIN_URL = '/baby-closet/login/'
 
 SESSION_COOKIE_AGE = 86400  # 1日 (24時間)
 SESSION_SAVE_EVERY_REQUEST = True
