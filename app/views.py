@@ -19,6 +19,7 @@ from django.views.generic.list import ListView
 import json, logging
 from .utils import extract_hashtags, save_hashtags_to_post
 from django.contrib import messages 
+from django.contrib.auth.hashers import check_password
 
 
 
@@ -120,19 +121,7 @@ class ProfileView(View):
             "user_posts": user_posts,
         })
         
-    @login_required
-    def update_profile(request):
-        if request.method == 'POST':
-            form = UserProfileForm(request.POST, request.FILES, instance=request.user.profile)
-            if form.is_valid():
-                form.save()
-            messages.success(request, "アカウント情報を更新しました。もう一度ログインしてください。")
-            return redirect('login') 
-        else:
-            form = UserProfileForm(instance=request.user.profile)
-            
-            return render(request, 'profile_edit.html', {'form': form})
-
+    
 
 class WishlistView(LoginRequiredMixin, View):
     def get(self, request):
@@ -147,35 +136,80 @@ class ClothesView(LoginRequiredMixin, View):
         return render(request, "clothes.html", {"clothes": clothes})
 
 
-
 class EditProfileView(LoginRequiredMixin, View):
     def get(self, request):
         user_profile = request.user
-        form = UserProfileForm(instance=request.user)
+        form = UserProfileForm(instance=user_profile)
         return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
 
     def post(self, request):
         user_profile = request.user
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
-        if form.is_valid():
-            form.save() 
-            messages.success(request, 'プロフィールが更新されました！')
-            return redirect("profile")
-        else:
-            messages.error(request, 'プロフィールの更新に失敗しました。入力内容を確認してください。')
-        return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
 
-# @login_required
-def profile(request):
-    user_profile = request.user
-    return render(request, 'profile.html', {'profile': user_profile})
+        current_password = request.POST.get("current_password")
+        new_password = request.POST.get("password1")
+
+        old_email = user_profile.email
+        old_account_name = user_profile.account_name
+        old_gender = user_profile.gender
+        old_birth_of_date = user_profile.birth_of_date
+        old_bio = user_profile.bio
+
+        if new_password:
+            if not current_password:
+                form.add_error("password1", "このフィールドに値を入力してください。")
+                return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
+
+            if not check_password(current_password, request.user.password):
+                messages.error(request, "現在のパスワードが正しくありません。")
+                return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
+
+        if form.is_valid():
+            new_email = form.cleaned_data["email"]
+            new_account_name = form.cleaned_data["account_name"]
+            new_gender = form.cleaned_data["gender"]
+            new_birth_of_date = form.cleaned_data["birth_of_date"]
+            new_bio = form.cleaned_data["bio"]
+
+            form.save()
+
+            local_messages = []
+            if old_email != new_email:
+                local_messages.append("メールアドレスを変更しました。")
+            
+            if old_account_name != new_account_name:
+                local_messages.append("アカウント名を変更しました。")
+
+            if old_gender != new_gender:
+                local_messages.append("性別を変更しました。")
+
+            if old_birth_of_date != new_birth_of_date:
+                local_messages.append("生年月日を変更しました。")
+
+            if old_bio != new_bio:
+                local_messages.append("自己紹介を変更しました。")
+
+            # 新しいパスワードが入力されていない場合は、edit_profile.html にメッセージを表示してそのまま戻る
+            if not new_password:
+                for msg in local_messages:
+                    messages.success(request, msg)
+                return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
+
+            # 新しいパスワードを変更した場合のみ、ログインページへリダイレクト
+            messages.success(request, "プロフィールが更新されました！もう一度ログインしてください。")
+            return redirect("login")
+        
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(request, error)
+
+        return render(request, "edit_profile.html", {"form": form, "user_profile": user_profile})
 
 
 class Wishlist_detailView(View):
     def get(self, request, item_id):
      item = get_object_or_404(WishlistItem, id=item_id)
      return render(request, 'wishlist_detail.html', {'item': item})
-
 
 
 class Wishlist_createView(LoginRequiredMixin, View):

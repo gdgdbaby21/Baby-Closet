@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.hashers import make_password
 from .models import  User, WishlistItem, Clothes, Post, Comment
+from django.core.exceptions import ValidationError
+import re
 
 
 class SignupForm(UserCreationForm):
@@ -49,7 +51,7 @@ class UserProfileForm(forms.ModelForm):
     
     class Meta:
         model = User
-        fields = ['email', 'profile_image','account_name', 'gender', 'birth_of_date', 'bio']
+        fields = ['email', 'profile_image', 'account_name', 'gender', 'birth_of_date', 'bio']
         labels = {
             'email': 'メールアドレス',
             'profile_image': 'プロフィール画像',
@@ -61,31 +63,46 @@ class UserProfileForm(forms.ModelForm):
         widgets = {
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'profile_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'account_name': forms.TextInput(attrs={'placeholder': 'フリー入力'}),
+            'account_name': forms.TextInput(attrs={'placeholder': 'アカウント名を入力してください'}),
             'gender': forms.Select(choices=[('M', '男性'), ('F', '女性'), ('O', 'その他')]),
             'birth_of_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'bio': forms.Textarea(attrs={'placeholder': 'フリー入力'}),
+            'bio': forms.Textarea(attrs={'placeholder': '自己紹介を入力してください'}),
         }
-    
+
+    def clean_password1(self):
+        password = self.cleaned_data.get("password1")
+
+        if password:
+            if len(password) < 8:
+                raise ValidationError("パスワードは8文字以上である必要があります。")
+
+            if not re.search(r"[a-z]", password):
+                raise ValidationError("パスワードには少なくとも1つの小文字が必要です。")
+
+            if not re.search(r"\d", password):
+                raise ValidationError("パスワードには少なくとも1つの数字が必要です。")
+
+        return password
+
     def clean(self):
         cleaned_data = super().clean()
         password1 = cleaned_data.get("password1")
         password2 = cleaned_data.get("password2")
 
         if password1 and password1 != password2:
-            raise forms.ValidationError("パスワードが一致しません")
+            self.add_error("password2", "パスワードが一致しません。")
 
         return cleaned_data
 
     def save(self, commit=True):
-        user = super().save(commit=False) 
+        user = super().save(commit=False)
 
         email = self.cleaned_data.get("email")
-        if email and email != user.email:  
+        if email and email != user.email:
             user.email = email
 
-        if self.cleaned_data["password1"]:
-            user.password = make_password(self.cleaned_data["password1"])
+        if self.cleaned_data.get("password1"):  
+            user.set_password(self.cleaned_data["password1"])  
 
         if commit:
             user.save()
