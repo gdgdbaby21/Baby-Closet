@@ -3,7 +3,7 @@
 
 {% block content %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"> 
-
+    <title>コーディネート投稿</title>
     <style>
         .title-container {
             width: 100%;
@@ -23,6 +23,7 @@
         }
         
         body {
+            font-size: 18px !important; /* 全体のフォントサイズを拡大 */
             margin: 0;
             padding: 0;
             background-color: #f8f8f8;
@@ -34,12 +35,20 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
+            margin: 0 auto; /* 中央揃え */
         }
-        
+        .form-label {
+            font-size: 18px !important;
+            font-weight: bold !important;
+        }
         .form-group {
-            max-width: 400px !important; /* ✅ 強制的に適用 */
-            width: 100% !important; /* ✅ フォームの幅にフィット */
+            max-width: 400px !important; 
+            width: 100% !important; 
             margin-bottom: 15px;
+        }
+        .form-group,
+        .mb-3 {
+            width: 50% !important;
         }
         
         .form-group label {
@@ -49,20 +58,17 @@
         }
         
         .form-group input,
-        .form-group select,
         .form-group textarea {
-            width: 100% !important; /* ✅ 入力欄の幅を100%に */
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white !important; /* ✅ 背景色が透過になっている場合の対策 */
+            width: 100% !important; 
+            height: 120px !important;  /* 高さを直接指定 */
+            font-size: 18px !important; /* 文字サイズを大きく */
+            padding: 15px !important; /* 内側の余白 */
+            border: 1px solid #ddd !important;
+            border-radius: 6px !important;
+            background-color: white !important;
+            box-sizing: border-box !important; /* padding を含めたサイズ計算 */
         }
-        
-        .form-group textarea {
-            resize: none;
-            height: 80px;
-        }
-        
+
         .btn-gray {
             background-color: #6c757d !important;
             border-color: #6c757d !important;
@@ -82,6 +88,32 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             font-size: 12px; 
+        }
+        #title::placeholder {
+            font-size: 12px !important; /* 例: 12px に縮小 */
+            color: #999 !important; /* 薄いグレーで視認性を保つ */
+        }
+        
+        /* メモのプレースホルダー文字を小さく */
+        #caption::placeholder {
+            font-size: 12px !important;
+            color: #999 !important;
+        }
+        #title {
+            width: 100% !important; /* 幅を最大限広げる */
+            height: 40px !important; /* 高さを少し大きく */
+            font-size: 18px !important;
+            padding: 12px !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* メモ入力欄を広げる */
+        #caption {
+            width:100% !important; /* 幅を最大限広げる */
+            height: 200px !important; /* 高さをさらに拡大 */
+            font-size: 18px !important;
+            padding: 12px !important;
+            box-sizing: border-box !important;
         }
     </style>
     <div class="title-container">

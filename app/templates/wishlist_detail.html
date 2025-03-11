@@ -2,7 +2,24 @@
 {% load static %}
 
 {% block content %}
+<title>欲しいものリスト表示</title>
     <style>
+        .title-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center; 
+            margin-top: 10px;
+            margin-left: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .title-container h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: normal;
+            margin-top: 30px;
+        }
         body {
             min-height: 100vh;
             margin: 0;
@@ -54,6 +71,9 @@
         }
         
     </style>
+    <div class="title-container">
+        <h1>欲しいものリスト表示</h1>
+    </div>
 
     <div class="content-wrapper">
     <h1>{{ item.name }}</h1> 

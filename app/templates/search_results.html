@@ -2,38 +2,19 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>検索結果</title>
+    <title>服管理検索結果</title>
+    </div>
+    
     <style>
+        
         body {
             margin: 0;
             padding: 0;
             background-color: #f8f9fa;
             text-align: center;  /* 全体のテキストを中央揃え */
         }
-
-        h1 {
-            text-align: center;
-            margin-top: 20px;  /* 余白を調整 */
-        }
-
-        .search-results-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: calc(100vh - 60px);
-            margin-top: 60px;
-            width: 100%;
-        }
-
-        .results-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
+       
+        
         .result-item {
             text-align: center;
             border: 1px solid #ddd;
@@ -47,13 +28,25 @@
             max-width: 100%;
             border-radius: 5px;
         }
-
-        .result-item-title {
+        .title-container h1 {
+            font-weight: normal !important; /* 絶対に適用 */
+            font-size: 16px !important; /* フォントサイズを調整 */
+            color: inherit !important; /* 文字色の影響を防ぐ */
+            font-style: normal !important; /* 斜体などを解除 */
+        }
+        .title-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center; 
+            font-size: 18px;
+            font-weight: normal;
             margin-top: 10px;
-            font-weight: bold;
+            margin-left: 10px;
+            margin-bottom: 20px;
         }
 
-        /* "戻る" ボタンの中央配置 */
+
         .back-link {
             display: inline-block;
             margin-top: 20px;
@@ -68,11 +61,13 @@
         .back-link:hover {
             background-color: #0056b3;
         }
-
     </style>
-</head>
-<body>
-    <h1>検索結果</h1>
+
+    <div class="title-container">
+        <h1>服管理検索結果</h1>
+    </div>
+
+    
 
     {% if clothes %}
         <div class="results-container">

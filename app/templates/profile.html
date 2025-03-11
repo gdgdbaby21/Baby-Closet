@@ -1,79 +1,176 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="profile-container" style="margin-top: 80px;"> 
-    <style>
-        .title-container {
-            width: 100%;
-            text-align: left;
-        }
-        .profile-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center;
-            width: 80%;
-            max-width: 800px;
-            margin: 80px auto 0;
-        }
-        
-        .profile-image img {
-            width: 100px; 
-            height: 100px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-        }
-        .profile-details {
-            margin-top: 20px;
-        }
+<title>プロフィール</title>
+<style>
+    /* 🔥 ページ全体を中央寄せ */
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    align-items: center; /* 🔥 中央揃え */
+    text-align: center; /* 🔥 文字も中央揃え */
+}
 
-        .profile-details p {
-            margin: 5px 0;
-        }
-        .post-list {
-            display: flex;
-            flex-wrap: wrap; 
-            gap: 20px; 
-            justify-content: flex-start; 
-        }
-        .post-item {
-            width: 300px; 
-            height: 400px; 
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column; 
-            justify-content: space-between; 
-            text-align: center; 
-        }
-        .image-wrapper {
-            text-align: center; 
-        }
+/* 🔥 全体を中央揃え */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 🔥 中央寄せ */
+    justify-content: center;
+    text-align: center; /* 文字も中央揃え */
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
 
-        .image-wrapper img {
-            max-width: 100%;
-            height: auto;
-            max-height: 200px; 
-            object-fit: cover; 
-            border-radius: 8px;
-        }
-        .post-meta, .post-caption {
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            white-space: nowrap; 
-        }
-    </style>
-    <div class="full-width-container">
-        <div class="title-container">
-            <h1>プロフィール</h1>
-        </div>
-    </div>
-    
-    <div class="profile-container">
-        
+/* 🔥 タイトルを中央揃え */
+.title-container {
+    width: 100%;
+    display: flex;
+    justify-content: left; /* タイトルを中央 */
+    align-items: left;
+    font-size: 16px !important; /* 例: 小さめのフォントサイズ */
+    font-weight: normal; /* 太さをノーマルに */
+    margin-top: 40px;
+    margin-left: 10px;
+    margin-bottom: 30px;
+}
+
+.title-container h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: normal;
+    text-align: center;
+}
+
+/* 🔥 プロフィール全体を中央揃え */
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 80%;
+    max-width: 600px;
+    margin: 40px auto 0;
+}
+
+/* 🔥 プロフィール画像を中央配置 */
+.profile-image {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* 🔥 プロフィール詳細を中央揃え */
+.profile-details {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* 🔥 編集リンクを中央揃え */
+.profile-details p,
+.profile-details a {
+    text-align: center;
+    display: block;
+    margin: 10px auto;
+}
+
+/* 🔥 編集ボタンのデザイン */
+.profile-details a {
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    padding: 8px 20px;
+    margin-top: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.profile-details a:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* 🔥 マイコーディネート一覧タイトルを中央揃え */
+h2 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 40px;
+}
+
+/* 🔥 投稿リストを中央揃え */
+.post-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center; /* 投稿カードを中央 */
+    width: 100%;
+    max-width: 1000px;
+}
+
+/* 🔥 投稿アイテムを中央配置 */
+.post-item {
+    width: calc((100% - 60px) / 3); /* 🔥 3列に配置 (60pxはgapの合計) */
+    max-width: 300px; /* 最大幅を設定 */
+    height: 400px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+
+/* 🔥 画像を中央揃え */
+.image-wrapper {
+    text-align: center;
+}
+
+/* 🔥 投稿内の画像 */
+.image-wrapper img {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* 🔥 投稿のメタ情報 */
+.post-meta, .post-caption {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 🔥 投稿がない時のメッセージも中央揃え */
+.post-list p {
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+}
+</style>
+    <div class="title-container">
+    <h1>プロフィール</h1>
+</div>
+
 
     
     {% load static %}
