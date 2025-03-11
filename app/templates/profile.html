@@ -3,25 +3,26 @@
 {% block content %}
 <div class="profile-container" style="margin-top: 80px;"> 
     <style>
+        .title-container {
+            width: 100%;
+            text-align: left;
+        }
         .profile-container {
             display: flex;
-            flex-direction: column; /* 縦方向に並べる */
-            align-items: center; /* 水平方向の中央揃え */
-            justify-content: center; /* 垂直方向の中央揃え */
-            width: 80%; /* 幅を80%にして中央寄せ */
-            max-width: 800px; /* 最大幅を指定 */
-            margin: 80px auto 0; /* 上に余白を入れて中央配置 */
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            width: 80%;
+            max-width: 800px;
+            margin: 80px auto 0;
         }
         
-        /* プロフィール画像のスタイリング */
         .profile-image img {
-            width: 100px; /* 幅を小さく設定 */
-            height: 100px; /* 高さを小さく設定 */
-            border-radius: 50%; /* 円形を維持 */
-            object-fit: cover; /* 画像を枠内に収める */
+            width: 100px; 
+            height: 100px; 
+            border-radius: 50%; 
+            object-fit: cover; 
         }
-
-        /* プロフィール情報のスタイリング */
         .profile-details {
             margin-top: 20px;
         }
@@ -29,50 +30,50 @@
         .profile-details p {
             margin: 5px 0;
         }
-
-        /* 投稿リストのスタイリング */
         .post-list {
             display: flex;
-            flex-wrap: wrap; /* 横並びで折り返し */
-            gap: 20px; /* アイテム間の余白 */
-            justify-content: flex-start; /* 左揃え */
+            flex-wrap: wrap; 
+            gap: 20px; 
+            justify-content: flex-start; 
         }
-
-        /* 各投稿のスタイリング */
         .post-item {
-            width: 300px; /* 幅を固定 */
-            height: 400px; /* 高さを統一 */
+            width: 300px; 
+            height: 400px; 
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
-            flex-direction: column; /* 子要素を縦に並べる */
-            justify-content: space-between; /* 子要素間のスペースを調整 */
-            text-align: center; /* 中央揃え */
+            flex-direction: column; 
+            justify-content: space-between; 
+            text-align: center; 
         }
-
-        /* 投稿画像のスタイリング */
         .image-wrapper {
-            text-align: center; /* 画像を中央揃え */
+            text-align: center; 
         }
 
         .image-wrapper img {
             max-width: 100%;
             height: auto;
-            max-height: 200px; /* 画像の高さを制限 */
-            object-fit: cover; /* 画像を枠内に収める */
+            max-height: 200px; 
+            object-fit: cover; 
             border-radius: 8px;
         }
-
-        /* テキストの省略表示設定 */
         .post-meta, .post-caption {
-            overflow: hidden; /* テキストがはみ出さないように設定 */
-            text-overflow: ellipsis; /* 長いテキストを省略 */
-            white-space: nowrap; /* テキストを1行に収める */
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
         }
     </style>
+    <div class="full-width-container">
+        <div class="title-container">
+            <h1>プロフィール</h1>
+        </div>
+    </div>
+    
+    <div class="profile-container">
+        
 
     
     {% load static %}

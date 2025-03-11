@@ -2,98 +2,117 @@
 {% load static %}
 
 {% block content %}
-    <title>商品登録</title>
+    <title>服管理登録</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 5px; 
             box-sizing: border-box;
         }
-
-        main {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            {% comment %} border: 1px solid #ddd; {% endcomment %}
-            
-        }
-
-        .form-group {
+        
+        .title-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center; 
+            margin-top: 10px;
+            margin-left: 10px;
             margin-bottom: 20px;
+        }
+        
+        .title-container h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: normal;
+            margin-top: 30px;
+        }
+        
+        .main {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: transparent; /* ✅ 背景色を透明に */
+            box-shadow: none; /* ✅ 影を削除 */
+            border-radius: 0; /* ✅ 角丸を削除 */
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .form-group {
+            width: 90%; /* 入力欄をコンパクトに */
+            margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: bold;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
-            width: 100%;
-            padding: 10px;
+            width: 90%; /* 入力欄を小さめに */
+            padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
 
         .form-group textarea {
             resize: none;
-            height: 100px;
+            height: 80px;
         }
 
+        
         .image-upload {
             text-align: center;
             margin-bottom: 20px;
         }
-
+        
+        .image-upload img {
+            width: 120px;
+            height: 120px;
+            background-color: transparent; /* ✅ 背景を透明に */
+            display: block;
+            margin: 0 auto 10px;
+            border-radius: 8px;
+        }
         
         .image-upload-container {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px; 
-            margin-top: 5px;
         }
-
-        .image-upload img {
-            width: 150px;
-            height: 150px;
-            background-color: #ddd;
-            display: block;
-            margin: 0 auto 10px;
-            border-radius: 4px;
-        }
-
+        
         .image-upload label {
             cursor: pointer;
             display: inline-block;
             background-color: #007BFF;
             color: #fff;
-            padding: 8px 16px;
-            border: none;
+            padding: 6px 12px;
             border-radius: 4px;
         }
-
+        
         .image-upload input {
             display: none;
         }
-
-        /* ✅ エラーメッセージのスタイル */
-        .error-message {
-            color: red;
-            font-size: 14px;
-        }
-
+        
         .button-container {
             text-align: center;
-            margin-top: 20px;
+            width: 90%;
+            margin-top: 15px;
         }
-
+        
         .button-container button {
-            padding: 10px 20px;
+            width: 100%;
+            padding: 10px;
             font-size: 16px;
             border: none;
             border-radius: 4px;
@@ -101,41 +120,29 @@
             color: white;
             cursor: pointer;
         }
-
+        
         .button-container button:hover {
             background-color: #0056b3;
         }
-
-        .custom-price-input::-webkit-outer-spin-button,
-        .custom-price-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
         
-        .custom-price-input {
-            -moz-appearance: textfield; 
-        }
     </style>
+    
+    <div class="title-container">
+        <h1>服管理登録</h1>
+    </div>
 
-    <main>
+    <main class="main">
         <form method="POST" enctype="multipart/form-data" action="{% url 'clothes_create' %}">
             {% csrf_token %}
 
             <div class="image-upload">
-                {% load static %}
                 <img id="preview" 
                      src="{% if clothes.image %}{{ clothes.image.url }}{% else %}{% static 'images/default-clothes.png' %}{% endif %}" 
                      alt="image">
             
-                <!-- ✅ ボタンとエラーメッセージを横並びにするための div -->
                 <div class="image-upload-container">
                     <label for="image-upload" class="image-label">画像を選択</label>
                     <input type="file" id="image-upload" name="image" accept="image/*" onchange="previewImage(event)">
-            
-                    <!-- ✅ 画像が未登録の場合のエラーメッセージを「画像を選択」の横に表示 -->
-                    {% if form.errors.image %}
-                        <span class="error-message">{{ form.errors.image.0 }}</span>
-                    {% endif %}
                 </div>
             </div>
 
@@ -188,28 +195,9 @@
             </div>
 
             <div class="form-group">
-                <label for="genre">ジャンル(必須):</label>
-                <select id="genre" name="genre" required>
-                    <option value="tops">トップス</option>
-                    <option value="pants">パンツ</option>
-                    <option value="outer">アウター</option>
-                    <option value="onepiece">ワンピース</option>
-                    <option value="hat">帽子</option>
-                    <option value="maternity">マタニティ</option>
-                    <option value="baby">ベビー</option>
-                    <option value="other">その他</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="id_price">価格:</label>
-                {{ form.price }}
-            </div>
-
-            <div class="form-group">
                 <label for="memo">メモ:</label>
                 <textarea id="memo" name="memo"></textarea>
-            
+            </div>
 
             <div class="button-container">
                 <button type="submit">登録</button>

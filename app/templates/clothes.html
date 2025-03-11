@@ -3,6 +3,24 @@
 
 {% block content %}
     <style>
+        .title-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start; /* 左寄せ */
+            align-items: center; 
+            margin-top: 10px;
+            margin-left: 10px; /* 左に寄せる */
+            margin-bottom: 20px;
+        }
+
+        .title-container h1 {
+            margin: 0;
+            font-size: 20px; /* ✅ フォントサイズを小さく */
+            font-weight: normal; /* 必要ならフォントの太さも調整 */
+            margin-top: 30px; /* ✅ メニューバーとの間に余白を追加 */
+        }
+        
+        
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -117,6 +135,9 @@
             color: inherit;
         }
     </style>
+    <div class="title-container">
+        <h1>服管理</h1>
+    </div>
 
     <div class="container">
         <meta charset="UTF-8">

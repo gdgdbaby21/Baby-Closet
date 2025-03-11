@@ -6,19 +6,30 @@
     <style>
         .clothes-container {
             display: flex;
-            flex-direction: column; /* 縦方向に並べる */
-            align-items: center; /* 水平方向の中央揃え */
-            justify-content: center; /* 垂直方向の中央揃え */
-            width: 80%; /* 幅を80%にして中央寄せ */
-            max-width: 800px; /* 最大幅を指定 */
-            margin: 80px auto 0; /* 上に余白を入れて中央配置 */
+            flex-direction: column;
+            align-items: center; /* ✅ 真ん中に寄せる */
+            justify-content: center;
+            text-align: center; /* ✅ 文字を中央寄せ */
+            width: 80%;
+            max-width: 800px;
+            margin: 40px auto 0; /* ✅ 真ん中に配置 */
+        }
+        
+        .clothes-title h1 {
+            text-align: center; /* ✅ タイトルを中央寄せ */
+        }
+        .title-container h1 {
+            margin: 0;
+            font-size: 20px; /* ✅ フォントサイズを小さく */
+            font-weight: normal; /* 必要ならフォントの太さも調整 */
+            margin-top: 30px; /* ✅ メニューバーとの間に余白を追加 */
         }
         
         .post-list {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-            justify-content: flex-start;
+            justify-content: center;
         }
 
         .post-item {
@@ -47,55 +58,62 @@
             margin-top: 8px;
         }
     </style>
+    
+    <div class="title-container">
+        <h1>服管理詳細</h1>
+    </div>
 
     <div class="clothes-container">
-    {% if clothes %}
-    <h1>{{ clothes.title }}</h1>
-    <img src="{{ clothes.image.url }}" alt="{{ clothes.title }}" style="max-width: 300px;">
-    <p><strong>サイズ:</strong> {{ clothes.size }}</p>
-    <p><strong>性別:</strong> {{ clothes.get_gender_display }}</p>
-    <p><strong>色:</strong> {{ clothes.get_color_display }}</p>
-    <p><strong>ジャンル:</strong> {{ clothes.get_genre_display }}</p>
-    <p>
-        価格: 
-        {% if clothes.price is not None %}
-          ¥{{ clothes.price|floatformat:0 }}
+        {% if clothes %}
+            <div class="clothes-title">
+                <h1>{{ clothes.title }}</h1>
+            </div>
+            <img src="{{ clothes.image.url }}" alt="{{ clothes.title }}" style="max-width: 300px;">
+            <p><strong>サイズ:</strong> {{ clothes.size }}</p>
+            <p><strong>性別:</strong> {{ clothes.get_gender_display }}</p>
+            <p><strong>色:</strong> {{ clothes.get_color_display }}</p>
+            <p><strong>ジャンル:</strong> {{ clothes.get_genre_display }}</p>
+            <p>
+                価格: 
+                {% if clothes.price is not None %}
+                    ¥{{ clothes.price|floatformat:0 }}
+                {% else %}
+                    登録されていません
+                {% endif %}
+            </p>
+            <p>メモ: {{ clothes.memo|default:"登録されていません" }}</p>
+            <a href="{% url 'clothes' %}">戻る</a>
+    
+            <form action="{% url 'delete_clothes' clothes.id %}" method="post" style="margin-top: 20px;">
+                {% csrf_token %}
+                <button type="submit" style="background-color: red; color: white; border: none; padding: 10px 20px; cursor: pointer;">
+                    削除
+                </button>
+            </form>
         {% else %}
-          登録されていません
+            <p>この服の情報が見つかりませんでした。</p>
         {% endif %}
-      </p>
-      <p>メモ: {{ clothes.memo|default:"登録されていません" }}</p>
-    <a href="{% url 'clothes' %}">戻る</a>
-
-    <form action="{% url 'delete_clothes' clothes.id %}" method="post" style="margin-top: 20px;">
-        {% csrf_token %}
-        <button type="submit" style="background-color: red; color: white; border: none; padding: 10px 20px; cursor: pointer;">
-            削除
-        </button>
-    </form>
-{% else %}
-    <p>この服の情報が見つかりませんでした。</p>
-{% endif %}
-
-    <h2>この服を使用しているコーディネート一覧</h2>
-    {% if related_posts %}
-        <div class="post-list">
-            {% for post in related_posts %}
-                <div class="post-item">
-                    <div class="image-wrapper">
-                        <a href="{% url 'post_detail' post.pk %}">
-                            {% if post.image %}
-                                <img src="{{ post.image.url }}" alt="{{ post.title }}">
-                            {% else %}
-                                <img src="{% static 'default_image.jpg' %}" alt="{{ post.title }}">
-                            {% endif %}
-                        </a>
+    
+        <h2>この服を使用しているコーディネート一覧</h2>
+        {% if related_posts %}
+            <div class="post-list">
+                {% for post in related_posts %}
+                    <div class="post-item">
+                        <div class="image-wrapper">
+                            <a href="{% url 'post_detail' post.pk %}">
+                                {% if post.image %}
+                                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                                {% else %}
+                                    <img src="{% static 'default_image.jpg' %}" alt="{{ post.title }}">
+                                {% endif %}
+                            </a>
+                        </div>
+                        <p><strong>{{ post.title }}</strong></p>
                     </div>
-                    <p><strong>{{ post.title }}</strong></p>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>この服を使用しているコーディネート投稿はありません。</p>
-    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>この服を使用しているコーディネート投稿はありません。</p>
+        {% endif %}
+    </div>
 {% endblock %}
