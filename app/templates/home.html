@@ -9,6 +9,7 @@
             max-width: 900px;
             margin-left: 100px; 
             padding: 20px;
+            padding-bottom: 80px;
         }
 
         
@@ -50,20 +51,24 @@
         
         .post-list {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 20px;
-            justify-content: start; 
+            grid-template-columns: repeat(3, 1fr);
+            gap: 80px; 
+            justify-content: space-around;
+            max-width: 90%;
+            margin: 0 auto; 
+            margin-left: 150px;
         }
         
         
         .post-item {
-            max-width: 300px;
+            max-width: 500px;
+            width: 100%;
             height: auto;
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 12px;
-            padding: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px; 
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -72,18 +77,6 @@
         }
         
         
-        @media screen and (max-width: 900px) {
-            .post-list {
-                grid-template-columns: repeat(2, 1fr); 
-            }
-        }
-        
-        @media screen and (max-width: 600px) {
-            .post-list {
-                grid-template-columns: repeat(1, 1fr); 
-            }
-        }
-
         .post-item:hover {
             background-color: #f8f9fa;
         }
@@ -219,149 +212,3 @@
 
 </div>
 {% endblock %}
-
-
-
-
-{% comment %} {% extends 'base.html' %}
-{% load static %}
-
-{% block content %}
-<div class="container">
-    <style>
-        .post-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: flex-start;
-        }
-
-        .post-item {
-            width: 300px;
-            height: 480px; 
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .post-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .image-wrapper img {
-            max-width: 100%;
-            height: auto;
-            max-height: 250px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .post-meta,
-        .post-caption {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #555;
-            text-align: center;
-        }
-    </style>
-
-    <div class="search-bar">
-        <form action="{% url 'hashtag_search' %}" method="get">
-            <input 
-                type="text" 
-                name="q" 
-                placeholder="#ハッシュタグ検索" 
-                aria-label="ハッシュタグ検索"
-                required
-            >
-            <button type="submit">検索</button>
-        </form>
-    </div>
-
-    <div class="post-header">
-        <h2>New Post</h2>
-        <a href="{% url 'create_post' %}" class="floating-button">
-            ＋
-        </a>
-    </div>
-
-    <div style="margin-bottom: 40px;">
-        <div class="post-list">
-            {% for post in posts %}
-                {% if post.is_public or post.user == request.user %}
-                    <a href="{% url 'post_detail' post.pk %}" class="post-item">
-                        <p class="text-muted">
-                            @
-                            {% if post.user.account_name %}
-                                {{ post.user.account_name }}
-                            {% else %}
-                                Unknown User
-                            {% endif %}
-                        </p>
-
-                        <div class="image-wrapper">
-                            <img src="{{ post.image.url }}" alt="投稿画像">
-                        </div>
-
-                        {% if post.title %}
-                            <p class="post-title">{{ post.title }}</p>
-                        {% endif %}
-
-                        {% if post.caption %}
-                            <p class="post-caption">{{ post.caption }}</p>
-                        {% endif %}
-
-                        <div class="post-meta">
-                            <span>♥ {{ post.likes.count|default:"0" }} </span>
-                            <span>💬 {{ post.comments.count|default:"0" }} </span>
-                        </div>
-                    </a> 
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- 人気のハッシュタグ セクション -->
-    <h2>人気のハッシュタグ</h2>
-    <div style="margin-top: 40px;">
-        {% for hashtag, posts in hashtag_posts.items %}
-            {% if posts|length > 0 %}
-            <div class="hashtag-section mb-5">
-                <h4>#{{ hashtag.name }}</h4>
-                <div class="post-list">
-                    {% for post in posts %}
-                        <a href="{% url 'post_detail' post.pk %}" class="post-item">
-                            <p class="text-muted">@ {{ post.user.account_name|default:"Unknown User" }}</p>
-                            <div class="image-wrapper">
-                                <img src="{{ post.image.url }}" alt="投稿画像">
-                            </div>
-                            <p class="post-title">{{ post.title }}</p>
-
-                            {% if post.caption %}
-                                <p class="post-caption">{{ post.caption }}</p>
-                            {% endif %}
-
-                            <div class="post-meta">
-                                <span>♥ {{ post.likes.count|default:"0" }} </span>
-                                <span>💬 {{ post.comments.count|default:"0" }} </span>
-                            </div>
-                        </a>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-</div>
-{% endblock %} {% endcomment %}

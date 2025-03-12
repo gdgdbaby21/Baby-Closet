@@ -6,61 +6,58 @@
     </div>
     
     <style>
-        
         body {
             margin: 0;
             padding: 0;
             background-color: #f8f9fa;
-            text-align: center;  /* 全体のテキストを中央揃え */
-        }
-       
-        
-        .result-item {
             text-align: center;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            width: 200px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            font-style: normal;
         }
-
+        
+        .results-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; 
+            gap: 20px; 
+            padding: 20px; 
+        }
+        
+       
+        .result-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            width: 220px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none; /* 🔹 リンクの下線を消す */
+            color: inherit; /* 🔹 文字色を通常の状態に */
+            display: block; /* 🔹 カード全体をクリック可能に */
+        
+        }
+        
+        .result-item:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
+        }
+        
         .result-item img {
             max-width: 100%;
+            height: auto;
             border-radius: 5px;
         }
-        .title-container h1 {
-            font-weight: normal !important; /* 絶対に適用 */
-            font-size: 16px !important; /* フォントサイズを調整 */
-            color: inherit !important; /* 文字色の影響を防ぐ */
-            font-style: normal !important; /* 斜体などを解除 */
-        }
-        .title-container {
-            width: 100%;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center; 
-            font-size: 18px;
-            font-weight: normal;
-            margin-top: 10px;
-            margin-left: 10px;
-            margin-bottom: 20px;
-        }
-
-
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            text-decoration: none;
-            color: white;
-            background-color: #007bff;
-            border-radius: 5px;
+        
+        .result-item-title {
+            font-size: 16px;
             font-weight: bold;
+            margin-top: 10px;
+            color: #333;
         }
-
-        .back-link:hover {
-            background-color: #0056b3;
-        }
+        
     </style>
 
     <div class="title-container">
@@ -70,16 +67,16 @@
     
 
     {% if clothes %}
-        <div class="results-container">
-            {% for item in clothes %}
-                <div class="result-item">
-                    <a href="{% url 'clothes_detail' item.id %}">
-                        <img src="{{ item.image.url }}" alt="{{ item.title }}">
-                    </a>
+    <div class="results-container">
+        {% for item in clothes %}
+            <a href="{% url 'clothes_detail' item.id %}" class="result-item">
+                <div class="result-content">
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}" class="result-item-image">
                     <div class="result-item-title">{{ item.title }}</div>
                 </div>
-            {% endfor %}
-        </div>
+            </a>
+        {% endfor %}
+    </div>
     {% else %}
         <p>該当する結果はありません。</p>
     {% endif %}

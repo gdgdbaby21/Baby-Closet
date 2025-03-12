@@ -302,7 +302,7 @@ class SearchResultsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user  
         queryset = Clothes.objects.filter(user=user) 
-        
+
         gender = self.request.GET.getlist('gender')
         size = self.request.GET.getlist('size')
         color = self.request.GET.getlist('color')
@@ -314,24 +314,22 @@ class SearchResultsView(LoginRequiredMixin, ListView):
 
         logger.info(f"検索条件: user={user}, gender={gender}, size={size}, color={color}, genre={genre}")
 
-        # AND 条件で絞り込むためのフィルタ
         query = Q()
-        if gender:
-            query &= Q(gender__in=gender)
-        if size:
-            query &= Q(size__in=size)
-        if color:
-            query &= Q(color__in=color)
-        if genre:
-            query &= Q(genre__in=genre)
 
-        # # すべての条件を満たすもののみを取得 (AND 条件)
+        if gender:
+            query &= Q(gender__in=gender) 
+        if size:
+            query &= Q(size__in=size) 
+        if color:
+            query &= Q(color__in=color) 
+        if genre:
+            query &= Q(genre__in=genre) 
+
         queryset = queryset.filter(query)
 
         logger.info(f"フィルタリング結果: {queryset}")
 
         return queryset
-    
 
 
 logger = logging.getLogger(__name__)
