@@ -3,170 +3,167 @@
 {% block content %}
 <title>プロフィール</title>
 <style>
-    /* 🔥 ページ全体を中央寄せ */
-body, html {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    flex-direction: column;
-    align-items: center; /* 🔥 中央揃え */
-    text-align: center; /* 🔥 文字も中央揃え */
-}
-
-/* 🔥 全体を中央揃え */
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* 🔥 中央寄せ */
-    justify-content: center;
-    text-align: center; /* 文字も中央揃え */
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-/* 🔥 タイトルを中央揃え */
-.title-container {
-    width: 100%;
-    display: flex;
-    justify-content: left; /* タイトルを中央 */
-    align-items: left;
-    font-size: 16px !important; /* 例: 小さめのフォントサイズ */
-    font-weight: normal; /* 太さをノーマルに */
-    margin-top: 40px;
-    margin-left: 10px;
-    margin-bottom: 30px;
-}
-
-.title-container h1 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: normal;
-    text-align: center;
-}
-
-/* 🔥 プロフィール全体を中央揃え */
-.profile-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: 80%;
-    max-width: 600px;
-    margin: 40px auto 0;
-}
-
-/* 🔥 プロフィール画像を中央配置 */
-.profile-image {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.profile-image img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-/* 🔥 プロフィール詳細を中央揃え */
-.profile-details {
-    margin-top: 20px;
-    text-align: center;
-}
-
-/* 🔥 編集リンクを中央揃え */
-.profile-details p,
-.profile-details a {
-    text-align: center;
-    display: block;
-    margin: 10px auto;
-}
-
-/* 🔥 編集ボタンのデザイン */
-.profile-details a {
-    display: inline-block;
-    font-size: 16px;
-    font-weight: bold;
-    color: #007bff;
-    text-decoration: none;
-    border: 1px solid #007bff;
-    border-radius: 5px;
-    padding: 8px 20px;
-    margin-top: 10px;
-    transition: all 0.3s ease-in-out;
-}
-
-.profile-details a:hover {
-    background-color: #007bff;
-    color: #fff;
-}
-
-/* 🔥 マイコーディネート一覧タイトルを中央揃え */
-h2 {
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    margin-top: 40px;
-}
-
-/* 🔥 投稿リストを中央揃え */
-.post-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center; /* 投稿カードを中央 */
-    width: 100%;
-    max-width: 1000px;
-}
-
-/* 🔥 投稿アイテムを中央配置 */
-.post-item {
-    width: calc((100% - 60px) / 3); /* 🔥 3列に配置 (60pxはgapの合計) */
-    max-width: 300px; /* 最大幅を設定 */
-    height: 400px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    text-align: center;
-}
-
-/* 🔥 画像を中央揃え */
-.image-wrapper {
-    text-align: center;
-}
-
-/* 🔥 投稿内の画像 */
-.image-wrapper img {
-    max-width: 100%;
-    height: auto;
-    max-height: 200px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-/* 🔥 投稿のメタ情報 */
-.post-meta, .post-caption {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* 🔥 投稿がない時のメッセージも中央揃え */
-.post-list p {
-    width: 100%;
-    text-align: center;
-    font-size: 18px;
-    color: #666;
-}
-</style>
+    body, html {
+        min-height: 80vh;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        text-align: center; 
+        flex-direction: column;
+    }    
+    .container {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        padding-bottom: 200px;
+    }
+    .title-container {
+        width: 100%;
+        display: flex;
+        justify-content: left;
+        align-items: left;
+        font-size: 16px;
+        font-weight: normal;
+        margin-top: 40px;
+        margin-left: 10px;
+        margin-bottom: 30px;
+    }
+    
+    .title-container h1 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: normal;
+        text-align: center;
+    }
+    
+    .profile-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 60%;
+        max-width: 600px;
+        margin: 40px auto 0;
+    }
+    
+    .profile-image {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .profile-image img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .profile-details {
+        margin-top: 20px;
+        text-align: center;
+    }
+    
+    .profile-details p,
+    .profile-details a {
+        text-align: center;
+        display: block;
+        margin: 10px auto;
+    }
+    
+    .profile-details a {
+        display: inline-block;
+        font-size: 16px;
+        font-weight: bold;
+        color: #007bff;
+        text-decoration: none;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        padding: 8px 20px;
+        margin-top: 10px;
+        transition: all 0.3s ease-in-out;
+    }
+    
+    .profile-details a:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+    
+    h2 {
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        margin-top: 40px;
+    }
+    .post-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 60px;
+        justify-content: center;
+        align-items: start;
+        max-width: 1200px;
+        margin: 0 auto; 
+        width: 70%;
+        margin-bottom: 100px;
+    }
+    .post-item {
+        width: 100%;
+        min-height: 100px;
+        max-width: none; 
+        height: auto;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .post-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .image-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        height: 400px;
+    }
+    
+    .image-wrapper img {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    
+    .post-meta, .post-caption {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .post-list p {
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+        color: #666;
+    }
+    
+    .post-item-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        width: 100%; 
+        max-width: none;
+    }    
+    </style>
     <div class="title-container">
     <h1>プロフィール</h1>
 </div>
@@ -196,15 +193,14 @@ h2 {
 
     <!-- マイコーディネート一覧 -->
     <h2>マイコーディネート一覧</h2>
-    <div class="post-list">
-        {% for post in user_posts %}
+<div class="post-list">
+    {% for post in user_posts %} 
+    <a href="{% url 'post_detail' post.id %}" class="post-item-link">
         <div class="post-item">
             <!-- 投稿画像 -->
             <div class="image-wrapper">
                 {% if post.image %}
-                    <a href="{% url 'post_detail' post.id %}">
-                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
-                    </a>
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
                 {% else %}
                     <p>No image available</p>
                 {% endif %}
@@ -217,9 +213,9 @@ h2 {
                 <span>💬 {{ post.comments_count }}</span>
             </div>
         </div>
-        {% empty %}
-        <p>投稿がありません。</p>
-        {% endfor %}
-    </div>
+    </a>        
+    {% empty %}
+    <p>投稿がありません。</p>
+    {% endfor %}
 </div>
 {% endblock %}
