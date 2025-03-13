@@ -4,14 +4,22 @@
 {% block content %}
 <div class="container">
     <style>
-        .container {
+        body, html {
             min-height: 80vh;
-            max-width: 900px;
-            margin-left: 100px; 
-            padding: 20px;
-            padding-bottom: 80px;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            text-align: center; 
+            flex-direction: column;
+        }    
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding-bottom: 200px;
         }
-
         
         .search-bar {
             margin: 20px auto;
@@ -23,6 +31,7 @@
             background-color: #f1f3f5;
             border-radius: 50px;
             padding: 5px 15px;
+            margin-bottom: 60px;
         }
 
         .search-bar input {
@@ -42,6 +51,8 @@
             border-radius: 50px;
             font-size: 16px;
             cursor: pointer;
+            
+            
         }
 
         .search-bar button:hover {
@@ -52,23 +63,33 @@
         .post-list {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 80px; 
-            justify-content: space-around;
-            max-width: 90%;
+            gap: 60px;
+            justify-content: center;
+            align-items: start;
+            max-width: 1200px;
             margin: 0 auto; 
-            margin-left: 150px;
+            width: 70%;
+            margin-bottom: 100px;
+            align-items: stretch;
+        }
+        .post-list p {
+            width: 100%;
+            text-align: center;
+            font-size: 18px;
+            
         }
         
-        
+
         .post-item {
-            max-width: 500px;
             width: 100%;
+            min-height: 100px;
+            max-width: none; 
             height: auto;
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 12px;
-            padding: 15px; 
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -76,7 +97,11 @@
             color: inherit;
         }
         
-        
+        .post-meta, .post-caption {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
         .post-item:hover {
             background-color: #f8f9fa;
         }
@@ -85,15 +110,16 @@
             display: flex;
             justify-content: center;
             width: 100%;
+            height: 300px;
         }
 
-        .image-wrapper img {
+         .image-wrapper img {
             width: 100%;
-            height: auto;
-            max-height: 250px;
+            height: 100%;
+            max-height: 350px;
             object-fit: cover;
             border-radius: 8px;
-        }
+        } 
 
         
         .floating-button {
@@ -135,7 +161,7 @@
             <button type="submit">検索</button>
         </form>
     </div>
-
+    
     <div class="post-header">
         <h2>New Post</h2>
     </div>

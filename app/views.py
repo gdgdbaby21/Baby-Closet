@@ -301,12 +301,12 @@ class SearchResultsView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user  
-        queryset = Clothes.objects.filter(user=user) 
+        queryset = Clothes.objects.filter(user=user)  
 
-        gender = self.request.GET.getlist('gender')
-        size = self.request.GET.getlist('size')
-        color = self.request.GET.getlist('color')
-        genre = self.request.GET.getlist('genre')
+        gender = [g for g in self.request.GET.getlist('gender') if g]
+        size = [s for s in self.request.GET.getlist('size') if s]
+        color = [c for c in self.request.GET.getlist('color') if c]
+        genre = [g for g in self.request.GET.getlist('genre') if g]
 
         if not any([gender, size, color, genre]):
             logger.info(f"検索条件なし - ユーザー {user} の結果なしを返す")
@@ -314,18 +314,18 @@ class SearchResultsView(LoginRequiredMixin, ListView):
 
         logger.info(f"検索条件: user={user}, gender={gender}, size={size}, color={color}, genre={genre}")
 
-        query = Q()
+        query_conditions = Q()
 
         if gender:
-            query &= Q(gender__in=gender) 
+            query_conditions &= Q(gender__in=gender)
         if size:
-            query &= Q(size__in=size) 
+            query_conditions &= Q(size__in=size)
         if color:
-            query &= Q(color__in=color) 
+            query_conditions &= Q(color__in=color)
         if genre:
-            query &= Q(genre__in=genre) 
+            query_conditions &= Q(genre__in=genre)
 
-        queryset = queryset.filter(query)
+        queryset = queryset.filter(query_conditions)
 
         logger.info(f"フィルタリング結果: {queryset}")
 
