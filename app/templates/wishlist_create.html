@@ -129,9 +129,14 @@
                 {{ form.image }}
             </div>
             <div class="form-group">
-                <label for="id_price">価格(※必須):</label>
-                {{ form.price }}
+                <label for="price">価格(※必須):</label>
+                <textarea id="price" name="price" 
+                          inputmode="numeric" 
+                          pattern="\d+(\.\d{1,2})?" 
+                          oninput="validatePrice(this)"
+                          style="width: 100px; height: 40px; resize: none;"></textarea>
             </div>
+
             <div class="form-group">
                 <label for="id_brand">ブランド:</label>
                 {{ form.brand }}
@@ -148,6 +153,9 @@
         </form>
         <a href="{% url 'wishlist' %}" class="back-link">戻る</a>
     </div>
-</body>
-</html>
+    <script>
+        function validatePrice(element) {
+            element.value = element.value.replace(/\D/g, '');
+        }
+        </script>
 {% endblock %}

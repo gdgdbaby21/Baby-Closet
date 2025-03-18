@@ -23,7 +23,7 @@
         }
         
         body {
-            font-size: 18px !important; /* 全体のフォントサイズを拡大 */
+            font-size: 18px !important; 
             margin: 0;
             padding: 0;
             background-color: #f8f8f8;
@@ -35,7 +35,7 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            margin: 0 auto; /* 中央揃え */
+            margin: 0 auto; 
         }
         .form-label {
             font-size: 18px !important;
@@ -60,13 +60,13 @@
         .form-group input,
         .form-group textarea {
             width: 100% !important; 
-            height: 120px !important;  /* 高さを直接指定 */
-            font-size: 18px !important; /* 文字サイズを大きく */
-            padding: 15px !important; /* 内側の余白 */
+            height: 120px !important;  
+            font-size: 18px !important; 
+            padding: 15px !important; 
             border: 1px solid #ddd !important;
             border-radius: 6px !important;
             background-color: white !important;
-            box-sizing: border-box !important; /* padding を含めたサイズ計算 */
+            box-sizing: border-box !important; 
         }
 
         .btn-gray {
@@ -90,8 +90,8 @@
             font-size: 12px; 
         }
         #title::placeholder {
-            font-size: 12px !important; /* 例: 12px に縮小 */
-            color: #999 !important; /* 薄いグレーで視認性を保つ */
+            font-size: 12px !important; 
+            color: #999 !important; 
         }
         
         /* メモのプレースホルダー文字を小さく */
@@ -107,7 +107,6 @@
             box-sizing: border-box !important;
         }
         
-        /* メモ入力欄を広げる */
         #caption {
             width:100% !important; /* 幅を最大限広げる */
             height: 200px !important; /* 高さをさらに拡大 */
@@ -115,6 +114,29 @@
             padding: 12px !important;
             box-sizing: border-box !important;
         }
+    /* アイテム名のフォントサイズを小さくする */
+.selected-item-text {
+    font-size: 12px;  /* フォントサイズを小さく */
+    margin-right: 20px; /* 右側に余白を追加 */
+    white-space: nowrap; /* テキストの折り返しを防ぐ */
+    overflow: hidden; /* はみ出したテキストを非表示 */
+    text-overflow: ellipsis; /* はみ出したテキストを「...」にする */
+}
+
+/* 削除ボタンの位置を調整 */
+.selected-item-delete {
+    font-size: 14px;  /* 削除ボタンのフォントサイズを小さく */
+    position: absolute;
+    right: 5px; /* 右に配置 */
+    top: 50%; /* 縦方向中央 */
+    transform: translateY(-50%); /* 縦方向中央揃え */
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: red;
+}
+
+
     </style>
     <div class="title-container">
         <h1>コーディネート投稿</h1>
@@ -240,14 +262,18 @@
             </div>
         </div>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('loadFilteredItems').addEventListener('click', function () {
+            const searchButton = document.getElementById('loadFilteredItems');
+            if (!searchButton) return; // ボタンが存在しない場合は処理しない
+        
+            searchButton.addEventListener('click', function () {
                 const genre = document.getElementById('genre-select').value;
                 const color = document.getElementById('color-select').value;
                 const size = document.getElementById('size-select').value;
         
-                const itemFilterUrl = "{% url 'item_filter' %}";  
+                const itemFilterUrl = "{% url 'item_filter' %}";
                 const fullUrl = `${itemFilterUrl}?genre=${encodeURIComponent(genre)}&color=${encodeURIComponent(color)}&size=${encodeURIComponent(size)}`;
         
                 console.log(`リクエストURL: ${fullUrl}`);
@@ -260,14 +286,20 @@
                         return response.text();
                     })
                     .then(html => {
-                        document.getElementById('filtered-items-container').innerHTML = html;
-                        new bootstrap.Modal(document.getElementById('filteredItemModal')).show();
+                        const container = document.getElementById('filtered-items-container');
+                        if (container) {
+                            container.innerHTML = html;
+                            new bootstrap.Modal(document.getElementById('filteredItemModal')).show();
+                        } else {
+                            console.error("filtered-items-container が見つかりません");
+                        }
                     })
                     .catch(error => {
                         console.error('アイテムの読み込み中にエラーが発生しました:', error);
                         alert('アイテムを取得できませんでした。');
                     });
             });
+        });
     
             // 選択されたアイテムを記録する配列
             let selectedItems = [];
@@ -332,16 +364,11 @@
     
                         const textTag = document.createElement('span');
                         textTag.textContent = itemName;
-                        textTag.style.flexGrow = '1';
-                        textTag.style.marginRight = '10px';
+                        textTag.className = 'selected-item-text'; // CSSクラスを適用
     
                         const deleteBtn = document.createElement('button');
                         deleteBtn.innerHTML = '🗑️';
-                        deleteBtn.className = 'border-0 bg-transparent text-danger';
-                        deleteBtn.style.cursor = 'pointer';
-                        deleteBtn.style.position = 'absolute';
-                        deleteBtn.style.right = '5px';
-                        deleteBtn.style.top = '5px';
+                        deleteBtn.className = 'selected-item-delete'; // CSSクラスを適用
                         deleteBtn.addEventListener('click', function () {
                             // アイテムリストから削除
                             selectedItems = selectedItems.filter(item => item.id !== itemId);
@@ -369,7 +396,6 @@
                     if (itemModal) itemModal.hide();
                 }
             });
-        });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     {% endblock %}

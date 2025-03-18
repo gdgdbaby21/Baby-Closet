@@ -99,17 +99,17 @@
     }
     .post-list {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 60px;
+        grid-template-columns: repeat(3, 3fr);
+        gap: 40px; 
         justify-content: center;
         align-items: start;
         max-width: 1200px;
+        width: 70%; 
         margin: 0 auto; 
-        width: 70%;
         margin-bottom: 100px;
     }
     .post-item {
-        width: 100%;
+        min-width: 300px;
         min-height: 100px;
         max-width: none; 
         height: auto;
@@ -162,7 +162,14 @@
         color: inherit;
         width: 100%; 
         max-width: none;
-    }    
+    }
+    .no-posts-message {
+        text-align: center;
+        font-size: 18px;
+        color: #666;
+        width: 100%;
+        padding: 20px;
+    }
     </style>
     <div class="title-container">
     <h1>プロフィール</h1>
@@ -215,7 +222,8 @@
         </div>
     </a>        
     {% empty %}
-    <p>投稿がありません。</p>
-    {% endfor %}
+<div class="no-posts-message">
+    投稿がありません。
+{% endfor %}
 </div>
 {% endblock %}
