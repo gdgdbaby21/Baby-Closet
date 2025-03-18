@@ -63,13 +63,18 @@ class LoginView(View):
         return render(request, "login.html", {"form": form})
 
 
-
 class LogoutView(View):
     def post(self, request):
         logout(request)
         return redirect("login")
-
-
+    
+    def custom_logout(request):
+        logout(request)  # ユーザーをログアウトする
+        storage = messages.get_messages(request)
+        storage.used = True  # すべてのメッセージを消去
+        return redirect("login")  # ログインページへリダイレクト
+    
+    
 class HomeView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'home.html'
