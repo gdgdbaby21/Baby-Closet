@@ -32,9 +32,9 @@
             max-width: 500px;
             margin: 0 auto;
             padding: 15px;
-            background-color: transparent; /* ✅ 背景色を透明に */
-            box-shadow: none; /* ✅ 影を削除 */
-            border-radius: 0; /* ✅ 角丸を削除 */
+            background-color: transparent; 
+            box-shadow: none; 
+            border-radius: 0; 
         }
         
         form {
@@ -45,7 +45,7 @@
         }
         
         .form-group {
-            width: 90%; /* 入力欄をコンパクトに */
+            width: 90%; 
             margin-bottom: 15px;
         }
 
@@ -58,7 +58,7 @@
         .form-group input,
         .form-group select,
         .form-group textarea {
-            width: 90%; /* 入力欄を小さめに */
+            width: 90%; 
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -78,7 +78,7 @@
         .image-upload img {
             width: 120px;
             height: 120px;
-            background-color: transparent; /* ✅ 背景を透明に */
+            background-color: transparent; 
             display: block;
             margin: 0 auto 10px;
             border-radius: 8px;
@@ -116,14 +116,12 @@
             font-size: 16px;
             border: none;
             border-radius: 4px;
-            background-color: ##6c757d;;
+            background-color: #6c757d;;
             color: white;
             cursor: pointer;
         }
         
-        .button-container button:hover {
-            background-color: #6c757d;;
-        }
+        
         
     </style>
     
@@ -195,6 +193,30 @@
             </div>
 
             <div class="form-group">
+                <label for="size">ジャンル(必須):</label>
+                <select id="size" name="genre" required>
+                    <option value="tops">トップス</option>
+                    <option value="skirt">スカート</option>
+                    <option value="outer">アウター</option>
+                    <option value="onepiece">ワンピース</option>
+                    <option value="pants">パンツ</option>
+                    <option value="hat">帽子</option>
+                    <option value="maternity">マタニティ</option>
+                    <option value="baby">ベビー</option>
+                    <option value="other">その他</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="price">価格:</label>
+                <textarea id="price" name="price" 
+                          inputmode="numeric" 
+                          pattern="\d+(\.\d{1,2})?" 
+                          oninput="validatePrice(this)"
+                          style="width: 70px; height: 10px;"></textarea>
+            </div>
+
+            <div class="form-group">
                 <label for="memo">メモ:</label>
                 <textarea id="memo" name="memo"></textarea>
             </div>
@@ -209,6 +231,10 @@
         function previewImage(event) {
             const preview = document.getElementById('preview');
             preview.src = URL.createObjectURL(event.target.files[0]);
+        }
+
+        function validatePrice(element) {
+            element.value = element.value.replace(/\D/g, '');
         }
     </script>
 {% endblock %}
