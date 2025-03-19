@@ -23,6 +23,7 @@ from django.contrib.auth.hashers import check_password
 
 
 
+
 class PortfolioView(View):
     def get(self, request):
         return render(request, "portfolio.html")
@@ -65,14 +66,22 @@ class LoginView(View):
 
 class LogoutView(View):
     def post(self, request):
+        self.clear_non_profile_messages(request)
         logout(request)
         return redirect("login")
-    
-    def custom_logout(request):
-        logout(request)  # ユーザーをログアウトする
+
+    def clear_non_profile_messages(self, request):
         storage = messages.get_messages(request)
-        storage.used = True  # すべてのメッセージを消去
-        return redirect("login")  # ログインページへリダイレクト
+        new_messages = []
+        
+        for message in storage:
+            if "profile_update" in message.tags:
+                new_messages.append(message)
+
+        storage.used = True
+
+        for message in new_messages:
+            messages.add_message(request, messages.SUCCESS, message.message, extra_tags="profile_update")
     
     
 class HomeView(LoginRequiredMixin, ListView):
@@ -126,7 +135,6 @@ class ProfileView(View):
             "user_posts": user_posts,
         })
         
-    
 
 class WishlistView(LoginRequiredMixin, View):
     def get(self, request):

@@ -153,3 +153,8 @@ LOGIN_URL = '/baby-closet/login/'
 SESSION_COOKIE_AGE = 86400  # 1日 (24時間)
 SESSION_SAVE_EVERY_REQUEST = True
 
+# メッセージフレームワークを有効化
+from django.contrib.messages import constants as messages
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+

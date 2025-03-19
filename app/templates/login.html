@@ -82,12 +82,12 @@
 
     
     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 
  {% if form.errors %}
         <div class="alert alert-danger">
