@@ -19,21 +19,35 @@ class SignupForm(UserCreationForm):
             raise forms.ValidationError("このメールアドレスは既に登録されています")
         return email
     
+
 class LoginForm(forms.Form):
-    email = forms.EmailField()
-    password = forms.CharField()
-    
-    
+    email = forms.EmailField(
+        label="メールアドレス",
+        error_messages={
+            "required": "メールアドレスの入力は必須です",
+            "invalid": "有効なメールアドレスを入力してください",
+        }
+    )
+    password = forms.CharField(
+        label="パスワード",
+        widget=forms.PasswordInput,
+        error_messages={
+            "required": "パスワードの入力は必須です",
+        }
+    )
+
     def clean(self):
         print("loginformのクリーンが呼び出された")
         email = self.cleaned_data.get("email")
         password = self.cleaned_data.get("password")
         print(email, password)
-        self.user = authenticate(email=email, password=password)
-        if self.user is None:
-            raise forms.ValidationError("認証に失敗しました")
+
+        # 両方入力があるときだけ認証処理
+        if email and password:
+            self.user = authenticate(email=email, password=password)
+            if self.user is None:
+                raise forms.ValidationError("メールアドレスまたはパスワードが正しくありません")
         return self.cleaned_data
-    
 
 User = get_user_model()
 
