@@ -78,7 +78,9 @@
             font-size: 18px;
             
         }
-        
+        .post-caption {
+            white-space: pre-wrap;
+        }
 
         .post-item {
             width: 100%;
@@ -189,12 +191,13 @@
                         {% endif %}
 
                         {% if post.caption %}
-                            <p class="post-caption">{{ post.caption }}</p>
+                        <p class="post-caption">{{ post.caption|linebreaksbr }}</p>
                         {% endif %}
 
                         <div class="post-meta">
                             <span>♥ {{ post.likes.count|default:"0" }} </span>
-                            <span>💬 {{ post.comments.count|default:"0" }} </span>
+                            <span>💬 {{ post.comments.count|default:"0" }} </span><br>
+                            <span>{{ post.created_at|date:"Y年n月j日 H:i" }}</span>
                         </div>
                     </a> 
                 {% endif %}
@@ -224,7 +227,8 @@
 
                             <div class="post-meta">
                                 <span>♥ {{ post.likes.count|default:"0" }} </span>
-                                <span>💬 {{ post.comments.count|default:"0" }} </span>
+                                <span>💬 {{ post.comments.count|default:"0" }} </span><br>
+                                <span>{{ post.created_at|date:"Y年n月j日 H:i" }}</span>
                             </div>
                         </a>
                     {% endfor %}

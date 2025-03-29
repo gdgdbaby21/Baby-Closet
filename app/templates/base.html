@@ -5,43 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ページタイトル{% endblock %}</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #f8f8f8;
-            padding: 10px 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        .header-menu {
-            list-style: none;
-            display: flex;
-            justify-content: space-around;
-            padding: 0;
-            margin: 0;
-        }
-        .header-menu li {
-            margin: 0;
-        }
-        .header-menu li a, 
-        .header-menu li form button {
-            text-decoration: none;
-            color: #333;
-            padding: 10px 20px;
-            display: block;
-            font-size: 14px;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-        .header-menu li a:hover, 
-        .header-menu li form button:hover {
-            background-color: #ddd;
-            border-radius: 5px;
-        }
-    </style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+        
+            header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background-color: #f8f8f8;
+                padding: 10px 20px;
+                border-bottom: 1px solid #ddd;
+                z-index: 1000;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            }
+        
+            .header-menu {
+                list-style: none;
+                display: flex;
+                justify-content: space-around;
+                padding: 0;
+                margin: 0;
+            }
+        
+            .header-menu li {
+                margin: 0;
+            }
+        
+            .header-menu li a, 
+            .header-menu li form button {
+                text-decoration: none;
+                color: #333;
+                padding: 10px 20px;
+                display: block;
+                font-size: 14px;
+                background: none;
+                border: none;
+                cursor: pointer;
+            }
+        
+            .header-menu li a:hover, 
+            .header-menu li form button:hover {
+                background-color: #ddd;
+                border-radius: 5px;
+            }
+        
+            main {
+                padding-top: 60px; /* ヘッダーの高さ分空ける */
+            }
+        </style>
+        
 </head>
 <body>
     <!-- ヘッダー部分 -->

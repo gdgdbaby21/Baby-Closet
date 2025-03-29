@@ -94,10 +94,13 @@ class HomeView(LoginRequiredMixin, ListView):
         """非公開投稿のフィルタリング"""
         user = self.request.user
         if user.is_authenticated:
-            
-            return Post.objects.filter(Q(is_public=True) | Q(user=user)).distinct()
+            return Post.objects.filter(
+                Q(is_public=True) | Q(user=user)
+                ).order_by('-created_at').distinct()
         else:
-            return Post.objects.filter(is_public=True).distinct() 
+            return Post.objects.filter(
+                is_public=True
+                ).order_by('-created_at').distinct()
 
     def get_context_data(self, **kwargs):
         """人気のハッシュタグとその投稿を取得"""
@@ -108,9 +111,11 @@ class HomeView(LoginRequiredMixin, ListView):
         ).order_by('-popularity', '-post_count')[:3]
 
         hashtag_posts = {
-            hashtag: hashtag.posts.filter(Q(is_public=True) | Q(user=self.request.user))[:5]
-            for hashtag in popular_hashtags
-        }
+    hashtag: hashtag.posts.filter(
+        Q(is_public=True) | Q(user=self.request.user)
+    ).order_by('-created_at')[:5]
+    for hashtag in popular_hashtags
+}
 
         context['popular_hashtags'] = popular_hashtags
         context['hashtag_posts'] = hashtag_posts
